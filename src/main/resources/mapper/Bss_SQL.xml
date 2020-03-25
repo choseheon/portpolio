@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bss">
+	<!-- 영업 카드 목록 -->
+	<select id="getBssList" parameterType="hashmap"
+		resultType="hashmap">
+		SELECT BC.CHN_NAME, CP.COMP_NAME, EI.EMP_NAME,
+		BC.PROG_NO, L.LEAD_NO, CHN_NO
+		FROM BSS_CHN BC INNER JOIN LEAD L
+		ON BC.LEAD_NO = L.LEAD_NO
+		INNER JOIN CLIENT C
+		ON L.CLIENT_NO = C.CLIENT_NO
+		INNER JOIN COMP CP
+		ON C.COMP_NO = CP.COMP_NO
+		INNER JOIN EMP_INFO EI
+		ON L.EMP_NO = EI.EMP_NO
+		<if test="searchTxt != null and searchTxt !=''">
+			<choose>
+				<when test="searchGbn2 eq 0">
+					WHERE (UPPER(CHN_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%'
+					OR UPPER(COMP_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%'
+					OR UPPER(EMP_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%')
+				</when>
+				<when test="searchGbn2 eq 1">
+					WHERE UPPER(CHN_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%'
+				</when>
+				<when test="searchGbn2 eq 2">
+					WHERE UPPER(COMP_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%'
+				</when>
+				<when test="searchGbn2 eq 3">
+					WHERE UPPER(EMP_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%'
+				</when>
+			</choose>
+		</if>
+		ORDER BY CHN_NO DESC
+	</select>
+	
+	<!-- 영업 카드 목록(리드) -->
+	<select id="getLeadList" parameterType="hashmap" resultType="hashmap">
+		SELECT L.LEAD_NAME, C.COMP_NAME, EI.EMP_NAME, L.LEAD_NO
+        FROM LEAD L INNER JOIN CLIENT CL
+                    ON L.CLIENT_NO = CL.CLIENT_NO
+                    INNER JOIN COMP C
+                    ON CL.COMP_NO = C.COMP_NO
+                    INNER JOIN EMP_INFO EI
+                    ON L.EMP_NO = EI.EMP_NO
+        AND L.LEAD_NO NOT IN (SELECT LEAD_NO FROM BSS_CHN)
+        <if test="searchTxt != null and searchTxt !=''">
+			<choose>
+				<when test="searchGbn2 eq 0">
+					WHERE (UPPER(LEAD_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%'
+					OR UPPER(COMP_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%'
+					OR UPPER(EMP_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%')
+				</when>
+				<when test="searchGbn2 eq 1">
+					WHERE UPPER(LEAD_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%'
+				</when>
+				<when test="searchGbn2 eq 2">
+					WHERE UPPER(COMP_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%'
+				</when>
+				<when test="searchGbn2 eq 3">
+					WHERE UPPER(EMP_NAME) LIKE '%' || UPPER(#{searchTxt}) || '%'
+				</when>
+			</choose>
+		</if>
+		ORDER BY L.LEAD_NO DESC
+	</select>
+
+	<!-- 영업 테이블 목록 페이징 -->
+	<select id="getBssCnt" parameterType="hashmap"
+		resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM BSS_CHN B INNER JOIN LEAD L
+		ON B.LEAD_NO = L.LEAD_NO
+		INNER JOIN CLIENT CL
+		ON L.CLIENT_NO = CL.CLIENT_NO
+		INNER JOIN COMP C
+		ON C.COMP_NO = CL.COMP_NO
+		INNER JOIN EMP_INFO E
+		ON B.EMP_NO = E.EMP_NO
+		INNER JOIN TEAM T
+		ON E.TEAM_NO = T.TEAM_NO
+		INNER JOIN DEPART D
+		ON T.DEPART_NO = D.DEPART_NO
+		INNER JOIN BSS_PROG P
+		ON B.PROG_NO = P.PROG_NO
+		LEFT OUTER JOIN BSS_CTRACT BC
+		ON B.CHN_NO = BC.CHN_NO
+		<choose>
+			<when test="searchTableTxt != null and searchTableTxt != ''">
+				<choose>
+					<when test="searchGbn eq 0">
+						WHERE B.CHN_NAME LIKE '%' || #{searchTableTxt} ||
+						'%'
+					</when>
+					<when test="searchGbn eq 1">
+						WHERE B.CHN_NAME LIKE '%' || #{searchTableTxt} ||
+						'%'
+						AND B.PROG_NO BETWEEN 1 AND 4
+					</when>
+					<when test="searchGbn eq 2">
+						WHERE B.CHN_NAME LIKE '%' || #{searchTableTxt} ||
+						'%'
+						AND B.PROG_NO = 5
+					</when>
+					<when test="searchGbn eq 3">
+						WHERE B.CHN_NAME LIKE '%' || #{searchTableTxt} ||
+						'%'
+						AND B.PROG_NO = 6
+					</when>
+					<when test="searchGbn eq 4">
+						WHERE B.CHN_NAME LIKE '%' || #{searchTableTxt} ||
+						'%'
+						AND B.PROG_NO = 7
+					</when>
+				</choose>
+				<if test="startDate != null and startDate != ''">
+					WHERE CHN_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD') + 0.99999
+				</if>
+			</when>
+			<when test="startDate != null and startDate != ''">
+				<choose>
+					<when test="searchGbn eq 0">
+						WHERE CHN_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD') + 0.99999
+					</when>
+					<when test="searchGbn eq 1">
+						WHERE CHN_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD') + 0.99999
+						AND B.PROG_NO BETWEEN 1 AND 4
+					</when>
+					<when test="searchGbn eq 2">
+						WHERE CHN_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD') + 0.99999
+						AND B.PROG_NO = 5
+					</when>
+					<when test="searchGbn eq 3">
+						WHERE CHN_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD') + 0.99999
+						AND B.PROG_NO = 6
+					</when>
+					<when test="searchGbn eq 4">
+						WHERE CHN_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD') + 0.99999
+						AND B.PROG_NO = 7
+					</when>
+				</choose>
+			</when>
+		</choose>
+	</select>
+
+	<!-- 영업 테이블 목록 -->
+	<select id="getBss" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM
+		(SELECT B.CHN_NO, B.CHN_NAME, TO_CHAR(B.CHN_DATE, 'YYYY-MM-DD') AS CHN_DATE,
+		CL.CLIENT_NAME,
+		CASE WHEN BC.CTRACT_DATE IS NULL
+		THEN ' '
+		ELSE TO_CHAR(BC.CTRACT_DATE, 'YYYY-MM-DD')
+		END CTRACT_DATE,
+		CASE WHEN B.EXPECT_SALES IS NULL
+		THEN 0
+		ELSE B.EXPECT_SALES
+		END EXPECT_SALES,
+		P.PROG_NAME, D.DEPART_NAME, E.EMP_NAME, C.COMP_NAME,
+		ROW_NUMBER() OVER(ORDER BY B.CHN_NO DESC) AS RNUM
+		FROM BSS_CHN B INNER JOIN LEAD L
+		ON B.LEAD_NO = L.LEAD_NO
+		INNER JOIN CLIENT CL
+		ON L.CLIENT_NO = CL.CLIENT_NO
+		INNER JOIN COMP C
+		ON C.COMP_NO = CL.COMP_NO
+		INNER JOIN EMP_INFO E
+		ON B.EMP_NO = E.EMP_NO
+		INNER JOIN TEAM T
+		ON E.TEAM_NO = T.TEAM_NO
+		INNER JOIN DEPART D
+		ON T.DEPART_NO = D.DEPART_NO
+		INNER JOIN BSS_PROG P
+		ON B.PROG_NO = P.PROG_NO
+		LEFT OUTER JOIN BSS_CTRACT BC
+		ON B.CHN_NO = BC.CHN_NO
+		<choose>
+			<when test="searchTableTxt != null and searchTableTxt != ''">
+				<choose>
+					<when test="searchGbn eq 0">
+						WHERE B.CHN_NAME LIKE '%' || #{searchTableTxt} ||
+						'%'
+					</when>
+					<when test="searchGbn eq 1">
+						WHERE B.CHN_NAME LIKE '%' || #{searchTableTxt} ||
+						'%'
+						AND B.PROG_NO BETWEEN 1 AND 4
+					</when>
+					<when test="searchGbn eq 2">
+						WHERE B.CHN_NAME LIKE '%' || #{searchTableTxt} ||
+						'%'
+						AND B.PROG_NO = 5
+					</when>
+					<when test="searchGbn eq 3">
+						WHERE B.CHN_NAME LIKE '%' || #{searchTableTxt} ||
+						'%'
+						AND B.PROG_NO = 6
+					</when>
+					<when test="searchGbn eq 4">
+						WHERE B.CHN_NAME LIKE '%' || #{searchTableTxt} ||
+						'%'
+						AND B.PROG_NO = 7
+					</when>
+				</choose>
+				<if test="startDate != null and startDate != ''">
+					AND B.CHN_DATE BETWEEN #{startDate} AND #{endDate}
+				</if>
+			</when>
+			<when test="startDate != null and startDate != ''">
+				<choose>
+					<when test="searchGbn eq 0">
+						WHERE CHN_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD') + 0.99999
+					</when>
+					<when test="searchGbn eq 1">
+						WHERE CHN_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD') + 0.99999
+						AND B.PROG_NO BETWEEN 1 AND 4
+					</when>
+					<when test="searchGbn eq 2">
+						WHERE CHN_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD') + 0.99999
+						AND B.PROG_NO = 5
+					</when>
+					<when test="searchGbn eq 3">
+						WHERE CHN_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD') + 0.99999
+						AND B.PROG_NO = 6
+					</when>
+					<when test="searchGbn eq 4">
+						WHERE CHN_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD') + 0.99999
+						AND B.PROG_NO = 7
+					</when>
+				</choose>
+			</when>
+			<when test="searchGbn != null and searchGbn != ''">
+				<choose>
+					<when test="searchGbn eq 0">
+						WHERE B.CHN_NAME LIKE '%' || #{searchTableTxt} || '%'
+					</when>
+					<when test="searchGbn eq 1">
+						WHERE B.PROG_NO BETWEEN 1 AND 4
+					</when>
+					<when test="searchGbn eq 2">
+						WHERE B.PROG_NO = 5
+					</when>
+					<when test="searchGbn eq 3">
+						WHERE B.PROG_NO = 6
+					</when>
+					<when test="searchGbn eq 4">
+						WHERE B.PROG_NO = 7
+					</when>
+				</choose>
+			</when>
+		</choose>
+		) B
+		WHERE B.RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	
+	<!-- 기회, 리드번호 가져오기 -->
+	<select id="getBssNo" parameterType="hashmap" resultType="hashmap">
+		SELECT CHN_NO, LEAD_NO
+		FROM BSS_CHN
+		WHERE CHN_NO = #{chnNo}
+	</select>
+
+</mapper>

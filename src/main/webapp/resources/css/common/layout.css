@@ -1,0 +1,615 @@
+/* 
+    공통되어 사용되는 레이아웃을 정의
+    상황에 맞는 클래스를 부여해서 사용
+*/
+
+* {
+	box-sizing: border-box;
+}
+
+/* 내용 영역 감싸기 - 크기 1080px로 제한 */
+.contents_wrap {
+    width: 1080px;
+}
+/* 테이블 타이틀과 버튼이 들어가는 공간 */
+.table_top_area {
+    width: 100%;
+    margin-top: 10px;
+
+    font-size: 0;
+    color: #000000;
+}
+/* 테이블 타이틀 공간 */
+.top_title_area {
+    display: inline-block;
+    width: 30%;
+    height: 50px;
+    line-height: 50px;
+
+    vertical-align: middle;
+    text-align: left;
+
+    font-size: 15pt;
+    font-weight: bold;
+}
+
+/* 버튼 공간 */
+.top_btn_area {
+    display: inline-block;
+    width: 70%;
+    height: 50px;
+    line-height: 50px;
+
+    vertical-align: middle;
+    text-align: right;
+}
+
+/* 기본 테이블 설정 */
+.table_normal {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+
+    border-top: 2px solid #F2B807;
+
+    font-size: 0;
+}
+/* tr 기본 설정 */
+tr {
+    height: 50px;
+    border-bottom: 1px solid #cacaca;
+}
+/* tr 밑줄 없는 설정 */
+.tr_no_uline {
+    border-bottom: 0;
+}
+/* 필드명 */
+.field_name {
+    background-color: #f2f2f2;
+    color: #272727;
+    border: 1px solid #cacaca;
+
+    font-size: 10pt;
+    font-weight: bold;
+}
+/* 맨왼쪽 필드명 스타일 - border-left 제거 */
+.first_field_name {
+    border-left: 0;
+}
+/* 맨오른쪽 셀 스타일 */
+.last_field_name {
+    border-right: 0 ;
+}
+/* 필드 내용 */
+.field_contents {
+    padding: 10px 15px;
+
+    text-align: left;
+    vertical-align: middle;
+
+    font-size: 10pt;
+}
+/* 필드 내용이되 정렬은 가운데로 하고싶을때 */
+.contents_align_center {
+    text-align: center;
+}
+/* 강조 텍스트 */
+.acc_txt {
+    color: #ff3737;
+    font-weight: 800;
+}
+
+/* 빈 공간 div */
+.blank_space {
+    width: 100%;
+    height: 50px;
+}
+
+/* 등급색상 팔레트 */
+/* 
+#000000
+#E88B89
+#58C9B9
+#30A9DE
+#A5421E
+#A901DB
+#0404B4
+#0040FF
+#01DF01
+#FFED0D
+#FF8000
+#FF0000 
+*/
+.color_view {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+
+    border-radius: 3px;
+    border: 2px solid #eeeeee;
+    background-color: #FFFFFF;
+    vertical-align: middle;
+
+    margin-left: 10px;
+}
+.color_view_rel {
+    display: block !important;
+    float:right;
+}
+
+/* 진행중인 작업 관련 */
+.chk_grp {
+    display: inline-block;
+    height: 50px;
+    line-height: 50px;
+
+    vertical-align: middle;
+}
+.chk_txt {
+    font-size: 10pt; 
+    color: #272727; 
+    vertical-align: middle; 
+    cursor: pointer; 
+    margin-left: 10px;
+}
+/* 요소 마진 조절 */
+.margin_right {
+    margin-right: 20px;
+}
+.work_block {
+    display: inline-block;
+    width: 90%;
+    height: 30px;
+    line-height: 30px;
+
+    border-radius: 3px;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 10pt;
+    font-weight: bold;
+}
+.lead_bg {
+    color: #ffffff;
+    background-color: #ff4040;
+}
+.chance_bg {
+    color: #ffffff;
+    background-color: #40a9ff;
+}
+.view_more {
+    color: #F2B807;
+    font-size: 10pt;
+    font-weight: bold;
+    cursor: pointer;
+}
+.view_more:hover {
+    text-decoration: underline;
+    color: #40a9ff;
+}
+.view_more_area:hover {
+    background-color: #ffffff !important;
+    cursor: default;
+}
+.click_table>tbody>tr {
+    cursor: pointer;
+}.click_table>tbody>tr:hover {
+    background-color: #eeeeee;
+}
+
+/* ------------------------------------------------------- 목록 테이블 CSS ------------------------------------------------------------- */
+/* 리스트 감싸기 - 크기 1200px 로 제한 */
+.list_wrap {
+    width: 1200px;
+}
+
+/* 리스트 테이블 */
+.table_list {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+
+    font-size: 0;
+}
+.list_contents:hover {
+    background-color: #eeeeee;
+}
+/* 리스트 테이블 헤더 */
+.table_list_header {
+    height: 50px;
+    
+    background-color: #595959;
+    
+    vertical-align: middle;
+    cursor: pointer;
+}
+.table_list_header td {
+    padding : 10px 15px;
+    color: #ffffff;
+
+    font-size: 10pt;
+    font-weight: bold;
+    vertical-align: middle;
+}
+/* 리스트 테이블 td 왼쪽 정렬 스타일 */
+.table_list .list_contents td {
+    padding : 10px 15px;
+    font-size: 10pt;
+    color: #000000;
+    vertical-align: middle;
+
+    cursor: pointer;
+}
+.td_left_align {
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* 리스트 테이블 페이지 인덱스 영역 */
+.list_paging_area {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+
+    margin-top: 30px;
+
+    text-align: center;
+    vertical-align: middle;
+}
+/* 테이블 리스트 체크 현황 */
+.top_title_area>div {
+    font-size: 10pt;
+    font-weight: normal;
+}
+
+/* cursor: pointer 영역 */
+.contents_pointer {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+
+    font-size: 10pt;
+}
+
+/* 입력창 이등분 */
+.td_half_area {
+    display: inline-block;
+    width: 50%;
+    height: 100%;
+}
+
+/*버튼영역*/
+.content_btn {
+	display: inline-block;
+	width: calc(1040px - 85px);
+	height: 50px;
+	vertical-align: top;
+}
+/*버튼을 div로 만들었습니다.
+  버튼 속성입니다.
+  버튼은 float:right을 썼기때문에 반대로 적어주세요.
+*/
+.content_btn>div {
+	display: table;
+	width: 80px;
+	height: 30px;
+	font-size: 10pt;
+	color: #595959;
+	text-align: center;
+	border-radius: 5px;
+	float: right;
+	background-color: #F2B807;
+	margin-top: 20px;
+	margin-left: 10px;
+	vertical-align : middle;
+	line-height : 30px;
+}
+/*버튼의 hover입니다.*/
+.content_btn>div:hover {
+	background-color: #F2CB07;
+	cursor: pointer;
+}
+
+/* 드롭리스트, 버튼, 이미지가 있는 영역 설정 */
+.content_top {
+	display: inline-block;
+	width: 1200px;
+	height: 50px;
+	font-size: 0px;
+}
+
+/* 상단 드롭다운리스트 영역 */
+.drop_area {
+	display: inline-block;
+	width: 160px;
+	heigth: 50px;
+	vertical-align: bottom;
+}
+/* 드롭다운 리스트 설정 */
+.drop_list {
+	display: inline-block;
+	background-color: white;
+	width: 160px;
+	height: 40px;
+	border-radius: 5px;
+	font-size: 11pt;
+	text-align: center;
+}
+/* 이미지 영역 */
+.view_area {
+	display: inline-block;
+	width: 85px;
+	height: 30px;
+	padding-top: 20px;
+	padding-left: 10px;
+}
+/* 테이블 이미지 속성 */
+.table_img_size {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	cursor: pointer;
+}
+/* 간판 이미지 속성 */
+.grid_img_size {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	cursor: pointer;
+	margin-left: 10px;
+}
+/* 테이블 영역설정 */
+.table_list {
+	width: 1200px;
+}
+
+/*버튼의 hover입니다.*/
+.content_srch_btn>div:hover {
+	background-color: #292929;
+	cursor: pointer;
+}
+/* 검색영역 */
+.content_srch {
+	width: 1200px;
+	height: 50px;
+}
+/* 검색창 설정 */
+.content_srch_btn>div {
+	display: table;/* 테이블속성을 갖는다. */
+	width: 80px;
+	height: 30px;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-align: center;
+	border-radius: 5px;
+	float: right;
+	background-color: #595959;
+	margin-top: 10px;
+	margin-left: 10px;
+	line-height : 30px;
+	vertical-align : middle;
+}
+/* 상단 검색 텍스트박스 설정 */
+.content_srch_txt {
+	display: inline-block;
+	width: 200px;
+	height: 30px;
+	font-size: 10pt;
+	margin-top: 10px;
+	margin-left: 10px;
+	border: 1px solid #ccc;
+	float: right;
+	border-radius: 5px;
+}
+/* 상단 검색창 영역 */
+.content_srch_btn {
+	display: inline-block;
+	width: 1200px;
+	height: 50px;
+}
+/* 검색창 드랍다운 리스트 설정 */
+.content_srch_DD {
+	display: inline-block;
+	width: 100px;
+	height: 30px;
+	font-size: 10pt;
+	margin-top: 10px;
+	margin-left: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	float: right;
+}
+/* 요소제거 */
+.content_srch_DD1 {
+	display: none;
+}
+/* 좌상단 #개항목#개 */
+.cntPick {
+	display: inline-block;
+	width: 200px;
+	height: 25px;
+	margin-top: 10px;
+	margin-left: 10px;
+	float: left;
+	border: 0;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #595959;
+}
+/* 제목열 */
+.sample_1 {
+	width: 1200px;
+	height: 50px;
+	border-bottom: 1px solid #cccccc;
+}
+/* 내용열 */
+.sample_2 {
+	width: 1200px;
+	height: 50px;
+	border-bottom: 1px solid #cccccc;
+}
+/* 아웃라인 없애기 */
+.sample_2 input {
+	outline: none;
+	
+}
+/* 체크박스설정 */
+.check {
+	background-color: #595959;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #ffffff;
+	width: 75px;
+}
+/* 제목td1 */
+.sample_title1 {
+	background-color: #595959;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #ffffff;
+	height : 50px;
+}
+/* 제목td2 */
+.sample_title2 {
+	background-color: #595959;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #ffffff;
+	height : 50px;
+}
+
+/* 제목td3 */
+.sample_title3 {
+	background-color: #595959;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #ffffff;
+	height : 50px;
+}
+/* 제목td4 */
+.sample_title4 {
+	background-color: #595959;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #ffffff;
+	height : 50px;
+}
+/* 제목td5 */
+.sample_title5 {
+	background-color: #595959;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #ffffff;
+	height : 50px;
+}
+/* 제목td6 */
+.sample_title6 {
+	background-color: #595959;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #ffffff;
+	height : 50px;
+}
+/* 제목td7 */
+.sample_title7 {
+	background-color: #595959;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #ffffff;
+	height : 50px;
+}
+/* 제목td8 */
+.sample_title8 {
+	background-color: #595959;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #ffffff;
+	height : 50px;
+}
+/* 제목td9 */
+.sample_title9 {
+	background-color: #595959;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #ffffff;
+	height : 50px;
+}
+
+/* .sample8_btn {
+	float: right;
+	display: inline-block;
+	height: 20px;
+	border: 1px solid #cccccc;
+	background-color: #ffffff;
+	border-radius: 3px;
+	cursor: pointer;
+	width: 50px;
+	height: 20px;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #595959;
+	padding: 2px;
+	margin-right: 27px;
+}
+ */
+/* .departments_btn:hover {
+	background-color: #F2CB07;
+}
+ */
+ /* 바텀 버튼영역 */
+.content_bottom {
+	display: block;
+	height: 40px;
+	padding: 0px;
+	width: 1200px;
+	font-size: 0px;
+	margin-top: 30px;
+	text-align:center;
+}
+/* 버튼나열 */
+.content_bottom_1_span {
+	display: inline-block;
+	position: relative;
+	margin-left: 432px;
+}
+/* 버튼1 */
+.bottom_btn_1 {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	border: 0px;
+	margin-left: 2px;
+	background-color: #595959;
+	color: #F2F2F2;
+}
+
+.bottom_btn_2 {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	margin-left: 2px;
+	border: 0px;
+	background-color: #595959;
+	color: #F2F2F2;
+}
+
+.bottom_btn_1:hover {
+	background-color: #F2CB07;
+	color: #595959;
+	cursor: pointer;
+}
+
+.bottom_btn_2:hover {
+	background-color: #F2CB07;
+	color: #595959;
+	cursor: pointer;
+}
+
+/* 드래그 방지 */
+.no_drag {
+	-ms-user-select: none;
+	-moz-user-select: -moz-none; 
+	-webkit-user-select: none; 
+	-khtml-user-select: none; 
+	user-select:none;
+}

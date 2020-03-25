@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="prod">
+	<!-- 서비스 리스트  -->
+	<select id="getServiceList" parameterType="hashmap" resultType="hashmap">
+	SELECT *
+	FROM
+	(
+	SELECT *
+		FROM 
+		(SELECT SERVICE_NO, SERVICE_CODE,SERVICE_PRICE, SERVICE_PERIOD,INSTALL_PRICE, REMARKS, PROD_NO,  ROW_NUMBER() OVER(ORDER BY SERVICE_NO DESC) AS RNUM 
+		FROM SERVICE
+		WHERE 1 = 1
+		<if test="searchTxt !=null and searchTxt !=''">
+			<choose>
+				<when test="service_gbn eq 0">
+    				 AND SERVICE_CODE LIKE '%' || #{searchTxt}  ||'%'
+				</when>
+				<when test="service_gbn eq 1">
+    				 AND SERVICE_PERIOD LIKE '%' || #{searchTxt}  ||'%' 	
+				</when>
+				<when test="service_gbn eq 2">
+    				 AND SERVICE_PRICE LIKE '%' || #{searchTxt}  ||'%'
+				</when>
+				<when test="service_gbn eq 3">
+    				 AND INSTALL_PRICE LIKE '%' || #{searchTxt}  ||'%'
+				</when>
+
+			</choose>
+		</if>
+		ORDER BY SERVICE_NO DESC
+		) S
+		INNER JOIN PROD P
+		ON P.PROD_NO = S.PROD_NO 
+		WHERE RNUM BETWEEN #{startCnt} AND #{endCnt}
+		)
+	</select>
+	<!-- 제품 리스트  -->
+	<select id="getGoodsList" parameterType="hashmap" resultType="hashmap">
+	SELECT *
+	FROM
+	(
+	SELECT *
+		FROM 
+		(SELECT GOODS_NO, GOODS_CODE, GOODS_PRICE, GOODS_SIZE, REMARKS, PROD_NO,  ROW_NUMBER() OVER(ORDER BY GOODS_NO DESC) AS RNUM 
+		FROM GOODS 
+		WHERE 1 = 1
+		<if test="searchTxt !=null and searchTxt !='' ">
+			<choose>
+				<when test="goods_gbn eq 0">
+					AND GOODS_CODE LIKE '%' || #{searchTxt} ||'%'
+				</when> 
+				<when test="goods_gbn eq 1">
+					AND GOODS_PRICE LIKE '%' || #{searchTxt} ||'%' 
+				</when>
+				<when test="goods_gbn eq 2">
+					AND GOODS_SIZE LIKE '%' || #{searchTxt} ||'%' 
+				</when>
+			</choose>
+		</if>
+		ORDER BY GOODS_NO DESC
+
+		) G
+		INNER JOIN PROD P
+		ON P.PROD_NO = G.PROD_NO
+		)G1
+		WHERE G1.RNUM BETWEEN #{startCnt} AND #{endCnt}
+		ORDER BY G1.RNUM
+
+		
+
+		
+	</select>
+	
+		<select id="getgoodslistCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM GOODS
+		WHERE 1=1
+		<if test="searchTxt !=null and searchTxt !=''">
+			<choose>
+				<when test="goods_gbn eq 0">
+    				 AND GOODS_CODE LIKE '%' || #{searchTxt}  ||'%'
+				</when>	
+				<when test="goods_gbn eq 1">
+    				 AND GOODS_PRICE LIKE '%' || #{searchTxt}  ||'%' 	
+				</when>
+				<when test="goods_gbn eq 2">
+    				 AND GOODS_SIZE LIKE '%' || #{searchTxt}  ||'%'
+				</when>
+
+			</choose>
+		</if>
+	</select>
+	
+		<select id="getservicelistCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM SERVICE
+		<if test="searchTxt !=null and searchTxt !=''">
+		WHERE 1=1
+			<choose>
+				<when test="service_gbn eq 0">
+    				 AND SERVICE_CODE LIKE '%' || #{searchTxt}  ||'%'
+				</when>
+				<when test="service_gbn eq 1">
+    				 AND SERVICE_PERIOD LIKE '%' || #{searchTxt}  ||'%' 	
+				</when>
+				<when test="service_gbn eq 2">
+    				 AND SERVICE_PRICE LIKE '%' || #{searchTxt}  ||'%'
+				</when>
+				<when test="service_gbn eq 3">
+    				 AND INSTALL_PRICE LIKE '%' || #{searchTxt}  ||'%'
+				</when>
+
+			</choose>
+		</if>
+	</select>
+
+
+	
+	<insert id="addproddata" parameterType="hashmap">
+		INSERT INTO PROD(PROD_NO, TYPE_NO, DIV_NO, PROD_NAME)
+		VALUES (PROD_SEQ.NEXTVAL, #{type_no}, #{div_no},
+		
+		 <if test="div_no eq 1">#{p_name}</if>
+		<if test="div_no eq 2">#{p2_name} </if>
+		)
+	</insert>
+	<insert id="addgoodsdata" parameterType="hashmap">	
+		INSERT  INTO GOODS (GOODS_NO, GOODS_CODE, GOODS_PRICE, GOODS_SIZE ,REMARKS, PROD_NO)
+		VALUES(GOODS_SEQ.NEXTVAL,#{g_code},#{g_price},#{g_size},#{g_remarks},#{prodNo})
+	</insert>
+	
+	
+	<insert id="addservicedata" parameterType="hashmap">	
+		INSERT  INTO SERVICE (SERVICE_NO, SERVICE_CODE, SERVICE_PERIOD, SERVICE_PRICE, INSTALL_PRICE, REMARKS, PROD_NO)
+		VALUES(SERVICE_SEQ.NEXTVAL,#{s_code},#{s_period},#{s_price},#{s_install},#{s_remarks},#{prodNo})
+	</insert>
+	
+ 	<select id="getdata" resultType="hashmap" parameterType="hashmap">
+		<choose>
+			<when test="prod eq 1">
+			SELECT *
+			FROM GOODS G
+			INNER JOIN PROD P
+			ON G.PROD_NO = P.PROD_NO
+			WHERE GOODS_NO = #{goods_no}
+			</when>
+		
+			<otherwise>		
+			SELECT *
+			FROM SERVICE S
+			INNER JOIN PROD P
+			ON S.PROD_NO = P.PROD_NO
+			WHERE SERVICE_NO = #{service_no}
+			</otherwise>
+		</choose>
+	</select> 
+	
+<!-- 	<select id="getproddata" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM PROD
+		WHERE PROD_NO = #{prodNo}
+	</select> -->
+	
+	
+	
+	<delete id="Detdeletedata" parameterType="hashmap">
+		<choose>
+			<when test="prod eq 1">
+				DELETE FROM GOODS
+				WHERE GOODS_NO = #{goods_no}			
+			</when>
+			<otherwise>
+				DELETE FROM SERVICE
+				WHERE SERVICE = #{service_no}
+			</otherwise>
+		</choose>
+	
+	</delete>
+	<delete id="Detdeletedata2" parameterType="hashmap">
+		<choose>
+			<when test="prod eq 1">
+				DELETE FROM PROD
+				WHERE PROD_NO = #{prod_no}			
+			</when>
+			<otherwise>
+				DELETE FROM PROD
+				WHERE PROD_NO = #{prod_no}
+			</otherwise>
+		</choose>
+	
+	</delete>
+	
+	
+	
+	
+	
+	<select id="getLastProd" parameterType="HashMap" resultType="HashMap">
+		SELECT *
+		FROM(
+		SELECT P.*, RANK()OVER(ORDER BY P.PROD_NO DESC) AS RNUM
+		FROM PROD P
+		)
+		WHERE RNUM = 1
+	</select>
+	
+	<update id="updatedata" parameterType="hashmap">
+	<choose>
+		<when test="prod eq 1">
+			UPDATE GOODS SET
+			GOODS_PRICE =#{goods_price} , GOODS_SIZE = #{goods_size}, REMARKS = #{remarks}
+			WHERE GOODS_NO = #{goods_no}
+		</when>
+		<otherwise>
+			UPDATE SERVICE SET
+			SERVICE_PRICE =#{service_price} , SERVICE_PERIOD = #{service_period},INSTALL_PRICE =#{install_price} ,REMARKS = #{remarks}
+			WHERE SERVICE_NO = #{service_no}
+		</otherwise>
+	</choose>
+	</update>
+	
+	
+	
+	
+	<update id="update2data" parameterType="hashmap">
+	<choose>
+		<when test="prod eq 1">
+		UPDATE PROD SET
+		PROD_NAME = #{prod_name1}
+		WHERE PROD_NO = #{prod_no}
+		</when>
+		<otherwise>
+		UPDATE PROD SET
+		PROD_NAME = #{prod_name2}
+		WHERE PROD_NO = #{prod_no}
+
+		</otherwise>
+	</choose>
+	</update>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>

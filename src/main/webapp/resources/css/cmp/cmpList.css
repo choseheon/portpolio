@@ -1,0 +1,234 @@
+@charset "UTF-8";
+/* 테이블 타이틀칸 */
+.title_1 {
+   	width: 100%;
+   	height: 50px;
+   	border-bottom: 1px solid #cccccc;
+}
+/* 테이블 내용칸 */ 
+.title_2 {
+   	width: 100%;
+   	height: 50px;
+   	border-bottom: 1px solid #cccccc;
+}
+/* 테이블 내용칸 */
+.title_2 input{
+	outline: none;
+}
+/* 테이블의 일련번호칸 */
+.table_title1{
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	color : #ffffff;
+
+}
+/* 테이블의 캠페인명칸 */
+.table_title2 {
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	text-align: center;
+	color : #ffffff;
+
+}
+/* 테이블의 진행기간칸 */
+.table_title3 {
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	color : #ffffff;
+	
+}
+.table_title4{
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	color : #ffffff;
+
+}
+.table_title5{
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	color : #ffffff;
+
+}
+.sample1_txt {
+	border : 0;
+	width: 150px;
+	
+}
+
+.sample2_txt {
+	border : 0;
+	width: 150px;
+}
+.sample3_txt {
+	border : 0;
+	width: 150px;
+
+}
+.sample4_txt {
+	border : 0;
+	width: 150px;
+}
+
+table{
+   width:1200px;
+   border-collapse : collapse;
+   padding : 0px;
+   margin : 0px;
+   border-spacing : 0px;
+   font-size : 10pt;
+   border-top : 2px solid #F2CB07;
+}
+
+td{
+   padding : 10px 15px;
+   font-weight : bold;
+   text-align:center;
+}
+.write_btn {
+    display: inline-block;
+    width: 1200px;
+    height: 50px;
+    vertical-align: top;
+}
+.write_btn > div {
+   display: table;
+   width : 80px;
+   height: 30px;
+   font-size: 10pt;
+   color: #595959;
+   text-align : center;
+   border-radius : 5px;
+	float : right; 
+   background-color : #F2B807;
+   padding-top : 7px;
+   margin-top : 20px;
+   margin-left : 10px;
+}
+/*버튼의 hover입니다.*/
+.write_btn > div:hover {
+   background-color : #F2CB07;
+   cursor : pointer;
+}
+
+.content_srch_btn {
+   display : inline-block;
+   width : 1200px;
+   height : 50px;
+}
+/* .search{
+	display: table;
+	width : 80px;
+	height: 30px;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-align : center;
+	border-radius : 5px;
+	float : right; 
+	background-color : #595959;
+	padding-top : 5px;
+	margin-top : 10px;
+	margin-left : 10px;
+}
+.search:hover {
+   background-color : #292929;
+} */
+
+.search_srch_btn > div {
+   display: table;
+   width : 80px;
+   height: 30px;
+   font-size: 10pt;
+   font-weight: bold;
+   color: white;
+   text-align : center;
+   border-radius : 5px;
+   float : right; 
+   background-color : #595959;
+   padding-top : 5px;
+   margin-top : 10px;
+   margin-left : 10px;
+}
+/* 버튼의 hover입니다. */
+.search_srch_btn > div:hover {
+   background-color : #292929;
+   cursor : pointer;
+}
+
+.textbox_srch_txt{
+   display : inline-block;
+   width: 200px;
+   height: 30px;
+   font-size: 10pt;
+   margin-top : 10px;
+   margin-left : 10px;
+   border : 1px solid #ccc;
+   float : right; 
+   border-radius : 5px;
+}
+.dropmenu_srch_DD{
+   display : inline-block;
+   width: 100px;
+   height: 30px;
+   font-size: 10pt;
+   margin-top : 10px;
+   margin-left : 10px;
+   border : 1px solid #ccc;
+   border-radius : 5px;
+   float : right;
+
+}
+
+.dropmenu_srch_DD1{
+   display : none;
+}
+.search_srch{
+   display : inline-block;
+   width : 1200px;
+   height : 50px;
+}
+.bottom_btn_1 {
+	display : inline-block;
+	width : 40px;
+	height : 40px;
+	border : 0px;
+	margin-left : 2px;
+	background-color : #595959;
+	color: #F2F2F2;
+	padding-top: 10px;
+	font-size: 11pt;
+	margin-top: 10px;
+}
+.bottom_btn_2 {
+   display : inline-block;
+   width : 40px;
+   height : 40px;
+   margin-left : 2px;
+   border : 0px;
+   background-color : #595959;
+   color: #F2F2F2;
+   padding-top: 10px;
+	font-size: 11pt;
+	margin-top: 10px;
+}
+.bottom_btn_1:hover {
+   background-color: #F2CB07;
+   color: #595959;
+   cursor : pointer;
+}
+.paging_area{
+	display: inline-block;
+	width: 1200px;
+	text-align: center;
+	position: relative;
+}
+.bottom_btn_2:hover {
+   background-color: #F2CB07;
+   color: #595959;
+   cursor : pointer;
+  }

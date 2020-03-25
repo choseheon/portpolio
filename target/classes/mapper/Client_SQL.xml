@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Client">
+	<!-- 고객등록 -->
+	<insert id="clientinsertData" parameterType="hashmap">
+		INSERT INTO CLIENT(CLIENT_NO,
+		CLIENT_NAME
+		<if test="txt__client_company != null and txt__client_company != ''">
+			,COMP_NO
+		</if>
+		<if test="txt_client_depart != null and txt_client_depart != ''">
+			,CLIENT_DEPART_NAME
+		</if>
+		<if test="txt_client_position != null and txt_client_position != ''">
+			,CLIENT_POSI_NAME
+		</if>
+			,CLIENT_PH
+		<if test="txt_client_ln != null and txt_client_ln != ''">
+			,CLIENT_LN
+		</if>
+		<if test="txt_client_fax != null and txt_client_fax != ''">
+			,CLIENT_FAX
+		</if>
+		<if test="txt_client_web != null and txt_client_web != ''">
+			,CLIENT_WEBSITE
+		</if>
+			,CLIENT_EMAIL
+		<if test="dd_client_grade != null and dd_client_grade != ''">
+			,CC_GRADE_NO
+		</if>
+		<if test="chk_client_cp != checked and chk_client_cp != ''">
+			,CLIENT_CP
+		</if>
+		<if test="txt_client_empno != null and txt_client_empno != ''">
+			,EMP_NO
+		</if>
+		)
+		VALUES( CLIENT_SEQ.NEXTVAL  
+			,#{txt_client_name}		
+		<if test="txt__client_company != null and txt__client_company != ''">
+			,#{txt__client_company}	
+		</if>
+		<if test="txt_client_depart != null and txt_client_depart != ''">
+			,#{txt_client_depart}		
+		</if>
+		<if test="txt_client_position != null and txt_client_position != ''">
+			,#{txt_client_position}		
+		</if>
+			,#{txt_client_ph}
+		<if test="txt_client_ln != null and txt_client_ln != ''">
+			,#{txt_client_ln}		
+		</if>
+		<if test="txt_client_fax != null and txt_client_fax != ''">
+			,#{txt_client_fax}
+		</if>
+		<if test="txt_client_web != null and txt_client_web != ''">
+			,#{txt_client_web}
+		</if>
+		    ,#{txt_client_email}
+		<if test="dd_client_grade != null and dd_client_grade != ''">
+			,#{dd_client_grade}
+		</if>
+		<if test="chk_client_cp != checked and chk_client_cp != ''">
+			,#{chk_client_cp}
+		</if>
+		<if test="txt_client_empno != null and txt_client_empno != ''">
+			,#{txt_client_empno}
+		</if>
+		)
+	</insert>
+	
+	<!-- 고객수정 -->
+	<update id="clientupdateData" parameterType="hashmap">
+		UPDATE CLIENT SET 
+		CLIENT_NAME = #{txt_client_name}
+		<if test="txt__client_company != null and txt__client_company != ''">
+			, COMP_NO = #{txt__client_company}
+		</if>
+		<if test="txt_client_depart != null and txt_client_depart != ''">
+			,CLIENT_DEPART_NAME = #{txt_client_depart}
+		</if>
+		<if test="txt_client_position != null and txt_client_position != ''">
+			,CLIENT_POSI_NAME = #{txt_client_position}
+		</if>
+			,CLIENT_PH = #{txt_client_ph}
+		<if test="txt_client_ln != null and txt_client_ln != ''">
+			,CLIENT_LN = #{txt_client_ln}
+		</if>
+		<if test="txt_client_fax != null and txt_client_fax != ''">
+			,CLIENT_FAX = #{txt_client_fax}
+		</if>
+		<if test="txt_client_web != null and txt_client_web != ''">
+			,CLIENT_WEBSITE = #{txt_client_web}
+		</if>
+			,CLIENT_EMAIL = #{txt_client_email}
+		<if test="dd_client_grade != null and dd_client_grade != ''">
+			,CC_GRADE_NO = #{dd_client_grade}
+		</if>
+		<if test="chk_client_cp != checked and chk_client_cp != ''">
+			,CLIENT_CP = #{chk_client_cp}
+		</if>
+		<if test="chk_client_cp == checked and chk_client_cp == ''">
+			,CLIENT_CP = 0
+		</if>
+		<if test="txt_client_empno != null and txt_client_empno != ''">
+			,EMP_NO = #{txt_client_empno}
+		</if>
+		
+		WHERE CLIENT_NO = #{client_no} 
+	</update>
+	<select id="getClientGrade" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM COMP_CLIENT_GRADE
+	</select>
+	<!-- 담당자 카운트 -->
+	<select id="getEmpCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+       	FROM EMP_INFO E INNER JOIN TEAM T
+       					ON E.TEAM_NO = T.TEAM_NO
+       					INNER JOIN DEPART D
+       					ON T.DEPART_NO = D.DEPART_NO
+       					INNER JOIN EMP_POSI EP
+       					ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+       					INNER JOIN COMMON_CODE CC
+       					ON E.EMP_FORM = CC.CODE_S_CATE
+       					AND CC.CODE_L_CATE = 1		
+       			WHERE E.EMP_RESIGN_DATE IS NULL
+				<if test="txt_emp_search != null and txt_emp_search != ''">
+					AND E.EMP_NAME LIKE '%' || #{txt_emp_search} || '%'
+					OR T.TEAM_NAME LIKE '%' || #{txt_emp_search} || '%'
+					OR D.DEPART_NAME LIKE '%' || #{txt_emp_search} || '%'
+				</if>
+	</select>
+	<!-- 담당자 조회 -->
+	<select id="getEmpList" parameterType="hashmap" resultType="hashmap">
+		SELECT SQ.NO, SQ.NAME, SQ.EMAIL, SQ.DEPART_NAME,SQ.TEAM_NAME, SQ.POSI_NAME, SQ.FORM, SQ.PHONE, SQ.JDATE, SQ.ADDR
+		FROM ( 	SELECT E.EMP_NO AS NO, E.EMP_NAME AS NAME, E.EMP_EMAIL AS EMAIL, D.DEPART_NAME, T.TEAM_NAME,
+					   EP.EMP_POSI_NAME AS POSI_NAME, CC.CODE_NAME AS FORM, E.EMP_PHONE AS PHONE, 
+					   TO_CHAR(E.EMP_JOIN_DATE, 'YYYY-MM-DD') AS JDATE,
+					   (E.EMP_ADDR || ' ' || E.EMP_DETAIL_ADDR) AS ADDR,
+              		   ROW_NUMBER() OVER(ORDER BY E.EMP_NO DESC) AS RNUM
+       			FROM EMP_INFO E INNER JOIN TEAM T
+       							ON E.TEAM_NO = T.TEAM_NO
+       							INNER JOIN DEPART D
+       							ON T.DEPART_NO = D.DEPART_NO
+       							INNER JOIN EMP_POSI EP
+       							ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+       							INNER JOIN COMMON_CODE CC
+       							ON E.EMP_FORM = CC.CODE_S_CATE
+       							   AND CC.CODE_L_CATE = 1
+       							
+       			WHERE E.EMP_RESIGN_DATE IS NULL
+				<if test="txt_emp_search != null and txt_emp_search != ''">
+					AND E.EMP_NAME LIKE '%' || #{txt_emp_search} || '%'
+					OR T.TEAM_NAME LIKE '%' || #{txt_emp_search} || '%'
+					OR D.DEPART_NAME LIKE '%' || #{txt_emp_search} || '%'
+				</if>
+       	) SQ
+		WHERE SQ.RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	<!-- 고객사 카운트 -->
+	<select id="getCompCnt" parameterType="hashmap" resultType="Integer">
+			SELECT COUNT(*) AS CNT
+			FROM (SELECT C.COMP_NO, C.COMP_NAME, CS1.COMP_SECT_NAME AS SECT_NAME
+			      FROM COMP C INNER JOIN COMP_SECT CS1 
+			            ON C.COMP_SECT_NO = CS1.COMP_SECT_NO 
+			            INNER JOIN EMP_INFO E 
+			            ON C.EMP_NO = E.EMP_NO
+			            AND C.COMP_STAT_NO != 0 
+			            <if test="client_empty != '' and  client_empty != null ">
+			            LEFT JOIN CLIENT CL 
+			            ON C.COMP_NO = CL.COMP_NO 
+			            </if>
+			      WHERE 1=1 
+			      <if test="client_my != '' and  client_my != null ">
+			      AND C.EMP_NO = #{sEmpNo} 
+			      </if>
+			      <if test="client_empty != ''  and client_empty != null ">
+			      AND CL.COMP_NO IS NULL 
+			      </if>
+			      )
+			WHERE 1=1 
+			<if test="searchTxt != null and searchTxt != ''">
+			AND COMP_NAME LIKE '%'||#{searchTxt}||'%' 
+			OR SECT_NAME LIKE '%'||#{searchTxt}||'%' 
+			</if>
+			
+			ORDER BY COMP_NO ASC 
+			
+	</select>
+	<!-- 고객사 조회 -->
+	<select id="getCompList" parameterType="hashmap" resultType="hashmap">
+		SELECT COMP_NO, COMP_NAME,SECT_NAME
+			FROM (SELECT C.COMP_NO, C.COMP_NAME, CS1.COMP_SECT_NAME AS SECT_NAME, ROW_NUMBER() OVER(ORDER BY C.COMP_NO ASC) AS RNUM 
+			      FROM COMP C INNER JOIN COMP_SECT CS1 
+			            ON C.COMP_SECT_NO = CS1.COMP_SECT_NO 
+			            INNER JOIN EMP_INFO E 
+			            ON C.EMP_NO = E.EMP_NO
+			             AND C.COMP_STAT_NO != 0 
+			            <if test="client_empty != '' and  client_empty != null ">
+			            LEFT JOIN CLIENT CL 
+			            ON C.COMP_NO = CL.COMP_NO
+			            </if>
+			      WHERE 1=1 
+			       <if test="client_my != '' and  client_my != null ">
+			      AND C.EMP_NO = #{sEmpNo}
+			      </if>
+			      <if test="client_empty != '' and  client_empty != null ">
+			      AND CL.COMP_NO IS NULL 
+			      </if>
+			      )
+			WHERE 1=1
+			<if test="searchTxt != null and searchTxt != ''">
+			AND COMP_NAME LIKE '%'||#{searchTxt}||'%' 
+			OR SECT_NAME LIKE '%'||#{searchTxt}||'%' 
+			</if>
+			
+			AND RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	
+	<!-- 고객목록 카운트 -->
+	<select id="getclientCnt" parameterType="hashmap" resultType="Integer">
+				SELECT COUNT(*) FROM
+				(SELECT E.CLIENT_NO,E.CLIENT_NAME,E.COMP_NAME,E.CLIENT_PH,NVL(E.CLIENT_EMAIL,'없음')AS CLIENT_EMAIL, E.EMP_NAME , NVL(E1.PROGCNT,0) AS PROGCNT,NVL(E1.ENDCNT,0) AS ENDCNT,ROW_NUMBER() OVER(ORDER BY E.CLIENT_NO DESC) AS RNUM
+				FROM( SELECT CL.CLIENT_NO , CL.CLIENT_NAME ,CP.COMP_NAME,
+				             CL.CLIENT_PH, CL.CLIENT_EMAIL, EI.EMP_NAME
+				      FROM CLIENT CL  LEFT JOIN LEAD L 
+				                      ON CL.CLIENT_NO = L.CLIENT_NO
+				                      AND L.CLIENT_NO IS NULL
+				                      INNER JOIN COMP CP
+				                      ON CL.COMP_NO = CP.COMP_NO
+				                      INNER JOIN EMP_INFO EI
+				                      ON CL.EMP_NO = EI.EMP_NO
+				                      AND CL.CLIENT_DEL_YN = 1
+				      ORDER BY CL.CLIENT_NO)E LEFT JOIN (SELECT CLIENT_NO, SUM(NVL(진행중인건수,0)) AS PROGCNT ,SUM(NVL(완료된건수,0)) AS ENDCNT
+				                                            FROM (SELECT CL.CLIENT_NO, CASE WHEN (BC.PROG_NO BETWEEN 1 AND 5 )
+				                                                                            THEN COUNT(BC.PROG_NO ) 
+				                                                                            END AS 진행중인건수,
+				                                                                            CASE WHEN (BC.PROG_NO BETWEEN 6 AND 7) 
+				                                                                                 THEN COUNT(BC.PROG_NO)
+				                                                                            END AS 완료된건수
+				                                                  FROM CLIENT CL INNER JOIN LEAD L 
+				                                                                 ON CL.CLIENT_NO = L.CLIENT_NO
+				                                                                 INNER JOIN COMP CP
+				                                                                 ON CL.COMP_NO = CP.COMP_NO
+				                                                                 INNER JOIN EMP_INFO EI
+				                                                                 ON CL.EMP_NO = EI.EMP_NO
+				                                                                 INNER JOIN BSS_CHN BC
+				                                                                 ON L.LEAD_NO = BC.LEAD_NO
+				                                                                 INNER JOIN BSS_PROG BP
+				                                                                 ON BC.PROG_NO = BP.PROG_NO
+				                                                                 GROUP BY BC.PROG_NO,CL.CLIENT_NO) 
+				                                            GROUP BY CLIENT_NO 
+				                                            ) E1
+				      ON E.CLIENT_NO = E1.CLIENT_NO) 
+				      WHERE 1=1
+		     <if test="searchTxt != null and searchTxt != ''">
+				<choose>     
+			      <when test="searchGbn == 0">
+				      AND CLIENT_NAME LIKE '%'||#{searchTxt}||'%'
+				      OR COMP_NAME LIKE '%'||#{searchTxt}||'%'
+				      OR CLIENT_PH LIKE '%'||#{searchTxt}||'%'
+				      OR CLIENT_EMAIL LIKE '%'||#{searchTxt}||'%'
+				      OR EMP_NAME LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			  <when test="searchGbn == 1">
+      			  	  AND CLIENT_NAME LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			  <when test="searchGbn == 2">
+      			  	  AND COMP_NAME LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			  <when test="searchGbn == 3">
+      			  	  AND CLIENT_PH LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			  <when test="searchGbn == 4">
+      			  	  AND CLIENT_EMAIL LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			  <when test="searchGbn == 5">
+      			  	  AND EMP_NAME LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			 </choose>
+      		</if>
+	</select>
+	<!-- 고객목록 조회 -->
+	<select id="getclientList" parameterType="hashmap" resultType="hashmap">
+				SELECT * FROM
+				(SELECT E.CLIENT_NO,E.CLIENT_NAME,E.COMP_NAME,E.CLIENT_PH,NVL(E.CLIENT_EMAIL,'없음')AS CLIENT_EMAIL, E.EMP_NAME , NVL(E1.PROGCNT,0) AS PROGCNT,NVL(E1.ENDCNT,0) AS ENDCNT,ROW_NUMBER() OVER(ORDER BY E.CLIENT_NO DESC) AS RNUM
+				FROM( SELECT CL.CLIENT_NO , CL.CLIENT_NAME ,CP.COMP_NAME,
+				             CL.CLIENT_PH, CL.CLIENT_EMAIL, EI.EMP_NAME
+				      FROM CLIENT CL  LEFT JOIN LEAD L 
+				                      ON CL.CLIENT_NO = L.CLIENT_NO
+				                      AND L.CLIENT_NO IS NULL
+				                      INNER JOIN COMP CP
+				                      ON CL.COMP_NO = CP.COMP_NO
+				                      INNER JOIN EMP_INFO EI
+				                      ON CL.EMP_NO = EI.EMP_NO
+				                      AND CL.CLIENT_DEL_YN = 1
+				      ORDER BY CL.CLIENT_NO)E LEFT JOIN (SELECT CLIENT_NO, SUM(NVL(진행중인건수,0)) AS PROGCNT ,SUM(NVL(완료된건수,0)) AS ENDCNT
+				                                            FROM (SELECT CL.CLIENT_NO, CASE WHEN (BC.PROG_NO BETWEEN 1 AND 5 )
+				                                                                            THEN COUNT(BC.PROG_NO ) 
+				                                                                            END AS 진행중인건수,
+				                                                                            CASE WHEN (BC.PROG_NO BETWEEN 6 AND 7) 
+				                                                                                 THEN COUNT(BC.PROG_NO)
+				                                                                            END AS 완료된건수
+				                                                  FROM CLIENT CL INNER JOIN LEAD L 
+				                                                                 ON CL.CLIENT_NO = L.CLIENT_NO
+				                                                                 INNER JOIN COMP CP
+				                                                                 ON CL.COMP_NO = CP.COMP_NO
+				                                                                 INNER JOIN EMP_INFO EI
+				                                                                 ON CL.EMP_NO = EI.EMP_NO
+				                                                                 INNER JOIN BSS_CHN BC
+				                                                                 ON L.LEAD_NO = BC.LEAD_NO
+				                                                                 INNER JOIN BSS_PROG BP
+				                                                                 ON BC.PROG_NO = BP.PROG_NO
+				                                                                 GROUP BY BC.PROG_NO,CL.CLIENT_NO) 
+				                                            GROUP BY CLIENT_NO 
+				                                            ) E1
+				      ON E.CLIENT_NO = E1.CLIENT_NO) 
+				      WHERE 1=1  
+			<if test="searchTxt != null and searchTxt != ''">
+				<choose>     
+			      <when test="searchGbn == 0">
+				      AND CLIENT_NAME LIKE '%'||#{searchTxt}||'%'
+				      OR COMP_NAME LIKE '%'||#{searchTxt}||'%'
+				      OR CLIENT_PH LIKE '%'||#{searchTxt}||'%'
+				      OR CLIENT_EMAIL LIKE '%'||#{searchTxt}||'%'
+				      OR EMP_NAME LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			  <when test="searchGbn == 1">
+      			  	  AND CLIENT_NAME LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			  <when test="searchGbn == 2">
+      			  	  AND COMP_NAME LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			  <when test="searchGbn == 3">
+      			  	  AND CLIENT_PH LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			  <when test="searchGbn == 4">
+      			  	  AND CLIENT_EMAIL LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			  <when test="searchGbn == 5">
+      			  	  AND EMP_NAME LIKE '%'||#{searchTxt}||'%'
+      			  </when>
+      			 </choose>
+      		</if>
+      			   	  AND RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	<!--고객 정보 가져오기  -->
+	<select id="getClientData" parameterType="hashmap" resultType="hashmap">
+		SELECT CL.CLIENT_NO,CL.CLIENT_NAME,CP.COMP_NO, CP.COMP_NAME, CL.CLIENT_DEPART_NAME,
+	       CL.CLIENT_POSI_NAME,CL.CLIENT_PH,CL.CLIENT_LN,CL.CLIENT_FAX,
+	       CL.CLIENT_WEBSITE, CL.CLIENT_EMAIL,CCG.CC_GRADE_NO, CCG.CC_GRADE_NAME,
+	       CCG.CC_GRADE_COLOR,CL.CLIENT_CP,EI.EMP_NO,EI.EMP_NAME
+		FROM CLIENT CL INNER JOIN COMP_CLIENT_GRADE CCG
+               ON CL.CC_GRADE_NO = CCG.CC_GRADE_NO
+               INNER JOIN COMP CP
+               ON CL.COMP_NO = CP.COMP_NO
+               INNER JOIN EMP_INFO EI
+               ON CL.EMP_NO = EI.EMP_NO
+        WHERE CL.CLIENT_NO = #{client_no}
+	</select>
+	
+	<!-- 의견 목록 가져오기 -->
+	<select id="getClientOpin" parameterType="hashmap" resultType="hashmap">
+		SELECT CO.CLIENT_OPIN_NO AS OPIN_NO, E.EMP_NAME, E.EMP_NO, EP.EMP_POSI_NAME AS POSI_NAME, CO.CLIENT_OPIN_CON AS OPIN_CON,
+		TO_CHAR(CO.CLIENT_OPIN_DATE, 'YYYY-MM-DD HH24:MI:SS') AS OPIN_DATE 
+		FROM CLIENT_OPIN CO INNER JOIN CLIENT C 
+		                    ON CO.CLIENT_NO = C.CLIENT_NO
+		                    INNER JOIN EMP_INFO E
+		                    ON E.EMP_NO = CO.EMP_NO
+		                    INNER JOIN EMP_POSI EP 
+		                    ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+		                    AND CO.CLIENT_OPIN_DEL_YN = 1 
+		WHERE CO.CLIENT_NO = #{client_no}
+		ORDER BY CO.CLIENT_OPIN_NO DESC
+	</select>
+	<!-- 의견 카운트 가져오기 -->
+	<select id="getClientOpinCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT FROM CLIENT_OPIN WHERE CLIENT_NO = #{client_no} AND CLIENT_OPIN_DEL_YN = 1 
+	</select>
+	
+	<!-- 의견 삽입 하기 -->
+	<insert id="insertClientOpin" parameterType="hashmap">
+		INSERT INTO CLIENT_OPIN(CLIENT_OPIN_NO, CLIENT_NO, EMP_NO, CLIENT_OPIN_CON) VALUES ( CLIENT_OPIN_SEQ.NEXTVAL, 
+		#{client_no}, #{emp_no}, #{opin_txt})
+	</insert>
+	
+	<!-- 의견 삭제 하기 -->
+	<delete id="delClientOpin" parameterType="hashmap">
+		UPDATE CLIENT_OPIN
+		SET CLIENT_OPIN_DEL_YN = 0
+		WHERE CLIENT_OPIN_NO = #{opin_no}
+	</delete>
+	
+	
+	<!-- 메모 목록 가져오기 -->
+	<select id="getClientMemo" parameterType="hashmap" resultType="hashmap">
+		SELECT CM.CLIENT_MEMO_NO AS MEMO_NO, E.EMP_NAME, E.EMP_NO, EP.EMP_POSI_NAME AS POSI_NAME, CM.CLIENT_MEMO_CON AS MEMO_CON,
+		TO_CHAR(CM.CLIENT_MEMO_DATE, 'YYYY-MM-DD HH24:MI:SS') AS MEMO_DATE 
+		FROM CLIENT_MEMO CM INNER JOIN CLIENT C 
+		                    ON CM.CLIENT_NO = C.CLIENT_NO
+		                    INNER JOIN EMP_INFO E
+		                    ON E.EMP_NO = CM.EMP_NO
+		                    INNER JOIN EMP_POSI EP 
+		                    ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+		                    AND CM.CLIENT_MEMO_DEL_YN = 1 
+		WHERE CM.CLIENT_NO = #{client_no}
+		ORDER BY CM.CLIENT_MEMO_NO DESC
+	</select>
+	<!-- 메모 카운트 가져오기 -->
+	<select id="getClientMemoCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT FROM CLIENT_MEMO WHERE CLIENT_NO = #{client_no} AND CLIENT_MEMO_DEL_YN = 1 
+	</select>
+	
+	<!-- 메모 삽입 하기 -->
+	<insert id="insertClientMemo" parameterType="hashmap">
+		INSERT INTO CLIENT_MEMO(CLIENT_MEMO_NO, CLIENT_NO, EMP_NO, CLIENT_MEMO_CON) VALUES ( CLIENT_MEMO_SEQ.NEXTVAL, 
+		#{client_no}, #{emp_no}, #{memo_txt})
+	</insert>
+	
+	<!-- 메모 삭제 하기 -->
+	<delete id="delClientMemo" parameterType="hashmap">
+		UPDATE CLIENT_MEMO
+		SET CLIENT_MEMO_DEL_YN = 0
+		WHERE CLIENT_MEMO_NO = #{memo_no}
+	</delete>
+	
+	<!-- 고객삭제  -->
+	<delete id="clientdel" parameterType="hashmap">
+		UPDATE CLIENT SET
+		CLIENT_DEL_YN = 0
+		WHERE CLIENT_NO = #{client_no}
+	</delete>
+	
+	<!-- 고객삭제  -->
+	<delete id="clientddel" parameterType="hashmap">
+		UPDATE CLIENT SET
+		CLIENT_DEL_YN = 0
+		WHERE CLIENT_NO = #{client_no}
+	</delete>
+	
+	<!--활동 일정  -->
+	<select id="getClientSche" parameterType="hashmap" resultType="hashmap">
+		SELECT S.SCHE_NO, S.SCHE_CON, S.SCHE_RES, TO_CHAR(S.SCHE_SDATE,'YY / MM / DD') AS SDATE, TO_CHAR(S.SCHE_EDATE,'YY / MM / DD') AS EDATE, S.SCHE_IMPORTANCE AS SC_IP , EI.EMP_NAME,
+		        EP.EMP_POSI_NAME AS EMP_PNM, C.CLIENT_NAME, C.CLIENT_POSI_NAME AS CLIENT_PNM, CC2.CODE_S_CATE, CC2.CODE_NAME
+		FROM SCHE S INNER JOIN EMP_INFO EI
+		                    ON S.EMP_NO = EI.EMP_NO
+		            INNER JOIN EMP_POSI EP
+		                    ON EI.EMP_POSI_NO = EP.EMP_POSI_NO
+                    INNER JOIN SCHE_CLIENT_INFO SCI
+                            ON SCI.SCHE_NO = S.SCHE_NO
+		            INNER JOIN CLIENT C
+		                    ON SCI.CLIENT_NO = C.CLIENT_NO        
+		            INNER JOIN COMMON_CODE CC2
+		                    ON S.SCHE_ACTI_NO = CC2.CODE_S_CATE
+		                    AND CC2.CODE_L_CATE = 3
+		WHERE SCI.CLIENT_NO = #{client_no}
+		AND ( ${filter} )
+		
+	</select>
+</mapper>

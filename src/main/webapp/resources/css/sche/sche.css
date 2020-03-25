@@ -1,0 +1,1215 @@
+@charset "UTF-8";
+
+/* -------------------------------------기본 스타일 ---------------------------------*/
+/* 메인 테이블 width 값 */
+.MainContent {
+	width: 1080px;
+}
+/* 테이블 기본 style */
+table {
+	border-collapse: collapse;
+	padding: 0px;
+	margin: 0px;
+	border-spacing: 0px;
+	font-size: 10px;
+	width: 1080px;
+}
+/* 테이블 td 기본 style */
+td {
+	padding: 10px 15px;
+}
+tr{
+	font-size:10pt;
+}
+
+/* 필수입력 사항 *(별포) 스타일 */
+.important_text {
+	color: #ff3737;
+	font-weight: 800;
+	text-align: center;
+}
+
+/* 빈 공간처리 스타일 */
+.blank_space {
+	height: 40px;
+	width: 1080px;
+}
+
+/* 일정 등록, 수정, 삭제, 취소 버튼 공간 스타일 */
+.select_space {
+	width: 1080px;
+	font-size: 0;
+	height: 50px;
+}
+
+/* 주황색 선 스타일 */
+.line {
+	background-color: #F2B807;
+	width: 1080px;
+	height: 2px;
+}
+
+/* -------------------------------------기본 스타일 end---------------------------------*/
+
+
+
+/* 인풋타입 텍스트 스타일 */
+.det_text {
+	width: 100%;
+	height: 30px;
+	border: 1px solid #eee;
+	border-radius: 3px;
+	font-size: 10pt;
+	text-indent: 5px;
+}
+/* det_txt div형 스타일 */
+.det_text_div {
+	width: 100%;
+	height: 30px;
+	text-indent: 5px;
+	font-size: 10pt;
+	line-height:30px;
+}
+.det_text:focus {
+	border: 1px solid #F2B807;
+	box-shadow: none;
+	outline: none;
+}
+.det_text::placeholder {
+	color: #cacaca;
+}
+
+/* 텍스트에어리어 스타일 */
+.det_text2 {
+	width: 100%;
+	height: 79px;
+	border: 1px solid #eee;
+	border-radius: 3px;
+	font-size: 10pt;
+	text-indent: 5px;
+	overflow-y: scroll;
+	resize: none;
+}
+.det_text2:focus {
+	border: 1px solid #F2B807;
+	box-shadow: none;
+	outline: none;
+}
+.det_text2::placeholder {
+	color: #cacaca;
+}
+
+/* 인풋타입 데이트에 대한 스타일 */
+.date_time_box {
+	width: 47.6%;
+	height: 30px;
+	border: 1px solid #eee;
+	border-radius: 3px;
+	font-size: 10pt;
+	text-indent: 5px;
+}
+.date_time_box_div {
+	height: 30px;
+	text-indent: 5px;
+	display:inline-block;
+	vertical-align:middle;
+	font-size: 10pt;
+	line-height:30px;
+}
+
+.date_time_box:focus {
+	border: 1px solid #F2B807;
+	box-shadow: none;
+	outline: none;
+}
+
+
+
+/*------------------------------- 회의록 스타일 ------------------------------ */
+/* 회의록 텍스트에어리어 텍스트 스타일 */
+.det_text_rel {
+	width: 100%;
+	height: 450px;
+	border: 1px solid #eee;
+	border-radius: 3px;
+	font-size: 10pt;
+	text-indent: 5px;
+	overflow-y: scroll;
+	resize: none;
+}
+.det_text_rel:focus {
+	border: 1px solid #F2B807;
+	box-shadow: none;
+	outline: none;
+}
+.det_text_rel::placeholder {
+	color: #cacaca;
+}
+/*------------------------------- 회의록 스타일 end ------------------------------ */
+
+
+
+/* ------------------------------------메인 테이블-------------------------------------------- */
+/* select_space속 타이틀 스타일 */
+.top_title_area {
+	width: 50%;
+	height: 50px;
+	display: inline-block;
+}
+/* select_space속 버튼 영역 */
+.content_btn {
+	width: 50%;
+	height: 50px;
+	display: inline-block;
+}
+/* 버튼 스타일 */
+.content_btn>div {
+	display: table;
+	width: 80px;
+	height: 30px;
+	font-size: 10pt;
+	color: #595959;
+	text-align: center;
+	border-radius: 5px;
+	float: right;
+	background-color: #F2B807;
+	margin-top: 10px;
+	margin-left: 10px;
+	line-height:30px;
+}
+
+.content_btn>div:hover {
+	background-color: #F2CB07;
+	cursor: pointer;
+}
+/* 팝업창 버튼 부분 */
+.content_btn2 {
+	width: 50%;
+	height: 50px;
+	display: inline-block;
+	padding-right: 10px;
+}
+/* 팝업창 버튼 스타일 */
+.content_btn2>div {
+	display: table;
+	width: 80px;
+	height: 30px;
+	font-size: 10pt;
+	color: #595959;
+	text-align: center;
+	border-radius: 5px;
+	float: right;
+	background-color: #F2B807;
+	padding-top: 5px;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+.content_btn2>div:hover {
+	background-color: #F2CB07;
+	cursor: pointer;
+}
+
+/* 세부사항 메인 내용 테이블 스타일 */
+.table_area {
+	font-size: 10pt;
+	width: 1080px;
+	border-collapse: collapse;
+}
+/* 회의록 테이블 스타일 */
+.table_area_rel {
+	font-size: 12px;
+	width: 678px;
+	border-collapse: collapse;
+}
+/* 연관제품 팝업 테이블 스타일 */
+.table_area_prod {
+	font-size: 12px;
+	width: 477px;
+	border-collapse: collapse;
+}
+
+/* 세부사항 메인 내용 테이블 tr의 1열에 대한 스타일 */
+.table_td_1 {
+	text-align: center;
+	background-color: #F2F2F2;
+	font-weight: bold;
+	vertical-align: middle;
+	border: 1px solid #cacaca;
+	border-left: 0;
+	color: #272727;
+}
+
+/* 세부사항 메인 내용 테이블의 2열 td 스타일 */
+.table_content {
+	text-align: left;
+	vertical-align: middle;
+	color: #272727;
+	border: 1px solid #cacaca;
+	border-right: 0;
+	font-size: 10pt;
+	padding: 10px 15px;
+	text-align: left;
+}
+
+/* 세부사항 메인 내용 테이블의 이메일과,맵 이미지가 있는 div 스타일 */
+.td_1_email_map {
+	margin-left: 20px;
+	width: 46px;
+	display: inline-block;
+}
+
+/* 맵 텍스트1 스타일 */
+.map_text1 {
+	background-color: #e0e0e0;
+	display: inline-block;
+	width: 130px;
+	height: 30px;
+	font-size: 10pt;
+	margin-bottom: 5px;
+	border: 1px solid #eeeeee;
+	border-radius: 3px;
+}
+
+.map_text1:focus {
+	border: 1px solid #F2B807;
+	box-shadow: none;
+	outline: none;
+}
+
+.map_text1::placeholder {
+	color: #cacaca;
+}
+/* 맵 텍스트2 스타일 */
+.map_text2 {
+	background-color: #e0e0e0;
+	display: inline-block;
+	width: 100%;
+	height: 30px;
+	font-size: 10pt;
+	margin-bottom: 5px;
+	border: 1px solid #eeeeee;
+	border-radius: 3px;
+}
+
+.map_text2:focus {
+	border: 1px solid #F2B807;
+	box-shadow: none;
+	outline: none;
+}
+
+.map_text2::placeholder {
+	color: #cacaca;
+}
+/* 맵 텍스트3 스타일 */
+.map_text3 {
+	display: inline-block;
+	width: 100%;
+	height: 30px;
+	font-size: 10pt;
+	border: 1px solid #eeeeee;
+	border-radius: 3px;
+}
+/* 맵 텍스트3 div */
+.map_text3_div {
+	display: inline-block;
+	width: 100%;
+	height: 30px;
+	vertical-align:middle;
+	font-size: 10pt;
+	line-height:30px;
+}
+
+.map_text3:focus {
+	border: 1px solid #F2B807;
+	box-shadow: none;
+	outline: none;
+}
+
+.map_text3::placeholder {
+	color: #cacaca;
+}
+/* 맵 텍스트 연관 스타일 */
+.input_readonly {
+	background-color: #e0e0e0;
+	color: #7a7a7a;
+	vertical-align: top;
+}
+/* 주소 검색버튼 스타일 */
+.map_search {
+	background-color: #4b4b4b;
+	color: #f2f2f2;
+	font-size: 10pt;
+	display: inline-block;
+	text-align: center;
+	vertical-align: middle;
+	border-radius: 3px;
+	font-weight: bold;
+	width: 70px;
+	height: 34px;
+	cursor: pointer;
+	line-height: 34px;
+	margin-left: 10px;
+	margin-bottom: 5px;
+}
+
+.map_search:hover {
+	background-color: #272727;
+}
+
+/* 연관제품, 회의록, 의견 스타일 부분 --------------------------------------------------------------------------------------------- */
+
+/* 연관제품, 회의록, 의견의 각각의 개수 */
+.list_count {
+	font-weight: 700;
+	font-size: 10pt;
+	color: #4b4b4b;
+}
+.opin-list_count {
+	font-weight: 700;
+	font-size: 10pt;
+	color: #4b4b4b;
+}
+
+/* 연관제품, 회의록, 의견 공간 스타일 */
+.rel_box {
+	width: 1080px;
+	border-collapse: collapse;
+}
+
+/* 연관제품, 회의록, 의견 공간 중 상단 스타일 */
+.rel_box_top {
+	height: 30%;
+	border-bottom: 2px solid #F2B807;
+}
+
+
+/* 연관제품, 회의록, 의견이 적혀있는 공간에 대한 스타일 */
+.rel_text {
+	display: inline-block;
+	font-size: 15pt;
+	width: 86%;
+	height: 100%;
+	font-weight: 700;
+	vertical-align: top;
+	margin-top: 13px;
+}
+
+.rel_text_2 {
+	display: inline-block;
+	font-size: 15pt;
+	width: 96%;
+	height: 100%;
+	font-weight: 700;
+	vertical-align: top;
+	margin-top: 13px;
+}
+
+/* 연관제품, 회의록, 의견에 있는 업다운 스크롤 버튼의 공간 스타일 */
+.rel_button {
+	display: inline-block;
+	height: 20PX;
+	margin-top: 15px;
+}
+
+/* 연관제품, 회의록, 의견에 있는 업다운 이미지 스타일 */
+.updown_icon {
+	margin-top: 10px;
+	cursor: pointer;
+	transform: scaleY(1);
+}
+.updown_icon_on {
+	margin-top: 10px;
+	cursor: pointer;
+	transform: scaleY(-1);
+}
+
+/* 연관제품, 회의록 추가버튼, 삭제버튼에 관한 스타일 */
+.plus_gabage_icon {
+	margin-top: 10px;
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+}
+
+/* 의견 스타일 부분 -------------------------------------------------------------- */
+/* 의견에 대한 내용이 있는 공간 */
+.opin_box {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+/* 의견에 대한 내용이 있는 공간 중 왼쪽 */
+.left_box {
+	display: inline-block;
+	width: 90%;
+	padding: 15px 12px;
+	text-align: left;
+	vertical-align: top;
+	font-size: 12pt;
+}
+
+/* 왼쪽 공간 중 의견 */
+.left_opin_content {
+	font-size: 10pt;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	box-sizing: border-box;
+	text-align: left;
+	border-collapse: collapse;
+}
+
+/* 왼쪽 공간 중 사용자 정보와 사용 시간대 */
+.left_user_data {
+	font-size: 10pt;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	color: #b3b3b3;
+	box-sizing: border-box;
+	text-align: left;
+	border-collapse: collapse;
+}
+
+/* 의견에 대한 내용이 있는 공간 중 오른쪽 */
+.right_box {
+	display: inline-block;
+	width: 6%;
+	height: 100%;
+	text-align: center;
+	vertical-align: middle;
+	font-size: 14pt;
+}
+.right_box_del {
+	display: inline-block;
+	width: 6%;
+	height: 100%;
+	text-align: center;
+	vertical-align: middle;
+	font-size: 14pt;
+	padding-left: 30px;
+	padding-top: 30px;
+}
+
+/* 오른쪽 공간 중 삭제 버튼이 있는 공간 */
+.del_btn_div {
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	text-align: center;
+	vertical-align: middle;
+	border-radius: 3px;
+	background-color: #ff2f2f;
+	border: 1px solid #ff4d4d;
+	color: #ffffff;
+	font-size: 10pt;
+	font-weight: bold;
+	cursor: pointer;
+	line-height: 20px;
+}
+
+.del_btn_div:hover {
+	background-color: #ff4d4d;
+}
+/* 공간 중 의견 삭제 이미지 스타일 */
+.opin_del_btn {
+	width: 10px;
+	height: 10px;
+	color: #ffffff;
+	font-size: 10pt;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.opin_box_style{
+	border-bottom: 1px solid #cacaca;
+}
+
+/* 의견 작성 공간 */
+.opin_box_1 {
+	width: 100%;
+	border-collapse: collapse;
+	height: 80px;
+}
+
+/* 의견 작성 공간 스타일1 */
+.input_min_mix1 {
+	width: 100%;
+	max-width: 885px;
+	min-width: 942px;
+	height: 60px;
+	box-sizing: border-box;
+}
+
+/* 의견 작성 공간 스타일2 */
+.input_style_normal1 {
+	font-size: 10pt;
+	text-indent: 5px;
+	border: 1px solid #cacaca;
+	padding: 0px;
+	box-sizing: border-box;
+	resize: none;
+}
+
+.input_style_normal1:focus {
+	border: 1px solid #F2B807;
+	box-shadow: none;
+	outline: none;
+}
+
+/* 작성버튼 */
+.btn_style_black1 {
+	display: inline-block;
+	margin-top: 8px;
+	margin-left: 10px;
+	text-align: center;
+	vertical-align: middle;
+	border-radius: 3px;
+	background-color: #4b4b4b;
+	color: #f2f2f2;
+	font-size: 10pt;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.btn_style_black1:hover {
+	background-color: #272727;
+}
+
+/* 작성버튼 속 작성 스타일 */
+.btn_size_big1 {
+	width: 80px;
+	height: 60px;
+	line-height: 60px;
+}
+.attachUpload {
+    	display: none;
+    }
+/* 회의록 스타일 부분 ------------------------------------------------------------ */
+.minute_box {
+	border-bottom: 1px solid #cacaca;
+}
+.att_box{
+	border-bottom: 1px solid #cacaca;
+}
+.prod_box{
+	border-bottom: 1px solid #cacaca;
+}
+.minutes_icon {
+	margin-left: 20px;
+	width: 30px;
+	height: 30px;
+	vertical-align: middle;
+	text-align: center;
+	cursor: pointer;
+}
+
+.minutes_right_box {
+	display: inline-block;
+	width: 90%;
+	padding: 15px 12px;
+	text-align: left;
+	vertical-align: middle;
+}
+.minutes_right_box2 {
+	display: inline-block;
+	width: 88%;
+	padding: 15px 12px;
+	text-align: left;
+	vertical-align: middle;
+}
+.minutes_left_box {
+	display: inline-block;
+	width: 6%;
+	height: 100%;
+	vertical-align: middle;
+}
+.rel_check{
+	display: inline-block;
+}
+.minutes_check {
+	width: 18px;
+	height: 18px;
+	background-color: white;
+}
+/* 연관제품 스타일 부분 ---------------------------------------------------------- */
+.prod_icon {
+	margin-left: 20px;
+	width: 30px;
+	height: 30px;
+	vertical-align: middle;
+	text-align: center;
+	cursor:pointer;
+}
+
+.prod_icon2 {
+	width: 80px;
+	height: 80px;
+	vertical-align: middle;
+	text-align: center;
+	cursor:pointer;
+}
+.radio_font_size{
+	font-size:14px;
+}
+.cursor_p{
+	cursor:pointer;
+}
+.prod_right_box {
+	display: inline-block;
+	width: 90%;
+	padding: 15px 12px;
+	text-align: left;
+	vertical-align: middle;
+}
+.prod_right_box2 {
+	display: inline-block;
+	width: 88%;
+	padding: 15px 12px;
+	text-align: left;
+	vertical-align: middle;
+}
+
+.prod_left_box {
+	display: inline-block;
+	width: 6%;
+	height: 100%;
+	vertical-align: middle;
+}
+
+/* 사용자, 고객 스케쥴 스타일 부분  --------------------------------------------------------------------------------------- */
+.u_s_tr {
+	height: 100px;
+}
+
+/* 세부사항 메인 내용 테이블의 첫번 째 줄 스타일 */
+.table_first {
+	border-top: 0;
+}
+
+
+/*  팝업창 */
+.pop_wrap_all {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 700;
+}
+/* 팝업 배경 */
+.pop_wrap_bg {
+	width: 100%;
+	height: 100%;
+	background-color: #000000a2;
+	z-index: 710;
+}
+/* 회의록 팝업 스타일 */
+.pop_wrap_rel {
+	width: 700px;
+	height: 600px;
+	position: absolute;
+	top: calc(50% - 300px);
+	left: calc(50% - 350px);
+	background-color: white;
+	border: 1px solid #272727;
+	box-sizing: border-box;
+	z-index: 720;
+}
+/* 연관제품 팝업 스타일 */
+.pop_wrap_prod {
+	width: 500px;
+	height: 300px;
+	position: absolute;
+	top: calc(50% - 150px);
+	left: calc(50% - 250px);
+	background-color: white;
+	border: 1px solid #272727;
+	box-sizing: border-box;
+	z-index: 720;
+}
+/* 팝업 상단 제목 부분 */
+.pop_title {
+	height: 40px;
+	width: 100%;
+	background-color: #272727;
+}
+/* 팝업 상단의 망고이미지 영역 */
+.pop_mango_space {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+}
+/* 망고이미지 영역의 이미지 스타일 */
+.pop_title_mango {
+	width: 20px;
+	height: 20px;
+	line-height: 40px;
+	margin-left: 10px;
+}
+/* 팝업 상단의 텍스트 영역 */
+.pop_text_space {
+	display: inline-block;
+	width: 317px;
+	height: 40px;
+	color: white;
+	text-align: center;
+	line-height: 40px;
+	font-size: 15pt;
+	font-weight: 500;
+}
+/* 회의록 팝업 상단의 텍스트 영역 */
+.pop_text_space_rel {
+	display: inline-block;
+	width: 616px;
+	height: 40px;
+	color: white;
+	text-align: center;
+	line-height: 40px;
+	font-size: 15pt;
+	font-weight: 500;
+}
+/* 연관제품 팝업 상단의 텍스트 영역 */
+.pop_text_space_prod {
+	display: inline-block;
+	width: 418px;
+	height: 40px;
+	color: white;
+	text-align: center;
+	line-height: 40px;
+	font-size: 15pt;
+	font-weight: 500;
+}
+/* 팝업 상단의 취소버튼 영역 */
+.pop_cancel_space {
+	display: inline-block;
+	width: 40px;
+	height: 100%;
+	font-size: 14pt;
+	color: white;
+	text-align: center;
+	vertical-align: top;
+	line-height: 46px;
+}
+/* 취소버튼 영역의 텍스트 스타일 */
+.pop_cancel_X {
+	text-align: center;
+	cursor: pointer;
+	font-size: 14pt;
+	color: white;
+}
+/* 팝업 중간 내용 영역 */
+.pop_content {
+	margin: 10px 10px 40px 10px;
+	height: 100px;
+	background-color: white;
+	font-size: 12pt;
+}
+/* 팝업 중간 내용 영역 */
+.pop_content_prod {
+	margin: 10px 10px 20px 10px;
+	font-size: 12pt;
+}
+/* 회의록 팝업  내용 영역 */
+.pop_content_rel{
+	margin: 10px 10px 40px 10px;
+	height: 500px;
+	background-color: white;
+	font-size: 12pt;
+}
+/* 팝업 하단  영역 */
+.pop_btn {
+	height: 50px;
+	width: 100%;
+	background-color: white;
+	text-align: right;
+}
+
+/* 팝업 꺼두기 - 임시 */
+.pop_off {
+	display: none;
+}
+
+/* 팝업 기본형태 */
+.pop {
+	display: inline-block;
+	background-color: #ffffff;
+	position: absolute;
+	z-index: 720;
+}
+/* 팝업의 제목부분 */
+.pop_title_area {
+	height: 40px;
+	line-height: 40px;
+	font-size: 0;
+	color: #f2f2f2;
+	background-color: #272727;
+}
+/* 팝업의 제목 텍스트 */
+.pop_title_text {
+	display: inline-block;
+	width: 80%;
+	height: 100%;
+	font-size: 12pt;
+	font-weight: bold;
+	text-align: left;
+	text-indent: 10px;
+}
+/* 팝업 타이틀 아이콘 */
+.pop_icon {
+	position: relative;
+	top: 4px;
+	width: 20px;
+}
+/* 팝업 닫기 영역 */
+.pop_close {
+	display: inline-block;
+	width: 20%;
+	height: 100%;
+	text-align: right;
+	vertical-align: top;
+}
+/* 팝업 닫기 버튼 */
+.BtnPopClose {
+	position: relative;
+	top: 10px;
+	left: -10px;
+	cursor: pointer;
+}
+
+/* 팝업 내용 영역 */
+.pop_contents {
+	width: 100%;
+	height: calc(100% - 90px);
+	padding: 10px;
+	color: #272727;
+	font-size: 12pt;
+	text-align: left;
+}
+
+/* 
+    밑 CSS는 주소 검색과 관련된 팝업입니다.
+*/
+/* 주소 검색 팝업 크기 */
+.pop_size_addr {
+	width: 400px;
+	height: 550px;
+	top: calc(50% - 275px);
+	left: calc(50% - 200px);
+}
+/* 주소 검색 입력창 */
+.pop_addr_search {
+	height: 50px;
+}
+
+.input_addr {
+	width: 100%;
+	height: 100%;
+	font-size: 13pt;
+	text-indent: 10px;
+	border: 1px solid #cacaca;
+}
+.input_addr:focus {
+	border: 1px solid #F2B807;
+	box-shadow: none;
+	outline: none;
+}
+
+.input_addr::placeholder {
+	font-size: 13pt;
+	color: #cacaca;
+}
+
+.addr_search_icon {
+	margin-top:5px;
+	float: right;
+	position: relative;
+	top: -40px;
+	left: -10px;
+	cursor: pointer;
+}
+.addr_search_icon2{
+	float: right;
+	position: relative;
+	top: -40px;
+	left: -10px;
+	cursor: pointer;
+}
+/* 주소 검색 팝업 내용 */
+.pop_addr_contents {
+	width: 100%;
+	height: calc(100% - 90px);
+	padding: 30px;
+	color: #272727;
+	font-size: 12pt;
+	text-align: left;
+}
+/* 주소 팝업 내용 텍스트 스타일 */
+.addr_acc_text {
+	color: #F2B807;
+}
+
+.addr_tip_text {
+	font-weight: bold;
+	font-size: 14pt;
+}
+/* 주소 검색 결과 팝업 배경색 */
+.pop_gray {
+	background-color: #E9E9E9;
+}
+
+.addr_search_cancel {
+	margin-top:5px;
+	float: right;
+	position: relative;
+	top: -35px;
+	left: -20px;
+	cursor: pointer;
+}
+
+.addr_search_cancel2{
+	float: right;
+	position: relative;
+	top: -35px;
+	left: -20px;
+	cursor: pointer;
+}
+/* 주소 팝업 내용의 카드형식 */
+.addr_contents_card {
+	background-color: #ffffff;
+	border: 1px solid #CACACA;
+}
+
+.addr_result_wrap {
+	border-bottom: 1px solid #CACACA;
+	padding: 10px;
+}
+
+.addr_contents_card>div>div {
+	height: 30px;
+	line-height: 30px;
+	vertical-align: middle;
+}
+
+.addr_contents_card>div>div:hover {
+	cursor: pointer;
+}
+
+.addr_result_paging {
+	height: 40px;
+	line-height: 40px;
+	vertical-align: middle;
+	text-align: center;
+}
+/* 주소 검색 팝업 둥근 아이콘 */
+.icon_border {
+	display: inline-block;
+	width: 45px;
+	height: 25px;
+	line-height: 25px;
+	border: 1px solid #CACACA;
+	border-radius: 5px;
+	color: #2ba0ff;
+	font-size: 10pt;
+	font-weight: 700;
+	text-align: center;
+	vertical-align: middle;
+}
+
+
+
+/*내용열에 들어가는 버튼의 속성입니다.*/
+.bottom_btn_2 {
+   display : inline-block;
+   width : 60px;
+   height : 35px;
+   margin-left : 2px;
+   border : 0px;
+   background-color : #595959;
+   color: #F2F2F2;
+   text-align:center;
+   border-radius : 5px;
+   font-size: 15px;
+    line-height: 35px;
+    margin-left:20px;
+}
+.bottom_btn_2:hover {
+   background-color: #F2CB07;
+   color: #595959;
+   cursor : pointer;
+}
+.witdh80{
+	width:80%;
+}
+
+/* 
+    밑 CSS는 고객사 검색과 관련된 팝업입니다.
+*/
+/* 고객사 검색 팝업 크기 */
+.pop_size_comp {
+    width: 800px;
+    height: 550px;
+    top: calc(50% - 275px);
+    left: calc(50% - 500px);
+}
+/* 고객사 검색 입력창 */
+.pop_comp_search {
+    display: inline-block;
+    width: 100%;
+    height: 40px;
+}
+/* 고객사 체크박스 영역 */
+.input_comp_chbox_area {
+    width: 30%;
+    display: inline-block;
+}
+/* 고객사 체크박스 크기 */
+.input_comp_chbox {
+    width : 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+}   
+/* 고객사 체크박스 호버 */
+.input_comp_chbox:hover{
+    cursor: pointer;
+}
+.pop_table_area{
+   display : inline-block;
+   width : 800px;
+   height : 419px;
+}
+/* 고객사 테이블 */
+.pop_comp_table {
+   width: 100%;
+   text-align: center;
+   border-collapse: collapse;
+   font-size: 10pt;
+    font-weight: bold;
+    border-top : 0px;
+    
+}
+/* 고객사 테이블 제목 */
+.pop_title_style {
+   width: 100%;
+   height: 40px;
+   border-bottom: 1px solid #cccccc;
+   background-color: #595959;
+   font-size: 10pt;
+   font-weight: bold;
+    color: #ffffff;
+}
+/* 하단 페이징 영역 */
+.pop_content_bottom {
+   display: block;
+   height: 40px;
+   font-size: 0px;
+    text-align: center;
+    line-height : 50px;
+    vertical-align : middle;
+}
+
+.pop_content_bottom_1_span {
+   display: inline-block;
+}
+
+.pop_bottom_btn_1 {
+   display: inline-block;
+   width: 30px;
+   height: 30px;
+   border: 0px;
+   margin-left: 2px;
+   background-color: #595959;
+   color: #F2F2F2;
+}
+
+.pop_bottom_btn_2 {
+   display: inline-block;
+   width: 30px;
+   height: 30px;
+   margin-left : 2px;
+   border : 0px;
+   background-color : #595959;
+   color: #F2F2F2;
+   border-radius : 5px;
+}
+
+.pop_bottom_btn_2:hover {
+   background-color: #F2CB07;
+   color: #595959;
+   cursor : pointer;
+}
+.pop_bottom_btn_1:hover {
+   background-color: #F2CB07;
+   color: #595959;
+   cursor: pointer;
+}
+
+/* 하단 페이징 영역 끝 */
+
+
+/* layout */
+.height50{
+	height:50px;
+}
+.ta_l{
+	text-align:left !important;
+}
+.radio_size_kh{
+	width:13px !important;
+}
+
+.search_pop_tbody>tr:hover{
+	background-color:#eeeeee;
+}
+.t_i{
+	text-indent:0 !important;
+}
+
+.uunderline {
+	text-decoration: none;
+	color:black;
+}
+.fs0{
+	font-size:0pt;
+}
+
+.product_area {
+	/* text-align: center;
+	background-color: #EEE; */
+	margin-top: 10px;
+	height: 360px;
+	/* border: 1px solid #CACACA; */
+	border-top: 1px solid #CACACA;
+	border-bottom: 1px solid #CACACA;
+}
+.product_name {
+	text-align: center;
+	height: 50px;
+	line-height: 50px;
+	/* border-bottom: 1px solid #CACACA; */
+}
+.product_name:hover {
+	cursor: pointer;
+	background-color: #DDD;
+}
+.input_address {
+	width: 477px;
+	height: 30px;
+}
+.address_search_icon2{
+	position: absolute;
+	top: 60px;
+	right: 18px;
+}
+.address_search_cancel2 {
+	position: absolute;
+	top: 65px;
+	right: 55px;
+}
+.address_search_icon:hover, .address_search_cancel:hover {
+	cursor: pointer;
+}
+
+.he59{
+	height:59px !important;
+}

@@ -1,0 +1,300 @@
+@charset "UTF-8";
+table{
+	font-size:10pt;
+}
+/* .sms_table , .mms_table , .email_table ,.sms_area , .mms_area ,.email_area{ 
+	display:none;
+} */
+
+.attachUpload {
+   	display: none;
+}
+
+.writeBtn {
+	display: inline-block;
+	float:right;
+	font-size:13pt;
+}
+.writeBtn > div {
+	text-align: center;
+	display: inline-block;
+	vertical-align: middle;
+	width:120px;
+	padding-top:10px;
+	height: 40px;
+	background-color: #F2B807;
+	cursor: pointer;
+	
+}
+
+.writeBtn :hover{
+	background-color: #F2B807;
+	color: #F2F2F2;
+}
+
+.btn_area {
+	width: 1080px;
+	height: 50px;
+}
+.save_Btn, .next_Btn, .back_Btn {
+   display: table;
+   width : 80px;
+   height: 30px;
+   font-size: 10pt;
+   color: #595959;
+   text-align : center;
+   border-radius : 5px;
+   float : right;
+   background-color : #F2B807;
+   padding-top : 7px;
+   margin-top : 10px;
+   margin-left : 10px;
+}
+.save_Btn:hover, .next_Btn:hover, .back_Btn:hover {
+   background-color : #F2CB07;
+   cursor : pointer;
+}
+
+.circle{
+	display:inline-block;
+	width:30px;
+	height:30px;
+	border-radius:50%;
+	background:#595959;
+	font-size:16px;
+	color:white;
+	text-align:center;  
+	line-height:30px;
+	font-weight: bold;  
+}
+
+.circle1{
+	display:inline-block;
+	width:30px;
+	height:30px;
+	border-radius:50%;
+	background:#F2CB07;
+	font-size:16px;
+	color:black;
+	text-align:center;  
+	line-height:30px;
+	font-weight: bold;
+}
+
+.content_title_num_area {
+	height: 100px;
+	width: 200px;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.content_title_margin {
+	display: inline-block;
+	height: 100px;
+	width: 450px;
+	vertical-align: top;
+}
+
+.move_btn_area {
+	display: inline-block;
+	height: 100px;
+	width: 250px;
+	background-color: black;
+	vertical-align: top;
+}
+
+.moveBtn {
+	display: inline-block;
+	float:right;
+	font-size:13pt;
+}
+.moveBtn > div {
+	text-align: center;
+	display: inline-block;
+	vertical-align: middle;
+	width:120px;
+	padding-top:10px;
+	height: 40px;
+	background-color: #F2B807;
+	cursor: pointer;
+	vertical-align: top;
+	
+}
+
+.moveBtn :hover{
+	background-color: #F2B807;
+	color: #F2F2F2;
+}
+
+.box_area{
+	display:inline-block;
+	width : 300px;
+	border :2px solid #F2B807;
+	vertical-align: top;
+	height: 250px;
+}
+
+.reserv_txt_area {
+	display: inline-block;
+	margin-bottom: 10px;
+	
+}
+
+.reserv_area {
+	display:inline-block;
+	width : 300px;
+	border :2px solid #F2B807;
+	margin-left: 30px;
+	vertical-align: top;
+	height: 250px;
+}
+.reserv_txt_title {
+	font-weight: bold;
+}
+
+.reserv_txt_exp {
+	
+}
+
+.email_area {
+	width: 600px;
+    height: 420px;
+    border: 2px solid #F2B807;
+    text-align: center;
+   	margin-bottom: 20px;
+
+    
+}
+
+/* mms_area */
+.mms_area{
+	
+	width: 400px;
+	height: 470px;
+	border: 2px solid #F2B807;
+	text-align:center;
+}
+
+.mms_title{
+	padding-top: 10px;
+	height:30px;
+	text-align:center;
+}
+
+.mms_content{
+	height: 350px;
+	width: 300px;
+}
+
+.mms_number{
+	display:inline-block;
+	height: 50px;
+	width:300px;
+	font-size:13pt;
+}
+
+.PH{
+	height: 40px;
+	width:300px;
+	float:left;
+}
+
+.file_add_input {
+	height: 40px;
+	width: 240px;
+	float: left;
+}
+
+.mms_bottom_area {
+	display:inline-block;
+	width: 300px;
+}
+
+.mms_btn{
+	display: inline-block;
+	text-align: center;
+	height: 50px;
+	width: 50px;
+	float: right;
+}
+.mms_btn>div{
+	display:inline-block;
+	height: 40px;
+	width:50px;
+	font-size:10pt;
+	float:right;
+	background-color : #F2B807;
+	padding-top:10px;
+	font-weight: bold;
+	text-align:center;
+	border:none;
+	border-radius:5px;
+}
+.mms_btn>div:hover{
+	cursor:pointer;
+	background-color:#F2CB07;
+	color:#595959;
+}
+
+/* sms_area */
+
+.sms_area{
+	width: 400px;
+	height: 430px;
+	border: 2px solid #F2B807;
+	text-align:center;
+	margin-bottom: 20px;
+	display:inline-block;
+}
+.sms_title{
+	padding-top:10px;
+	height:30px;
+	text-align:center;
+}
+.sms_content{
+	height: 350px;
+	width: 300px;
+}
+.sms_number{
+	display:inline-block;
+	height: 50px;
+	width:300px;
+	font-size:13pt;
+
+}
+.PH{
+	height: 40px;
+	width:300px;
+	float:left;
+}
+.sms_btn{
+	display:inline-block;
+	text-align:center;
+	height: 50px;
+	width:300px;
+}
+.sms_btn>div{
+	display:inline-block;
+	height: 40px;
+	width:50px;
+	font-size:10pt;
+	float:right;
+	background-color : #F2B807;
+	padding-top:10px;
+	font-weight: bold;
+	text-align:center;
+	border:none;
+	border-radius:5px;
+}
+.sms_btn>div:hover{
+	cursor:pointer;
+	background-color:#F2CB07;
+	color:#595959;
+}
+.sms_table{
+	display:inline-block;
+}
+
+.channel_table3 {
+	margin-top: 20px;	
+}

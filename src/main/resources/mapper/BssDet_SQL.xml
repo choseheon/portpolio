@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bssDet">
+<select id="getFirst" parameterType="hashmap" resultType="hashmap">
+	SELECT CHN_NO, PROG_NO
+	FROM BSS_CHN
+	WHERE CHN_NO = #{chnNo}
+</select>
+<select id="getChn" parameterType="hashmap" resultType="hashmap">
+SELECT CH.CHN_NO, CH.PROG_NO, CH.LEAD_NO, CH.CHN_NAME, CH.EXPECT_SALES, TO_CHAR(CH.CHN_DATE, 'yyyy-mm-dd') AS CHN_DATE, CH.BSS_TYPE_NO, CH.SALES_DIV_NO, CH.EMP_NO , PR.PROG_NAME, bstype.BSS_TYPE_NAME, SALDIV.SALES_DIV_NAME, ls.LEAD_STAT_NAME, 
+cl.CLIENT_NAME, cl.CLIENT_PH, cl.CLIENT_FAX, cl.CLIENT_EMAIL, cp.COMP_NAME, cp.COMP_PH, ei.EMP_NAME, EI.EMP_NO
+, ei.EMP_PHONE, T.TEAM_NAME, T.TEAM_CALL 
+FROM BSS_CHN CH INNER JOIN BSS_PROG PR 
+                        ON CH.PROG_NO = PR.PROG_NO 
+                LEFT OUTER JOIN BSS_TYPE BSTYPE 
+                        ON CH.BSS_TYPE_NO = BSTYPE.BSS_TYPE_NO 
+                LEFT OUTER JOIN BSS_SALES_DIV SALDIV 
+                        ON CH.SALES_DIV_NO = SALDIV.SALES_DIV_NO 
+                INNER JOIN LEAD LD 
+                        ON ch.lead_no = ld.lead_no 
+                INNER JOIN LEAD_STAT LS 
+                        ON ld.lead_stat_no = ls.lead_stat_no 
+                INNER JOIN CLIENT CL 
+                        ON ld.client_no = cl.client_no 
+                INNER JOIN COMP CP 
+                        ON cl.comp_no = cp.comp_no 
+                INNER JOIN EMP_INFO EI 
+                        ON CH.emp_no = EI.EMP_NO 
+                INNER JOIN TEAM T 
+                        ON EI.TEAM_NO = T.TEAM_NO 
+WHERE ch.CHN_NO = #{chnNo}
+</select>
+<select id="getSgt" parameterType="HashMap" resultType="HashMap">
+	SELECT TO_CHAR(SGT_DATE, 'yyyy-mm-dd') AS SGT_DATE
+	FROM BSS_SGT
+	WHERE CHN_NO = #{chnNo}
+</select>
+<select id="getSgtChnDt" parameterType="HashMap" resultType="HashMap">
+	SELECT TO_CHAR(CHN_DATE, 'yyyy-mm-dd') AS CHN_DATE
+	FROM BSS_CHN
+	WHERE CHN_NO = #{chnNo}
+</select>
+<select id="getNgt" parameterType="HashMap" resultType="HashMap">
+	SELECT TO_CHAR(NGT_SDATE, 'yyyy-mm-dd') AS NGT_SDATE, TO_CHAR(NGT_EDATE, 'yyyy-mm-dd') AS NGT_EDATE
+	FROM BSS_NGT
+	WHERE CHN_NO = #{chnNo}
+</select>
+<select id="getCtract" parameterType="HashMap" resultType="HashMap">
+	SELECT BC.CTRACT_NO, BC.CHN_NO, BC.DEP_ACCOUNT_NO, TO_CHAR( BC.CTRACT_DATE, 'yyyy-mm-dd') AS CTRACT_DATE, BC.CREDIT_TYPE, DA.*
+	FROM BSS_CTRACT BC INNER JOIN DEP_ACCOUNT  DA
+								ON BC.DEP_ACCOUNT_NO = DA.DEP_ACCOUNT_NO
+	WHERE CHN_NO = #{chnNo}
+</select>
+<select id="getBssType" parameterType="hashmap" resultType="hashmap">
+	SELECT *
+	FROM BSS_TYPE
+</select>
+<select id="getBssSalesDiv" parameterType="hashmap" resultType="hashmap">
+	SELECT *
+	FROM BSS_SALES_DIV
+</select>
+<select id="getEmpList" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM ( 	SELECT E.EMP_NO, D.DEPART_NAME, T.TEAM_NAME, E.EMP_NAME, EP.EMP_POSI_NAME AS POSI_NAME, E.EMP_EMAIL, D.DEPART_NO,
+				   	   ROW_NUMBER() OVER(ORDER BY E.EMP_NO DESC) AS RNUM
+			   	FROM EMP_INFO E INNER JOIN TEAM T
+			   					ON E.TEAM_NO = T.TEAM_NO
+			   					INNER JOIN DEPART D
+			   					ON T.DEPART_NO = D.DEPART_NO
+			   					INNER JOIN EMP_POSI EP
+			   					ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+			   	WHERE E.EMP_RESIGN_DATE IS NULL
+			   	<if test="searchTxt != null and searchTxt != ''">
+			   		AND E.EMP_NO LIKE '%' || #{searchTxt} || '%'
+					OR D.DEPART_NAME LIKE '%' || #{searchTxt} || '%'
+					OR T.TEAM_NAME LIKE '%' || #{searchTxt} || '%'
+					OR E.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+					OR EP.EMP_POSI_NAME LIKE '%' || #{searchTxt} || '%'
+				</if>
+				ORDER BY E.EMP_NO DESC
+		) SQ
+		WHERE SQ.RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	
+	<select id="getEmpCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM EMP_INFO E INNER JOIN TEAM T
+			   			ON E.TEAM_NO = T.TEAM_NO
+			   			INNER JOIN DEPART D
+			   			ON T.DEPART_NO = D.DEPART_NO
+			   			INNER JOIN EMP_POSI EP
+			   			ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+		WHERE E.EMP_RESIGN_DATE IS NULL
+		<if test="searchTxt != null and searchTxt != ''">
+			AND E.EMP_NO LIKE '%' || #{searchTxt} || '%'
+			OR D.DEPART_NAME LIKE '%' || #{searchTxt} || '%'
+			OR T.TEAM_NAME LIKE '%' || #{searchTxt} || '%'
+			OR E.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+			OR EP.EMP_POSI_NAME LIKE '%' || #{searchTxt} || '%'
+		</if>
+	</select>
+	<select id="getSelectProdDiv" parameterType="hashmap" resultType="hashmap">
+		SELECT DIV_NO
+		FROM PROD
+		GROUP BY DIV_NO
+	</select>
+	<select id="getSelectProdType" parameterType="hashmap" resultType="hashmap">
+		SELECT TYPE_NO
+		FROM PROD
+		GROUP BY TYPE_NO
+	</select>
+	<select id="getProdDefaultList" parameterType="hashmap" resultType="hashmap">
+	SELECT *
+	FROM(
+		SELECT P.*, ROW_NUMBER()OVER(ORDER BY P.PROD_NO) AS RNUM
+		FROM (
+		SELECT P.PROD_NO, P.DIV_NO, P.TYPE_NO, P.PROD_NAME AS NAME, G.GOODS_NO AS NO, G.GOODS_CODE AS CODE, G.GOODS_PRICE AS PRICE, G.GOODS_SIZE AS SIZ
+		FROM PROD P INNER JOIN GOODS G
+		                    ON P.PROD_NO = G.PROD_NO
+		UNION
+		SELECT P.PROD_NO, P.DIV_NO, P.TYPE_NO, P.PROD_NAME AS NAME, S.SERVICE_NO AS NO, S.SERVICE_CODE AS CODE,S.SERVICE_PRICE + S.INSTALL_PRICE AS PRICE, S.SERVICE_PERIOD AS SIZ
+		FROM PROD P INNER JOIN SERVICE S
+		                    ON P.PROD_NO = S.PROD_NO
+		ORDER BY TYPE_NO ASC
+		                    ) P
+		WHERE 1=1
+			<if test="type_name neq 0">
+				AND TYPE_NO = #{type_name}
+		</if>
+		<if test="div_name neq 0">
+				AND DIV_NO = #{div_name}
+		</if>
+			<if test="searchTxt != null and searchTxt != ''">
+		AND NAME LIKE '%' || #{searchTxt} || '%'
+			OR CODE LIKE '%' || #{searchTxt} || '%'
+		</if>
+		)
+		WHERE RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	<select id="getProdDefaultListCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*)
+		FROM (
+		SELECT P.PROD_NO, P.DIV_NO, P.TYPE_NO, P.PROD_NAME AS NAME, G.GOODS_NO AS NO, G.GOODS_CODE AS CODE, G.GOODS_PRICE AS PRICE, G.GOODS_SIZE AS SIZ
+		FROM PROD P INNER JOIN GOODS G
+		                    ON P.PROD_NO = G.PROD_NO
+		UNION
+		SELECT P.PROD_NO, P.DIV_NO, P.TYPE_NO, P.PROD_NAME AS NAME, S.SERVICE_NO AS NO, S.SERVICE_CODE AS CODE,S.SERVICE_PRICE + S.INSTALL_PRICE AS PRICE, S.SERVICE_PERIOD AS SIZ
+		FROM PROD P INNER JOIN SERVICE S
+		                    ON P.PROD_NO = S.PROD_NO
+		ORDER BY TYPE_NO ASC
+		                    )
+		WHERE 1=1
+			<if test="type_name neq 0">
+		AND TYPE_NO = #{type_name}
+		</if>
+		<if test="div_name neq 0">
+		AND DIV_NO = #{div_name}
+		</if>
+		<if test="searchTxt != null and searchTxt != ''">
+		AND NAME LIKE '%' || #{searchTxt} || '%'
+			OR CODE LIKE '%' || #{searchTxt} || '%'
+		</if>
+	</select>
+	<update id="updateProg" parameterType="hashmap">
+	<if test="selectChk eq 1">
+	<choose>
+			<when test="bssProgEnd eq 4">
+			UPDATE BSS_CHN SET PROG_NO = 7
+			WHERE CHN_NO = #{chnNo}
+		</when>
+		<otherwise>
+			UPDATE BSS_CHN SET PROG_NO = PROG_NO + 1
+			WHERE CHN_NO = #{chnNo}
+		</otherwise>
+	</choose>
+	</if>
+	<if test="selectChk eq 2">
+		UPDATE BSS_CHN SET PROG_NO = 6
+		WHERE CHN_NO = #{chnNo}
+	</if>	
+	<if test="selectChk eq 3">
+		UPDATE BSS_CHN SET PROG_NO = 5
+		WHERE CHN_NO = #{chnNo}
+	</if>
+	</update> 
+	<update id="updateBssEndDt" parameterType="HashMap">
+		<choose>
+			<when test="bssProgEnd eq 1">
+				UPDATE BSS_CHN SET CHN_DATE = SYSDATE
+				WHERE CHN_NO = #{chnNo}
+			</when>
+			<when test="bssProgEnd eq 2">
+				UPDATE BSS_SGT SET SGT_DATE = SYSDATE
+				WHERE CHN_NO = #{chnNo}
+			</when>
+			<when test="bssProgEnd eq 3">
+				UPDATE BSS_NGT SET NGT_EDATE = SYSDATE
+				WHERE CHN_NO = #{chnNo}
+			</when>
+			<otherwise>
+				UPDATE BSS_CTRACT SET CTRACT_DATE = SYSDATE
+				WHERE CHN_NO = #{chnNo}
+			</otherwise>
+		</choose>
+	</update>
+	<insert id="makeNextProgTbl" parameterType="HashMap">
+		<choose>
+			<when test="bssProgEnd eq 1">
+				INSERT INTO BSS_SGT (SGT_NO, CHN_NO)
+				VALUES(BSS_SGT_SEQ.NEXTVAL, #{chnNo})
+			</when>
+			<when test="bssProgEnd eq 2">
+				INSERT INTO BSS_NGT (NGT_NO, CHN_NO, NGT_SDATE)
+				VALUES(BSS_NGT_SEQ.NEXTVAL, #{chnNo}, SYSDATE)
+			</when>
+			<when test="bssProgEnd eq 3">
+				INSERT INTO BSS_CTRACT (CTRACT_NO, CHN_NO)
+				VALUES(BSS_CTRACT_SEQ.NEXTVAL, #{chnNo})
+			</when>
+			<otherwise>
+				
+			</otherwise>
+		</choose>
+	</insert>
+	<select id="getNextBssNo" parameterType="HashMap" resultType="Integer">
+		<choose>
+			<when test="bssProgEnd eq 1">
+				SELECT SGT_NO
+				FROM BSS_SGT
+				WHERE CHN_NO = #{chnNo}
+			</when>
+			<when test="bssProgEnd eq 2">
+				SELECT NGT_NO
+				FROM BSS_NGT
+				WHERE CHN_NO = #{chnNo}
+			</when>
+			<when test="bssProgEnd eq 3">
+				SELECT CTRACT_NO
+				FROM BSS_CTRACT
+				WHERE CHN_NO = #{chnNo}
+			</when>
+			<otherwise>
+				
+			</otherwise>
+		</choose>
+	</select>
+	<select id="getListBeforeProd" parameterType="HashMap" resultType="HashMap">
+		<choose>
+			<when test="bssProgEnd eq 1">
+				SELECT *
+				FROM CHN_PROD
+				WHERE CHN_NO = #{chnNo}
+			</when>
+			<when test="bssProgEnd eq 2">
+				SELECT SP.*
+FROM BSS_CHN BC INNER JOIN BSS_SGT BS
+                        ON BC.CHN_NO = BS.CHN_NO
+                INNER JOIN SGT_PROD SP
+                        ON BS.SGT_NO = SP.SGT_NO
+WHERE BC.CHN_NO = #{chnNo}
+			</when>
+			<when test="bssProgEnd eq 3">
+			
+			</when>
+			<otherwise>
+				
+			</otherwise>
+		</choose>
+	</select>
+	<select id="updateBssNextProgProd" parameterType="HashMap" resultType="HashMap">
+		<choose>
+			<when test="bssProgEnd eq 1">
+				INSERT INTO SGT_PROD(PROD_NO, SGT_NO, CNT, PRICE)
+				VALUES(#{bssProdNo}, #{bssNo}, #{bssProdCnt}, #{bssProdPrice})
+			</when>
+			<when test="bssProgEnd eq 2">
+				INSERT INTO NGT_PROD(PROD_NO, NGT_NO, CNT, PRICE)
+				VALUES(#{bssProdNo}, #{bssNo}, #{bssProdCnt}, #{bssProdPrice})
+			</when>
+		</choose>
+	</select>
+	<select id="getProdNowListCnt" parameterType="HashMap" resultType="Integer">
+<choose>
+		<when test="bssProgNo eq 1">
+SELECT COUNT(*)
+			FROM(
+			SELECT NW.*, ROW_NUMBER()OVER(ORDER BY CHN_NO) AS RNUM
+			FROM(
+			SELECT CP.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,CP.CNT, P.PROD_NAME AS NAME, G.GOODS_CODE AS CODE, G.GOODS_PRICE AS PRICE, G.GOODS_SIZE AS SIZ
+			FROM BSS_CHN BC INNER JOIN CHN_PROD CP
+			                        ON BC.CHN_NO = CP.CHN_NO
+			                INNER JOIN PROD P
+			                        ON CP.PROD_NO = P.PROD_NO
+			                INNER JOIN GOODS G
+			                        ON P.PROD_NO = G.PROD_NO
+			UNION
+			SELECT CP.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,CP.CNT, P.PROD_NAME AS NAME, S.SERVICE_CODE AS CODE, S.SERVICE_PRICE + S.INSTALL_PRICE AS PRICE, S.SERVICE_PERIOD AS SIZ
+			FROM BSS_CHN BC INNER JOIN CHN_PROD CP
+			                        ON BC.CHN_NO = CP.CHN_NO
+			                INNER JOIN PROD P
+			                        ON CP.PROD_NO = P.PROD_NO
+			                INNER JOIN SERVICE S
+			                        ON P.PROD_NO = S.PROD_NO
+			ORDER BY TYPE_NO
+			) NW
+			WHERE NW.CHN_NO = #{chnNo}
+			)
+			WHERE 1=1
+		</when>
+		<when test="bssProgNo eq 2">
+SELECT COUNT(*)
+			FROM(
+			SELECT NW.*, ROW_NUMBER()OVER(ORDER BY CHN_NO) AS RNUM
+			FROM(
+			SELECT BC.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,SP.CNT, P.PROD_NAME AS NAME, G.GOODS_CODE AS CODE, G.GOODS_PRICE AS PRICE, G.GOODS_SIZE AS SIZ
+			FROM BSS_CHN BC INNER JOIN BSS_SGT BS
+			                        ON BC.CHN_NO = BS.CHN_NO
+	                        INNER JOIN SGT_PROD SP
+	                                ON BS.SGT_NO = SP.SGT_NO
+			                INNER JOIN PROD P
+			                        ON SP.PROD_NO = P.PROD_NO
+			                INNER JOIN GOODS G
+			                        ON P.PROD_NO = G.PROD_NO
+			UNION
+			SELECT BC.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,SP.CNT, P.PROD_NAME AS NAME, S.SERVICE_CODE AS CODE, S.SERVICE_PRICE + S.INSTALL_PRICE AS PRICE, S.SERVICE_PERIOD AS SIZ
+			FROM BSS_CHN BC INNER JOIN BSS_SGT BS
+			                        ON BC.CHN_NO = BS.CHN_NO
+	                        INNER JOIN SGT_PROD SP
+	                                ON BS.SGT_NO = SP.SGT_NO
+			                INNER JOIN PROD P
+			                        ON SP.PROD_NO = P.PROD_NO
+			                INNER JOIN SERVICE S
+			                        ON P.PROD_NO = S.PROD_NO
+			ORDER BY TYPE_NO
+			) NW
+			WHERE NW.CHN_NO = #{chnNo}
+			)
+			WHERE 1=1
+		</when>
+		<otherwise>
+		SELECT COUNT(*)
+			FROM(
+			SELECT NW.*, ROW_NUMBER()OVER(ORDER BY CHN_NO) AS RNUM
+			FROM(
+			SELECT BC.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,NP.CNT, P.PROD_NAME AS NAME, G.GOODS_CODE AS CODE, G.GOODS_PRICE AS PRICE, G.GOODS_SIZE AS SIZ
+			FROM BSS_CHN BC INNER JOIN BSS_NGT BN
+			                        ON BC.CHN_NO = BN.CHN_NO
+	                        INNER JOIN NGT_PROD NP
+	                                ON BN.NGT_NO = NP.NGT_NO
+			                INNER JOIN PROD P
+			                        ON NP.PROD_NO = P.PROD_NO
+			                INNER JOIN GOODS G
+			                        ON P.PROD_NO = G.PROD_NO
+			UNION
+			SELECT BC.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,NP.CNT, P.PROD_NAME AS NAME, S.SERVICE_CODE AS CODE, S.SERVICE_PRICE + S.INSTALL_PRICE AS PRICE, S.SERVICE_PERIOD AS SIZ
+			FROM BSS_CHN BC INNER JOIN BSS_NGT BN
+			                        ON BC.CHN_NO = BN.CHN_NO
+	                        INNER JOIN NGT_PROD NP
+	                                ON BN.NGT_NO = NP.NGT_NO
+			                INNER JOIN PROD P
+			                        ON NP.PROD_NO = P.PROD_NO
+			                INNER JOIN SERVICE S
+			                        ON P.PROD_NO = S.PROD_NO
+			ORDER BY TYPE_NO
+			) NW
+			WHERE NW.CHN_NO = #{chnNo}
+			)
+			WHERE 1=1
+		</otherwise>
+	</choose>
+	</select>
+	<select id="getProdNowList" parameterType="HashMap" resultType="HashMap">
+	<choose>
+		<when test="bssProgNo eq 1">
+			SELECT *
+			FROM(
+			SELECT NW.*, ROW_NUMBER()OVER(ORDER BY CHN_NO) AS RNUM
+			FROM(
+			SELECT CP.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,CP.CNT, P.PROD_NAME AS NAME, G.GOODS_CODE AS CODE, G.GOODS_PRICE AS PRICE, G.GOODS_SIZE AS SIZ
+			FROM BSS_CHN BC INNER JOIN CHN_PROD CP
+			                        ON BC.CHN_NO = CP.CHN_NO
+			                INNER JOIN PROD P
+			                        ON CP.PROD_NO = P.PROD_NO
+			                INNER JOIN GOODS G
+			                        ON P.PROD_NO = G.PROD_NO
+			UNION
+			SELECT CP.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,CP.CNT, P.PROD_NAME AS NAME, S.SERVICE_CODE AS CODE, S.SERVICE_PRICE + S.INSTALL_PRICE AS PRICE, S.SERVICE_PERIOD AS SIZ
+			FROM BSS_CHN BC INNER JOIN CHN_PROD CP
+			                        ON BC.CHN_NO = CP.CHN_NO
+			                INNER JOIN PROD P
+			                        ON CP.PROD_NO = P.PROD_NO
+			                INNER JOIN SERVICE S
+			                        ON P.PROD_NO = S.PROD_NO
+			ORDER BY TYPE_NO
+			) NW
+			WHERE NW.CHN_NO = #{chnNo}
+			)
+			WHERE 1=1
+					AND RNUM BETWEEN #{startCnt} AND #{endCnt}
+		</when>
+		<when test="bssProgNo eq 2">
+		SELECT *
+			FROM(
+			SELECT NW.*, ROW_NUMBER()OVER(ORDER BY CHN_NO) AS RNUM
+			FROM(
+			SELECT BC.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,SP.CNT, P.PROD_NAME AS NAME, G.GOODS_CODE AS CODE, G.GOODS_PRICE AS PRICE, G.GOODS_SIZE AS SIZ
+			FROM BSS_CHN BC INNER JOIN BSS_SGT BS
+			                        ON BC.CHN_NO = BS.CHN_NO
+	                        INNER JOIN SGT_PROD SP
+	                                ON BS.SGT_NO = SP.SGT_NO
+			                INNER JOIN PROD P
+			                        ON SP.PROD_NO = P.PROD_NO
+			                INNER JOIN GOODS G
+			                        ON P.PROD_NO = G.PROD_NO
+			UNION
+			SELECT BC.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,SP.CNT, P.PROD_NAME AS NAME, S.SERVICE_CODE AS CODE, S.SERVICE_PRICE + S.INSTALL_PRICE AS PRICE, S.SERVICE_PERIOD AS SIZ
+			FROM BSS_CHN BC INNER JOIN BSS_SGT BS
+			                        ON BC.CHN_NO = BS.CHN_NO
+	                        INNER JOIN SGT_PROD SP
+	                                ON BS.SGT_NO = SP.SGT_NO
+			                INNER JOIN PROD P
+			                        ON SP.PROD_NO = P.PROD_NO
+			                INNER JOIN SERVICE S
+			                        ON P.PROD_NO = S.PROD_NO
+			ORDER BY TYPE_NO
+			) NW
+			WHERE NW.CHN_NO = #{chnNo}
+			)
+			WHERE 1=1
+					AND RNUM BETWEEN #{startCnt} AND #{endCnt}
+		</when>
+		<otherwise>
+		SELECT *
+			FROM(
+			SELECT NW.*, ROW_NUMBER()OVER(ORDER BY CHN_NO) AS RNUM
+			FROM(
+			SELECT BC.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,NP.CNT, P.PROD_NAME AS NAME, G.GOODS_CODE AS CODE, G.GOODS_PRICE AS PRICE, G.GOODS_SIZE AS SIZ
+			FROM BSS_CHN BC INNER JOIN BSS_NGT BN
+			                        ON BC.CHN_NO = BN.CHN_NO
+	                        INNER JOIN NGT_PROD NP
+	                                ON BN.NGT_NO = NP.NGT_NO
+			                INNER JOIN PROD P
+			                        ON NP.PROD_NO = P.PROD_NO
+			                INNER JOIN GOODS G
+			                        ON P.PROD_NO = G.PROD_NO
+			UNION
+			SELECT BC.CHN_NO, P.PROD_NO, P.DIV_NO, P.TYPE_NO,NP.CNT, P.PROD_NAME AS NAME, S.SERVICE_CODE AS CODE, S.SERVICE_PRICE + S.INSTALL_PRICE AS PRICE, S.SERVICE_PERIOD AS SIZ
+			FROM BSS_CHN BC INNER JOIN BSS_NGT BN
+			                        ON BC.CHN_NO = BN.CHN_NO
+	                        INNER JOIN NGT_PROD NP
+	                                ON BN.NGT_NO = NP.NGT_NO
+			                INNER JOIN PROD P
+			                        ON NP.PROD_NO = P.PROD_NO
+			                INNER JOIN SERVICE S
+			                        ON P.PROD_NO = S.PROD_NO
+			ORDER BY TYPE_NO
+			) NW
+			WHERE NW.CHN_NO = #{chnNo}
+			)
+			WHERE 1=1
+					AND RNUM BETWEEN #{startCnt} AND #{endCnt}
+		</otherwise>
+	</choose>
+	</select>
+
+	<select id="getPopBssNoProd" parameterType="HashMap" resultType="Integer">
+		SELECT 
+		<choose>
+			<when test="bssProgNo eq 2">
+				BS.SGT_NO
+			</when>
+			<otherwise>
+				, BN.NGT_NO
+			</otherwise>
+		</choose>
+		
+		FROM BSS_CHN BC 
+		<choose>
+			<when test="bssProgNo eq 2">
+				INNER JOIN BSS_SGT BS
+                        ON BC.CHN_NO = BS.CHN_NO
+			</when>
+			<otherwise>
+				INNER JOIN BSS_NGT BN
+                        ON BC.CHN_NO = BN.CHN_NO
+			</otherwise>
+		</choose>
+		WHERE BC.CHN_NO = #{chnNo}
+	</select>
+	<insert id="updateNowProd" parameterType="Hashmap">
+	<choose>
+		<when test="bssProgNo eq 1">
+			INSERT INTO CHN_PROD(PROD_NO, CHN_NO, CNT, PRICE)
+			VALUES(#{prodDefaultNo}, #{chnNo}, '1', #{getProdPrice})
+		</when>
+		<when test="bssProgNo eq 2">
+			INSERT INTO SGT_PROD(PROD_NO, SGT_NO, CNT, PRICE)
+			VALUES(#{prodDefaultNo}, #{bssNo}, '1', #{getProdPrice})
+		</when>
+		<when test="bssProgNo eq 3">
+			INSERT INTO NGT_PROD(PROD_NO, NGT_NO, CNT, PRICE)
+			VALUES(#{prodDefaultNo}, #{bssNo}, '1', #{getProdPrice})
+		</when>
+	</choose>
+		
+	</insert>
+	<delete id="deleteNowProd" parameterType="Hashmap">
+	<choose>
+		<when test="bssProgNo eq 1">
+			DELETE FROM CHN_PROD
+			WHERE CHN_NO = #{chnNo} AND PROD_NO = #{prodNowNo}
+		</when>
+		<when test="bssProgNo eq 2">
+			DELETE FROM SGT_PROD
+			WHERE SGT_NO = #{bssNo} AND PROD_NO = #{prodNowNo}
+		</when>
+		<when test="bssProgNo eq 3">
+			DELETE FROM NGT_PROD
+			WHERE NGT_NO = #{bssNo} AND PROD_NO = #{prodNowNo}
+		</when>
+	</choose>
+		
+	</delete>
+	<update id="updateNowProdend" parameterType="Hashmap">
+		UPDATE CHN_PROD SET CNT = #{prodNowEndCnt}
+		WHERE PROD_NO = #{prodNowEndNo}
+		AND CHN_NO = #{chnNo}
+	</update>
+	
+	<!-- 의견 목록 가져오기 -->
+	<select id="getBssOpin" parameterType="hashmap"
+		resultType="hashmap">
+		SELECT BS.OPIN_NO AS OPIN_NO, E.EMP_NAME, E.EMP_NO,
+		EP.EMP_POSI_NAME AS POSI_NAME,
+		BS.BSS_OPIN_CON AS OPIN_CON, TO_CHAR(BS.BSS_OPIN_DATE, 'YYYY-MM-DD HH24:MI:SS') AS
+		OPIN_DATE
+		FROM BSS_OPIN BS INNER JOIN EMP_INFO E
+		ON BS.EMP_NO = E.EMP_NO
+		INNER JOIN EMP_POSI EP
+		ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+		AND BS.BSS_OPIN_DEL_YN = 1
+		WHERE BS.CHN_NO = #{chnNo}
+		ORDER BY
+		BS.OPIN_NO DESC
+	</select>
+	
+	<!-- 의견 목록 페이징 -->
+	<select id="getBssOpinCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM BSS_OPIN
+		WHERE CHN_NO = #{chnNo}
+		AND BSS_OPIN_DEL_YN = 1
+	</select>
+	
+	<!-- 의견 작성 -->
+	<insert id="insertBssOpin" parameterType="hashmap">
+		INSERT INTO BSS_OPIN(OPIN_NO, CHN_NO, EMP_NO, BSS_OPIN_CON)
+		VALUES ( BSS_OPIN_SEQ.NEXTVAL, #{chnNo}, #{empNo}, #{opin_txt})
+	</insert>
+	
+	<!-- 의견 삭제 -->
+	<update id="delBssOpin" parameterType="hashmap">
+		UPDATE BSS_OPIN
+		SET BSS_OPIN_DEL_YN = 0
+		WHERE OPIN_NO = #{opin_no}
+	</update>
+	
+	<!-- 활동일정 목록 가져오기 -->
+	<select id="getBssSche" parameterType="hashmap" resultType="hashmap">
+	SELECT S.SCHE_NO, TO_CHAR(S.SCHE_SDATE,'YY / MM / DD') AS SDATE, S.SCHE_CON, S.SCHE_RES,
+                TO_CHAR(S.SCHE_EDATE,'YY / MM / DD') AS EDATE, S.SCHE_IMPORTANCE AS SC_IP, CL.CLIENT_NAME,
+                CL.CLIENT_POSI_NAME AS CLIENT_PNM,
+                EI.EMP_NAME, EP.EMP_POSI_NAME AS EMP_PNM, CC2.CODE_S_CATE, CC2.CODE_NAME
+        FROM SCHE S INNER JOIN SCHE_CHN SC
+                    ON S.SCHE_NO = SC.SCHE_NO
+                    INNER JOIN BSS_CHN BC
+                    ON SC.CHN_NO = BC.CHN_NO
+                    INNER JOIN LEAD L
+                    ON BC.LEAD_NO = L.LEAD_NO
+                    INNER JOIN CLIENT CL
+                    ON L.CLIENT_NO = CL.CLIENT_NO
+                    INNER JOIN EMP_INFO EI
+                    ON L.EMP_NO = EI.EMP_NO
+                    INNER JOIN EMP_POSI EP
+                    ON EI.EMP_POSI_NO = EP.EMP_POSI_NO
+                    INNER JOIN COMMON_CODE CC1
+		                    ON S.SCHE_DIV_NO = CC1.CODE_S_CATE
+		                    AND CC1.CODE_L_CATE = 2
+		            INNER JOIN COMMON_CODE CC2
+		                    ON S.SCHE_ACTI_NO = CC2.CODE_S_CATE
+		                    AND CC2.CODE_L_CATE = 3
+		WHERE SC.CHN_NO = #{chnNo}
+		AND ( ${filter} )
+		ORDER BY S.SCHE_DATE DESC
+	</select>
+	
+	<!-- 제안 첨부파일 등록 -->
+	<insert id="insertSgtAttach" parameterType="hashmap">
+				INSERT INTO SGT_ATTACH(SGT_ATTACH_NO, SGT_NO, SGT_ATTACH_NAME)
+				VALUES (SGT_ATTACH_SEQ.NEXTVAL, #{sgtNo}, #{attachFile})
+	</insert>
+	
+	<!-- 협상 첨부파일 등록 -->
+	<insert id="insertNgtAttach" parameterType="hashmap">
+				INSERT INTO NGT_ATTACH(NGT_ATTACH_NO, NGT_NO, NGT_ATTACH_NAME)
+				VALUES (NGT_ATTACH_SEQ.NEXTVAL, #{ngtNo}, #{attachFile})
+	</insert>
+	
+	<!-- 계약 첨부파일 등록 -->
+	<insert id="insertCtractAttach" parameterType="hashmap">
+				INSERT INTO CTRACT_ATTACH(CTRACT_ATTACH_NO, CTRACT_NO, CTRACT_ATTACH_NAME)
+				VALUES (CTRACT_ATTACH_SEQ.NEXTVAL, #{ctractNo}, #{attachFile})
+	</insert>
+	
+	<!-- 제안 첨부파일 목록 -->
+	<select id="sgtAttachList" parameterType="hashmap" resultType="hashmap">
+		SELECT SGT_ATTACH_NO, SGT_NO, SGT_ATTACH_NAME
+        FROM SGT_ATTACH
+        WHERE SGT_NO = #{sgtNo}
+	</select>
+	
+	<!-- 협상 첨부파일 목록 -->
+	<select id="ngtAttachList" parameterType="hashmap" resultType="hashmap">
+		SELECT NGT_ATTACH_NO, NGT_NO, NGT_ATTACH_NAME
+        FROM NGT_ATTACH
+        WHERE NGT_NO = #{ngtNo}
+	</select>
+	
+	<!-- 계약 첨부파일 목록 -->
+	<select id="ctractAttachList" parameterType="hashmap" resultType="hashmap">
+		SELECT CTRACT_ATTACH_NO, CTRACT_NO, CTRACT_ATTACH_NAME
+        FROM CTRACT_ATTACH
+        WHERE CTRACT_NO = #{ctractNo}
+	</select>
+	
+	<!-- 제안 첨부파일 삭제 -->
+	<delete id="delSgtAttach" parameterType="hashmap">
+				DELETE FROM SGT_ATTACH
+				WHERE SGT_ATTACH_NO = #{attachNo}
+	</delete>
+	
+	<!-- 협상 첨부파일 삭제 -->
+	<delete id="delNgtAttach" parameterType="hashmap">
+				DELETE FROM NGT_ATTACH
+				WHERE NGT_ATTACH_NO = #{attachNo}
+	</delete>
+	
+	<!-- 계약 첨부파일 삭제 -->
+	<delete id="delCtractAttach" parameterType="hashmap">
+				DELETE FROM CTRACT_ATTACH
+				WHERE CTRACT_ATTACH_NO = #{attachNo}
+	</delete>
+	<select id="getProdGoods" parameterType="HashMap" resultType="HashMap">
+	<choose>
+			<when test="bssProgNo eq 1">
+				SELECT * 
+		FROM BSS_CHN BC INNER JOIN CHN_PROD CP
+                        ON BC.CHN_NO = CP.CHN_NO
+                INNER JOIN PROD P
+                        ON CP.PROD_NO = P.PROD_NO
+                INNER JOIN GOODS G
+                        ON P.PROD_NO = G.PROD_NO
+        WHERE BC.CHN_NO = #{chnNo}
+			</when>
+			<when test="bssProgNo eq 2">
+				SELECT * 
+				FROM BSS_SGT BS INNER JOIN SGT_PROD SP
+                        ON BS.SGT_NO = SP.SGT_NO
+                INNER JOIN PROD P
+                        ON SP.PROD_NO = P.PROD_NO
+                INNER JOIN GOODS G
+                        ON P.PROD_NO = G.PROD_NO
+    		     WHERE BS.CHN_NO = #{chnNo}
+			</when>
+			<otherwise>
+				SELECT * 
+				FROM BSS_NGT BN INNER JOIN NGT_PROD NP
+                        ON BN.NGT_NO = NP.NGT_NO
+                INNER JOIN PROD P
+                        ON NP.PROD_NO = P.PROD_NO
+                INNER JOIN GOODS G
+                        ON P.PROD_NO = G.PROD_NO
+    		     WHERE BN.CHN_NO = #{chnNo}
+			</otherwise>
+		</choose>
+		
+	</select>
+	<select id="getProdService" parameterType="HashMap" resultType="HashMap">
+		<choose>
+			<when test="bssProgNo eq 1">
+				SELECT * 
+		FROM BSS_CHN BC INNER JOIN CHN_PROD CP
+                        ON BC.CHN_NO = CP.CHN_NO
+                INNER JOIN PROD P
+                        ON CP.PROD_NO = P.PROD_NO
+                INNER JOIN SERVICE S
+                        ON P.PROD_NO = S.PROD_NO
+        WHERE BC.CHN_NO = #{chnNo}
+			</when>
+			<when test="bssProgNo eq 2">
+				SELECT * 
+				FROM BSS_SGT BS INNER JOIN SGT_PROD SP
+                        ON BS.SGT_NO = SP.SGT_NO
+                INNER JOIN PROD P
+                        ON SP.PROD_NO = P.PROD_NO
+                INNER JOIN SERVICE S
+                        ON P.PROD_NO = S.PROD_NO
+    		    WHERE BS.CHN_NO = #{chnNo}
+			</when>
+			<otherwise>
+				SELECT * 
+				FROM BSS_NGT BN INNER JOIN NGT_PROD NP
+                        ON BN.NGT_NO = NP.NGT_NO
+                INNER JOIN PROD P
+                        ON NP.PROD_NO = P.PROD_NO
+                INNER JOIN SERVICE S
+                        ON P.PROD_NO = S.PROD_NO
+    		   WHERE BN.CHN_NO = #{chnNo}
+			</otherwise>
+		</choose>
+	</select>
+	<select id="getDepCnt" parameterType="HashMap" resultType="Integer">
+		SELECT COUNT(*)
+		FROM (
+		SELECT DA.*, B.*, ROW_NUMBER()OVER(ORDER BY DA.DEP_ACCOUNT_NO DESC) AS RNUM
+		FROM DEP_ACCOUNT DA INNER JOIN BANK B
+		                            ON DA.BANK_NO = B.BANK_NO)
+	</select>
+	<select id="getDepList" parameterType="HashMap" resultType="HashMap">
+		SELECT *
+		FROM (
+		SELECT DA.*, B.BANK_NAME, ROW_NUMBER()OVER(ORDER BY DA.DEP_ACCOUNT_NO DESC) AS RNUM
+		FROM DEP_ACCOUNT DA INNER JOIN BANK B
+		                            ON DA.BANK_NO = B.BANK_NO)
+					WHERE RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	<!-- 영업번호 가져오기 -->
+	<select id="getBssNo" parameterType="HashMap" resultType="HashMap">
+		SELECT BC.CHN_NO, BS.SGT_NO, BN.NGT_NO, BCT.CTRACT_NO
+		FROM BSS_CHN BC LEFT OUTER JOIN BSS_SGT BS
+                ON BC.CHN_NO = BS.CHN_NO
+                LEFT OUTER JOIN BSS_NGT BN
+                ON BC.CHN_NO = BN.CHN_NO
+                LEFT OUTER JOIN BSS_CTRACT BCT
+                ON BC.CHN_NO = BCT.CHN_NO
+                WHERE BC.CHN_NO = #{chnNo}
+	</select>
+	<update id="updateBssChn" parameterType="HashMap">
+	<if test="bssProgNo eq 1">
+		UPDATE BSS_CHN SET 
+		<if test="emp_name neq null and emp_name neq ''">
+			EMP_NO = #{emp_no2}
+		</if>
+		<if test="chn_name neq null and chn_name neq ''">
+			,CHN_NAME = #{chn_name}
+		</if>
+		<if test="expect_sales neq null and expect_sales neq ''">
+			,EXPECT_SALES = #{expect_sales}
+		</if>
+		<if test="bss_type_name neq null and bss_type_name neq ''">
+			,BSS_TYPE_NO = #{BssTypeNo}
+		</if>
+		<if test="sales_div_no neq null and sales_div_no neq ''">
+			,SALES_DIV_NO = #{BssDivNo}
+		</if>
+		WHERE CHN_NO = #{chnNo}
+	</if>
+	<if test="bssProgNo eq 4">
+		UPDATE BSS_CTRACT SET
+		<if test="deper neq null and deper neq ''">
+			DEP_ACCOUNT_NO = #{deperNo}
+		</if>
+	</if>
+	</update>
+	<select id="getBssTypeEnd" parameterType="HashMap" resultType="HashMap">
+		SELECT *
+		FROM BSS_CHN
+		WHERE CHN_NO = #{chnNo}
+	</select>
+</mapper>

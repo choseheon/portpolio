@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bssPps">
+<insert id="insertBssPpsAdd" parameterType="hashmap">
+INSERT INTO BSS_PPS(PPS_NO, MGR_NO, EMP_NO, DEPART_NO, PPS_NAME, PPS_SALES, PPS_YEAR) 
+			VALUES(BSS_PPS_SEQ.NEXTVAL, #{mgr_no}, #{sEmpNo}, #{depart_no}, #{pps_name}, REPLACE(#{pps_sales}, ',', ''), #{pps_year})
+</insert>
+<select id="getBssPpsCnt" parameterType="hashmap" resultType="Integer">
+SELECT COUNT(*) AS CNT
+FROM BSS_PPS B INNER JOIN EMP_INFO E1
+								ON B.MGR_NO = E1.EMP_NO
+					INNER JOIN EMP_INFO E2
+								ON B.EMP_NO = E2.EMP_NO
+                    INNER JOIN TEAM T
+                            	ON E1.TEAM_NO = T.TEAM_NO
+					INNER JOIN DEPART D
+                        		ON T.DEPART_NO = D.DEPART_NO
+WHERE PPS_DEL_YN = 1
+<if test="searchDepart neq 0">
+	AND D.DEPART_NO = #{searchDepart}
+</if>
+ <if test="searchYear neq 0">
+	 	<choose>
+				<!-- 2020 -->
+				<when test="searchYear eq 1">
+					AND B.PPS_YEAR LIKE '2020'
+				</when>
+				<!-- 2021 -->
+				<when test="searchYear eq 2">
+					AND B.PPS_YEAR LIKE '2021'
+				</when>
+				<!-- 2022 -->
+				<when test="searchYear eq 3">
+					AND B.PPS_YEAR LIKE '2022'
+				</when>
+				<!-- 2023 -->
+				<when test="searchYear eq 4">
+					AND B.PPS_YEAR LIKE '2023'
+				</when>
+			</choose>
+	</if>
+	<if test="searchTxt != null and searchTxt != ''">
+			<choose>
+				<!-- 적요명 -->
+				<when test="searchGbn eq 0">
+					AND B.PPS_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<!-- 등록자 -->
+				<when test="searchGbn eq 1">
+					AND E2.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<!-- 담당자 -->
+				<when test="searchGbn eq 2">
+					AND E1.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+			</choose>
+		</if>
+</select>
+<select id="getBssPpsList" parameterType="hashmap" resultType="hashmap">
+SELECT S1.*
+FROM(SELECT B.PPS_NO, B.PPS_NAME, TO_CHAR(B.PPS_SALES,'999,999,999,999') AS PPS_SALES, B.PPS_YEAR, TO_CHAR(B.PPS_DATE, 'YYYY-MM-DD') AS PPS_DATE, D.DEPART_NAME,
+	 E1.EMP_NAME AS MGR_NAME, E2.EMP_NAME AS EMP_NAME, E1.EMP_EMAIL AS MGR_EMAIL, ROW_NUMBER() OVER(ORDER BY B.PPS_NO DESC) AS RNUM
+	 FROM BSS_PPS B INNER JOIN EMP_INFO E1
+								ON B.MGR_NO = E1.EMP_NO
+					INNER JOIN EMP_INFO E2
+								ON B.EMP_NO = E2.EMP_NO
+                    INNER JOIN TEAM T
+                            	ON E1.TEAM_NO = T.TEAM_NO
+					INNER JOIN DEPART D
+                        		ON T.DEPART_NO = D.DEPART_NO
+	 WHERE PPS_DEL_YN = 1
+	 <if test="searchDepart neq 0">
+	AND D.DEPART_NO = #{searchDepart}
+</if>
+	 <if test="searchYear neq 0">
+	 	<choose>
+				<!-- 2020 -->
+				<when test="searchYear eq 1">
+					AND B.PPS_YEAR LIKE '2020'
+				</when>
+				<!-- 2021 -->
+				<when test="searchYear eq 2">
+					AND B.PPS_YEAR LIKE '2021'
+				</when>
+				<!-- 2022 -->
+				<when test="searchYear eq 3">
+					AND B.PPS_YEAR LIKE '2022'
+				</when>
+				<!-- 2023 -->
+				<when test="searchYear eq 4">
+					AND B.PPS_YEAR LIKE '2023'
+				</when>
+			</choose>
+	</if>
+	<if test="searchTxt != null and searchTxt != ''">
+			<choose>
+				<!-- 적요명 -->
+				<when test="searchGbn eq 0">
+					AND B.PPS_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<!-- 등록자 -->
+				<when test="searchGbn eq 1">
+					AND E2.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<!-- 담당자 -->
+				<when test="searchGbn eq 2">
+					AND E1.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+			</choose>
+		</if>
+		) S1
+		WHERE S1.RNUM BETWEEN #{startCnt} AND #{endCnt}
+</select>
+
+<select id="getBssPpsOne" parameterType="hashmap" resultType="hashmap">
+SELECT B.PPS_NO, B.PPS_NAME, LTRIM(TO_CHAR(B.PPS_SALES,'999,999,999,999')) AS PPS_SALES, B.PPS_YEAR, TO_CHAR(B.PPS_DATE, 'YYYY-MM-DD') AS PPS_DATE, D.DEPART_NAME,
+	 	E1.EMP_NAME AS MGR_NAME, E2.EMP_NAME AS EMP_NAME, E2.EMP_EMAIL AS MGR_EMAIL, ROW_NUMBER() OVER(ORDER BY B.PPS_NO DESC) AS RNUM
+FROM BSS_PPS B INNER JOIN EMP_INFO E1
+								ON B.MGR_NO = E1.EMP_NO
+					INNER JOIN EMP_INFO E2
+								ON B.EMP_NO = E2.EMP_NO
+                    INNER JOIN TEAM T
+                            	ON E1.TEAM_NO = T.TEAM_NO
+					INNER JOIN DEPART D
+                        		ON T.DEPART_NO = D.DEPART_NO
+WHERE B.PPS_DEL_YN = 1
+AND B.PPS_NO = #{pps_no}
+</select>
+
+<update id="updateBssPpsEdit" parameterType="hashmap">
+UPDATE BSS_PPS SET  EMP_NO = #{sEmpNo},
+ <if test="depart_no != null and depart_no != ''">
+ MGR_NO = #{mgr_no},
+ DEPART_NO = #{depart_no}, 
+ </if>
+ PPS_NAME = #{pps_name}, PPS_SALES = REPLACE(#{pps_sales}, ',', ''), PPS_YEAR = #{pps_year}, PPS_DATE = SYSDATE
+WHERE PPS_NO = #{pps_no}
+</update>
+
+<update id="updateBssPpsDelete" parameterType="hashmap">
+UPDATE BSS_PPS SET PPS_DEL_YN = 0
+WHERE PPS_NO = #{pps_no}
+</update>
+
+<select id="getDepartList" parameterType="hashmap" resultType="hashmap">
+SELECT *
+FROM DEPART
+</select>
+</mapper>

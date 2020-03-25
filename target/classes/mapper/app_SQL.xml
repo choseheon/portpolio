@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cmp">
+	<select id="listCnt" parameterType="hashmap" resultType="Integer">
+	   	SELECT COUNT(*) AS CNT
+		FROM CMP CMP INNER JOIN EMP_INFO EI ON CMP.ADDEMP_NO = EI.EMP_NO
+    	WHERE PROG_STAT IN(4,5)
+		<if test="searchTxt != null and searchTxt != ''">
+			<choose>
+				<when test="searchGbn eq 0">
+					AND CMP.CMP_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn eq 1">
+					AND EI.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn eq 2">					
+					AND  CMP.PROG_STAT LIKE '%' || #{searchTxt} || '%'
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<!-- 결재목록 -->
+	<select id="getlist" parameterType="hashmap" resultType="hashmap">
+		select CMP_NAME , TO_CHAR(CMP.SDATE,'YYYY-MM-DD') AS SDATE, TO_CHAR(CMP.EDATE,'YYYY-MM-DD') AS EDATE , CMP.PROG_STAT , TO_CHAR(CMP.APP_DAY,'YYYY-MM-DD') AS APP_DAY
+		        , CMP_NO ,ROW_NUMBER()OVER(ORDER BY CMP_NO DESC) AS RNUM , EI.EMP_NAME AS EMP_NAME
+		from cmp CMP INNER JOIN EMP_INFO EI ON CMP.ADDEMP_NO = EI.EMP_NO
+		where prog_stat in(4,5)		
+			<if test="searchTxt != null and searchTxt != ''">
+			<choose>
+				<when test="searchGbn eq 0">
+					AND CMP.CMP_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn eq 1">
+					AND EI.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn eq 2">					
+					AND  CMP.PROG_STAT LIKE '%' || #{searchTxt} || '%'
+				</when>
+			</choose>
+		</if>	
+	</select>
+	
+	<update id="Appday" parameterType="hashmap">
+		UPDATE CMP_APP SET APP_EMP_NO = 1, APP_DAY = SYSDATE , APP_STAT = 5		
+        WHERE APP_NO = #{appno}
+	</update>
+	<select  id = "getapp" parameterType="hashmap" resultType="hashmap">
+		SELECT C.CMP_NO AS CMP_NO, C.CMP_NAME AS CMP_NAME,A.APP_STAT AS APP_STAT
+		FROM CMP C  INNER JOIN CMP_APP A
+                                ON C.CMP_NO = A.CMP_NO
+                  LEFT OUTER JOIN EMP_INFO
+								   ON EMP_INFO.EMP_NO = A.APP_EMP_NO         
+		WHERE A.APP_NO = #{appno}
+	</select>
+	
+	<select id="get_sim" parameterType="hashmap" resultType="hashmap">
+		SELECT S.SIM_NO, CMP.CMP_NO AS CMP_NO, S.CHANNEL_NO AS CHANNEL_NO, SEND_SIZE, RECEIVE_SIZE, RESPONSE_SIZE, ACTUAL_RESPONSE_SIZE
+		        , CMP_NAME , C.CHANNEL_NAME AS CHANNEL_NAME , EI.EMP_NAME AS EMP_NAME
+		FROM SIM_RESULT S INNER JOIN CMP      ON S.CMP_NO = CMP.CMP_NO
+		                INNER JOIN CHANNEL C  ON C.CHANNEL_NO = S.CHANNEL_NO
+		                INNER JOIN EMP_INFO EI ON CMP.MGR_NO = EI.EMP_NO
+		WHERE S.CMP_NO = #{appno}
+	</select>		
+	<!--prog stat update  -->
+	<update id="updateStat" parameterType="hashmap">
+		UPDATE CMP SET PROG_STAT=(SELECT PROG_STAT
+									FROM CMP
+									WHERE CMP_NO = #{appno}
+									)	 +	1
+		WHERE CMP_NO = #{appno}
+		</update>	
+	<!-- 시퀀스 조회 -->
+	<select id="ggetSeq" resultType="String">
+		SELECT CMP_SEQ.NEXTVAL AS SEQ
+		FROM DUAL
+	</select>
+	</mapper>

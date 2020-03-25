@@ -1,0 +1,968 @@
+@charset "UTF-8";
+
+.tbl_area{
+	display: inline-block;
+	width : 1080px;
+	height : 600px;
+	border-top : 2px solid #F2CB07
+}
+.select_header{
+	display: inline-block;
+	width: 1080px;
+	height: 40px;
+}
+.select_main{
+	display: inline-block;
+	width: 1080px;
+	height: 500px;
+	font-size : 13pt;
+}
+.select_footer{
+	display: inline-block;
+	width: 1080px;
+	height: 60px;
+}
+.box_area{
+	display: inline-block;
+	width:370px;
+	height : 90px;
+	margin-left : 100px;
+	font-size : 13pt;
+	border :2px solid #F2B807;
+	vertical-align:top;
+	padding-top : 10px;
+}
+.select_footer > div {
+   display: table;
+   width : 80px;
+   height: 30px;
+   font-size: 10pt;
+   color: #595959;
+   text-align : center;
+   border-radius : 5px;
+   float : right;
+   background-color : #F2B807;
+   padding-top : 7px;
+   margin-top : 10px;
+   margin-left : 10px;
+}
+.select_footer > div:hover {
+   background-color : #F2CB07;
+   cursor : pointer;
+}
+.line{
+	margin-left:10px;
+	height: 60px;
+	width:1080px;
+	color:#595959;
+}
+.circle{
+	display:inline-block;
+	width:30px;
+	height:30px;
+	border-radius:50%;
+	background:#595959;
+	font-size:16px;
+	color:white;
+	text-align:center;  
+	line-height:30px;
+	font-weight: bold;  
+}
+
+.circle1{
+	display:inline-block;
+	width:30px;
+	height:30px;
+	border-radius:50%;
+	background:#F2CB07;
+	font-size:16px;
+	color:black;
+	text-align:center;  
+	line-height:30px;
+	font-weight: bold;
+}
+/* 
+대상목록
+ */
+@charset "UTF-8";
+table {
+   width: 1080px;   
+   text-align: center;
+   border-collapse: collapse;
+   font-size : 10pt;
+font-weight: bold;
+}
+
+/*버튼영역*/
+.content_btn {
+   width : 1080px;
+   height : 50px;
+}
+/*버튼을 div로 만들었습니다.
+  버튼 속성입니다.
+  버튼은 float:right을 썼기때문에 반대로 적어주세요.
+*/
+.content_btn > div {
+   display: table;
+   width : 80px;
+   height: 30px;
+   font-size: 10pt;
+   color: #595959;
+   text-align : center;
+   border-radius : 5px;
+   float : right;
+   background-color : #F2B807;
+   padding-top : 7px;
+   margin-top : 20px;
+   margin-left : 10px;
+   margin-bottom : 5px;
+}
+/*버튼의 hover입니다.*/
+.content_btn > div:hover {
+   background-color : #F2CB07;
+   cursor : pointer;
+}
+/*버튼을 div로 만들었습니다.
+  버튼 속성입니다.
+  버튼은 float:right을 썼기때문에 반대로 적어주세요.
+*/
+.content_srch{
+   width : 1080px;
+   height : 50px;
+}
+.content_srch_btn > div {
+   display: table;
+   width : 80px;
+   height: 25px;
+   font-size: 10pt;
+   font-weight: bold;
+   color: white;
+   text-align : center;
+   border-radius : 5px;
+   float : right;
+   background-color : #595959;
+   padding-top : 5px;
+   margin-top : 10px;
+   margin-left : 10px;
+   margin-bottom : 10px;
+}
+/*버튼의 hover입니다.*/
+.content_srch_btn > div:hover {
+   background-color : #292929;
+   cursor : pointer;
+}
+.content_srch_txt{
+   display : inline-block;
+   width: 200px;
+   height: 25px;
+   font-size: 10pt;
+   margin-top : 10px;
+   margin-left : 10px;
+   border : 1px solid #ccc;
+   float : right;
+   border-radius : 5px;
+}
+
+.content_srch_btn {
+   display : inline-block;
+   width : 1080px;
+   height : 50px;
+}
+.content_srch_DD{
+   display : inline-block;
+   width: 100px;
+   height: 30px;
+   font-size: 10pt;
+   margin-top : 10px;
+   margin-left : 10px;
+   border : 1px solid #ccc;
+   border-radius : 5px;
+   float : right;
+
+}
+.content_srch_DD1{
+   display : none;
+}
+.cntPick {
+display : inline-block;
+width : 200px;
+height : 25px;
+margin-top : 15px;
+margin-left : 10px;
+float : left;
+border: 0;
+font-size: 10pt;
+font-weight: bold;
+color: #595959;
+}
+.sample_1 {
+   width: 100%;
+   height: 50px;
+   border-bottom: 1px solid #cccccc;
+}
+.sample_2 {
+   width: 100%;
+   height: 50px;
+   border-bottom: 1px solid #cccccc;
+}
+.sample_2 input{
+outline: none;
+}
+
+.check {
+background-color : #595959;
+font-size : 10pt;
+font-weight: bold;
+color : #ffffff;
+width: 75px;
+}
+.sample_title1{
+background-color : #595959;
+font-size : 10pt;
+font-weight: bold;
+color : #ffffff;
+width: 75px;
+}
+.sample_title2 {
+background-color : #595959;
+font-size : 10pt;
+font-weight: bold;
+color : #ffffff;
+width: 150px;
+}
+.sample1_txt {
+border : 0;
+width: 150px;
+
+}
+.sample_title3 {
+background-color : #595959;
+font-size : 10pt;
+font-weight: bold;
+color : #ffffff;
+width: 150px;
+
+}
+.sample2_txt {
+border : 0;
+width: 150px;
+text-align:center;
+}
+.sample_title4{
+background-color : #595959;
+font-size : 10pt;
+font-weight: bold;
+color : #ffffff;
+width: 150px;
+
+}
+.sample3_txt {
+border : 0;
+width: 150px;
+text-align:center;
+}
+.sample_title5{
+background-color : #595959;
+font-size : 10pt;
+font-weight: bold;
+color : #ffffff;
+width: 150px;
+}
+.sample4_txt {
+border : 0;
+width: 150px;
+text-align:center;
+}
+.sample_title6 {
+background-color : #595959;
+font-size : 10pt;
+font-weight: bold;
+color : #ffffff;
+width: 100px;
+}
+.sample5_txt {
+border : 0;
+width: 100px;
+text-align:center;
+}
+.sample_title7{
+background-color : #595959;
+font-size : 10pt;
+font-weight: bold;
+color : #ffffff;
+width: 100px;
+
+}
+.sample6_txt {
+border : 0;
+width: 100px;
+
+}
+.sample_title8{
+background-color : #595959;
+font-size : 10pt;
+font-weight: bold;
+color : #ffffff;
+width: 200px;
+
+}
+.sample7_txt {
+border : 0;
+width: 200px;
+
+}
+.sample_title9{
+background-color : #595959;
+font-size : 10pt;
+font-weight: bold;
+color : #ffffff;
+width: 200px;
+}
+.sample8_btn{
+   float: right;
+   display: inline-block;
+   height: 20px;
+   border : 1px solid #cccccc;
+   background-color: #ffffff;
+   border-radius: 3px;
+   cursor: pointer;
+   width: 50px;
+   height: 20px;
+   font-size: 10pt;
+   font-weight: bold;
+   color: #595959;
+   padding: 2px;
+   margin-right: 27px;
+}
+
+.departments_btn:hover {
+   background-color: #F2CB07;
+}
+
+.content_bottom1{
+   display: block;
+   height : 40px;
+   padding : 0px;
+   width: 1200px;
+   font-size : 0px;
+   margin-top: 30px;
+}
+.content_bottom_1_span {
+
+   display: inline-block;
+   position : relative;
+   margin-left : 432px;
+}
+.bottom_btn_1 {
+	display : inline-block;
+	width : 40px;
+	height : 40px;
+	border : 0px;
+	margin-left : 2px;
+	background-color : #595959;
+	color: #F2F2F2;
+	padding-top: 7px;
+	font-size: 11pt;
+	margin-top: 10px;
+}
+.bottom_btn_2 {
+   display : inline-block;
+   width : 40px;
+   height : 40px;
+   margin-left : 2px;
+   border : 0px;
+   background-color : #595959;
+   color: #F2F2F2;
+   padding-top: 7px;
+	font-size: 11pt;
+	margin-top: 10px;
+}
+.bottom_btn_1:hover {
+   background-color: #F2CB07;
+   color: #595959;
+   cursor : pointer;
+}
+.bottom_btn_2:hover {
+   background-color: #F2CB07;
+   color: #595959;
+   cursor : pointer;
+  }
+
+@charset "UTF-8";
+html, body {
+	margin: 0;
+	font-size: 0pt;
+	width: 100%;
+	height: 100%;
+}
+* {
+	box-sizing: border-box;
+	font-family: 'Gothic A1', sans-serif;
+}
+.left_wrap {
+	display: inline-block;
+	vertical-align: top;
+	width: 200px;
+	height: 100%;
+	background-color: #595959;
+	box-shadow: 1px 0px 3px rgba(0, 0, 0, 0.5);
+}
+
+.right_wrap {
+	display: inline-block;
+	vertical-align: top;
+	width: calc(100% - 200px);
+	height: 100%;
+}
+
+.logo_wrap {
+	display: table;
+	width: 100%;
+	height: 60px;
+	background-color: #262626;
+	font-size: 20px;
+	font-weight: bold;
+	color: #F2F2F2;
+}
+
+.logo_wrap > div {
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+	text-align: center;
+	text-indent: -10px;
+}
+
+.logo_wrap > div > img {
+	width: 25px;
+	height: 25px;
+	vertical-align: middle;
+}
+
+.logo_wrap > div > span {
+	margin-left: 5px;
+	color: #F2CB07;
+}
+
+.menu_wrap {
+	font-weight: bold;
+	text-indent: 10px;
+	cursor: pointer;
+}
+
+.first_menu, .first_menu_on {
+	display: table;
+	width: 100%;
+	font-size: 14pt;
+	color: #F2F2F2;
+	min-height: 50px;
+}
+
+.first_menu:hover {
+	background-color: #F2B807;
+	color: #595959;
+}
+
+.first_menu_on {
+	background-color: #F2B807;
+	color: #595959;
+}
+
+.first_menu > div, .first_menu_on > div {
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+}
+
+.menu_txt {
+	display: inline-block;
+	vertical-align: top;
+	width: calc(100% - 50px);
+	text-indent: 0px;
+}
+
+.first_menu_wrap .first_menu .menu_gbn {
+	display: inline-block;
+	vertical-align: top;
+	width: 25px;
+	height: 25px;
+	background-image: url('../images/common/close1.png');
+	background-size: 20px;
+	background-repeat: no-repeat;
+}
+
+.first_menu_wrap .first_menu_on .menu_gbn {
+	display: inline-block;
+	vertical-align: top;
+	width: 25px;
+	height: 25px;
+	background-image: url('../images/common/open1.png');
+	background-size: 20px;
+	background-repeat: no-repeat;
+}
+
+.second_menu, .second_menu_on {
+	display: table;
+	width: 100%;
+	font-size: 12pt;
+	color: #F2F2F2;
+	height: 40px;
+	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.second_menu:hover {
+	background-color: #F2CB07;
+	color: #595959;
+}
+
+.second_menu_on {
+	background-color: #F2CB07;
+	color: #595959;
+}
+
+.second_menu > div, .second_menu_on > div {
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+}
+
+.gnb_wrap {
+	min-width: 1080px;
+	height: 60px;
+	background-color: #EEEEEE;
+	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.gnb_area {
+	display: inline-block;
+	vertical-align: top;
+	width: calc(100% - 260px);
+	height: 60px;
+}
+
+.gnb_area > div {
+	display: table;
+	width: 100%;
+	height: 60px;
+	font-size: 14pt;
+	font-weight: bold;
+	color: #595959;
+}
+
+.gnb_area > div > div {
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+	text-indent: 20px;
+}
+
+.person_area {
+	display: inline-block;
+	vertical-align: top;
+	width: 240px;
+	height: 50px;
+	padding: 5px 10px;
+}
+
+.person_area > div {
+	display: inline-block;
+	vertical-align: top;
+	height: 50px;
+}
+
+.p_img {
+	width: 50px;
+	background-color: #343434;
+	border-radius: 3px;
+}
+
+.p_info {
+	width: 110px;
+	padding: 0px 10px;
+}
+
+.p_info > div {
+	display: table;
+	width: 100%;
+	height: 50px;
+	font-size: 12pt;
+	font-weight: bold;
+	color: #595959;
+}
+
+.p_info > div > div {
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+}
+
+.p_btn_area {
+	width: 60px;
+}
+
+.p_btn_space {
+	height: 6px;
+}
+
+.p_btn {
+	width: calc(100% - 2px);
+	height: 20px;
+	background-color: #F2B807;
+	border: 1px solid #707070;
+	border-radius: 3px;
+	font-size: 10px;
+	cursor: pointer;
+}
+
+.p_btn:hover {
+	background-color: #F2CB07;
+}
+
+.p_btn > div {
+	display: table;
+	width: 100%;
+	height: 20px;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #595959;
+}
+
+.p_btn > div > div {
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+	text-align: center;
+}
+
+.title_area {
+	text-indent: 20px;
+	padding: 20px 0px;
+	font-size: 20pt;
+	font-weight: bold;
+	color: #595959;
+}
+
+.content_area {
+	width: 100% !important;
+	/* height: calc(100% - 135px); */
+	font-size: 14pt;
+}
+
+.right_wrap > .slimScrollDiv {
+	display: inline-block;
+	height: calc(100% - 145px) !important;
+	width: calc(100% - 40px) !important;
+	min-width: 1040px !important;
+	padding: 0px 20px;
+}
+.center1 {
+	height: 30px;
+	padding: 0px 50px;
+}
+
+.center0 {
+	display: inline-block;
+	width : 1080px;
+	height: 50px;
+	font-size:0pt;
+	text-align:right;
+}
+
+.tbl_set_top {
+	height: 80px;
+}
+.tbl_set{
+	height: 80px;
+}
+
+.set1:hover {
+	background-color: #F2CB07;
+	cursor: pointer;
+}
+
+.set1 {
+	height: 50px;
+}
+.set2 {
+	height: 70px;
+}
+
+.tbl {
+	width : 1080px;
+	border : 0px;
+	vertical-align : top;
+}
+
+.tb {
+	color: black;
+	font-size: 15pt;
+	background-color: #FFFF8F;
+	border: none;
+	text-align: center;
+	width : 250px;
+	height: 23px;
+}
+
+.tbb {
+	color: black;
+	font-size: 10pt;
+	background-color: #FFFF8F;
+	border: none;
+	width: 700px;
+	height: 80px;
+	text-align: left;
+}
+.border_title{
+	background-color:#F2F2F2;
+	border-right : 1px solid #262626;
+	border-bottom : 1px solid #262626;
+}
+.border_content{
+	border-right : 1px solid #262626;
+	border-bottom : 1px solid #262626;
+}
+.border3 {
+	border-bottom: 1px solid #BDBDBD;
+	border-right : 1px solid #BDBDBD;
+}
+.border4 {
+	border-bottom: 1px solid #BDBDBD;
+	border-right : 1px solid #BDBDBD;
+	border-left : 1px solid #BDBDBD;
+}
+.tbl_opt {
+	font-size: 10pt;
+	font-weight: bold;
+}
+.tbl1 {
+	border-top : 2px solid #F2CB07;
+	border-left : 1px solid #262626;
+}  
+.tbl_color{
+	background-color:#EEEEEE;
+}
+.tbl_color1{
+	background-color:white;
+}
+.table_gbn {
+	display: inline-block;
+	vertical-align: top;
+	width: 30px;
+	height: 30px;
+	background-image: url('../images/out/search.png');
+	background-size: 30px;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	background-color: white;
+	border: none;
+}
+.center2 {
+	height: 50px;
+}
+.center3 {
+	height: 100px;
+}
+.expl {
+	
+	width : 1080px;
+	height: 70px;
+	font-size: 20pt;
+	font-weight: bold;
+	color:#595959;
+}
+
+.txt {
+	display: inline-block;
+	width:1080px;
+	background-color: white;
+	height: 100px;
+	font-weight: normal;
+	font-size: 10pt;
+	border-top : 2px solid #F2CB07;
+}
+.btn_area {
+	width: 1080px;
+	height: 50px;
+}
+.save_Btn, .next_Btn, .back_Btn {
+   display: table;
+   width : 80px;
+   height: 30px;
+   font-size: 10pt;
+   color: #595959;
+   text-align : center;
+   border-radius : 5px;
+   float : right;
+   background-color : #F2B807;
+   padding-top : 7px;
+   margin-top : 10px;
+   margin-left : 10px;
+}
+.save_Btn:hover, .next_Btn:hover, .back_Btn:hover {
+   background-color : #F2CB07;
+   cursor : pointer;
+}
+
+.page1{
+	display:inline-block;
+	width: 1200px;
+	height: 80px;
+}
+.btn_opt {
+	display:inline-block;
+	height: 30px;
+	width: 80px;
+	background-color: #F2B807;
+	font-weight: bold;
+	font-size: 10pt;
+	vertical-align: top;
+	color : #595959;
+	border-radius : 5px;
+	border:none;
+}
+.btn_opt:hover{
+	background-color : #F2CB07;
+	color : #595959;
+	
+}
+.search {
+	display: inline-block;
+	background-color: #EAEAEA;
+	width: 300px;
+	height: 50px;
+	padding: 0px;
+	vertical-align: top;
+	border: none;
+	font-size:10pt;
+}
+.search0 {
+	display: inline-block;
+	background-color: white;
+	width: 1099px;
+	height: 30px;
+	font-size: 10pt;
+}
+.question {
+	display: inline-block;
+	background-image: url('../images/out/icon3.png');
+	background-repeat: no-repeat;
+	width: 100px;
+	height: 50px;
+	cursor:pointer;
+}
+.ques {
+	background-color: #EAEAEA;
+	display: inline-block;
+	width: 100px;
+	height: 50px;
+}
+.num {
+	display: inline-block;
+	width:1080px;
+	height: 80px;
+	text-align: center;
+	font-size:0px;
+}
+.num_opt {
+	display: inline-block;
+	background-color: #EAEAEA;
+	width: 50px;
+	height: 50px;
+	color: black;
+	font-size: 10pt;
+	cursor: pointer;
+}
+.num_1 {
+	display: inline-block;
+	background-color: #F2B807;
+	width: 50px;
+	height: 50px;
+	color: black;
+	font-size: 15pt;
+}
+
+.customer {
+	width: 200px;
+	font-size: 30pt;
+	font-weight: bold;
+}
+
+
+.tbl_border{
+	border-bottom: 1px solid black;
+}
+.tbl_border1{
+	border-bottom: 1px solid #EEEEEE;
+}
+ .u_line{
+	display:inline-block;
+	width:1080px;
+	height: 5px;
+} 
+.table_txt10{
+   	display: inline-block;
+    vertical-align: top;
+    /*버튼과 같이해서 width를 조절해주세요.*/
+    width: 80%;
+    height: 35px;
+    background: #fff;
+    border: 0px solid #eee;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 10pt;
+    outline: none;
+    color:#000000;
+    line-height: 35px;
+}
+
+ /* 목록 체크 박스 스타일 */
+.list_chbox {
+    display: none;
+    vertical-align: middle;
+}
+.chbox_lbl {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #e4e4e4;
+    border-radius : 3px;
+    background-color: #ffffff;
+    cursor: pointer;
+    vertical-align: middle;
+}
+.list_chbox:checked + label {
+    background-color: #F2B807;
+}
+.chk_grp {
+    display: inline-block;
+    height: 50px;
+    /* line-height: 50px; */
+    vertical-align: middle;
+}
+.chk_txt {
+    font-size: 10pt; 
+    color: #272727; 
+    vertical-align: middle; 
+    cursor: pointer; 
+    margin-left: 10px;
+}
+.target_g{
+	display: inline-block;
+    height: 50px;
+    vertical-align: middle;
+}
+.paging_area{
+	display: inline-block;
+    width: 1200px;
+    text-align: center;
+    position: relative;
+}
+.bottom_btn_2{
+	display: inline-block;
+    width: 40px;
+    height: 40px;
+    margin-left: 2px;
+    border: 0px;
+    background-color: #595959;
+    color: #F2F2F2;
+}

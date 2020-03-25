@@ -1,0 +1,237 @@
+/* 팝업 꺼두기 - 임시 */
+.pop_off {
+    display: none;
+}
+
+/* 팝업 감싸기 */
+.pop_wrap {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+/* 팝업 배경 */
+.pop_bg {
+    width: 100%;
+    height: 100%;
+    background-color: #000000a2;
+}
+/* 팝업 기본형태 */
+.pop {
+    display: inline-block;
+    background-color: #ffffff;
+    position:absolute;
+}
+/* 팝업의 제목부분 */
+.pop_title_area {
+    height: 40px;
+    line-height: 40px;
+
+    font-size: 0;
+
+    color: #f2f2f2;
+    background-color: #272727;
+}
+/* 팝업의 제목 텍스트 */
+.pop_title_text {
+    display: inline-block;
+    width: 80%;
+    height: 100%;
+
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: left;
+    text-indent: 10px;
+}
+/* 팝업 타이틀 아이콘 */
+.pop_icon {
+    position: relative;
+    top: 4px;
+
+    width: 20px;
+}
+/* 팝업 닫기 영역 */
+.pop_close {
+    display:inline-block;
+    width: 20%;
+    height: 100%;
+
+    text-align: right;
+    vertical-align: top;
+}
+/* 팝업 닫기 버튼 */
+#BtnPopClose {
+    position: relative;
+    top: 10px;
+    left: -10px;
+
+    cursor: pointer;
+}
+/* 팝업 내용 영역 */
+.pop_contents {
+    width: 100%;
+    height: calc(100% - 90px);
+    padding: 10px;
+
+    color: #272727;
+    font-size: 12pt;
+    
+    text-align: left;
+}
+/* 팝업 버튼 영역 */
+.pop_btn_area {
+    height: 50px;
+    line-height: 50px;
+    vertical-align: center;
+    text-align: right;
+}
+.search_pop_title {
+	border : 1px solid #e9e9e9;
+	border-radius : 5px;
+	height : 50px;
+}
+.search_pop_title > td {
+	background-color : #595959;
+	color : #fff;
+	font-size: 10pt;
+	font-weight: bold;
+	text-align : center;
+}
+
+.search_pop_tbody > tr > td{
+	text-align : center;
+}
+/* 팝업 크기 관련 */
+.pop_size_small {
+    width: 400px;
+    height: 200px;
+    top: calc(50% - 100px);
+    left: calc(50% - 200px);
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+}
+
+
+
+/* 
+    밑 CSS는 주소 검색과 관련된 팝업입니다.
+*/
+/* 주소 검색 팝업 크기 */
+.pop_size_address {
+    width: 400px;
+    height: 550px;
+    top: calc(50% - 275px);
+    left: calc(50% - 200px);
+}
+/* 주소 검색 입력창 */
+.pop_address_search {
+    height: 50px;
+}
+.input_address {
+    width: 100%;
+    height: 100%;
+
+    font-size: 13pt;
+    text-indent: 10px;
+    border: 1px solid #cacaca;
+}
+.input_address2 {
+    width: 100%;
+    height: 50px;
+
+    font-size: 13pt;
+    text-indent: 10px;
+    border: 1px solid #cacaca;
+    border-radius : 5px;
+}
+.input_address2::placeholder {
+    font-size: 13pt;
+    color: #cacaca;
+}
+.input_address::placeholder {
+    font-size: 13pt;
+    color: #cacaca;
+}
+.address_search_icon {
+    float:right;
+    position: relative;
+    top: -40px;
+    left: -10px;
+
+    cursor: pointer;
+}
+/* 주소 검색 팝업 내용 */
+.pop_address_contents {
+    width: 100%;
+    height: calc(100% - 90px);
+    padding: 30px;
+
+    color: #272727;
+    font-size: 12pt;
+    
+    text-align: left;
+}
+/* 주소 팝업 내용 텍스트 스타일 */
+.address_acc_text {
+    color: #F2B807;
+}
+.address_tip_text {
+    font-weight: bold;
+    font-size: 14pt;
+}
+/* 주소 검색 결과 팝업 배경색 */
+.pop_gray {
+    background-color: #E9E9E9;
+}
+.address_search_cancel {
+    float:right;
+    position: relative;
+    top: -35px;
+    left: -20px;
+
+    cursor: pointer;
+}
+/* 주소 팝업 내용의 카드형식 */
+.address_contents_card {
+    background-color: #ffffff;
+    border: 1px solid #CACACA;
+    width: 100%;
+}
+.address_result_wrap {
+    border-bottom: 1px solid #CACACA;
+    padding: 10px;
+}
+.address_contents_card>div>div {
+    height: 30px;
+    line-height: 30px;
+
+    vertical-align: middle;
+}
+.address_contents_card>div>div:hover {
+    cursor: pointer;
+}
+.address_result_paging {
+    height: 40px;
+    line-height: 40px;
+
+    vertical-align: middle;
+    text-align: center;
+}
+/* 주소 검색 팝업 둥근 아이콘 */
+.icon_border {
+    display: inline-block;
+    width: 45px;
+    height: 25px;
+    line-height: 25px;
+
+    border: 1px solid #CACACA;
+    border-radius: 5px;
+
+    color: #2ba0ff;
+    font-size: 10pt;
+    font-weight: 700;
+
+    text-align:center;
+    vertical-align: middle;
+}
+

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="machine">
+	<update id="emailReceptRandom">
+		UPDATE EMAIL_S_MACHINE 
+		SET RECEPT_WHETH = CEIL(DBMS_RANDOM.VALUE(0, 2)) - 1
+		WHERE TO_CHAR(SEND_DAY, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+	</update>
+	
+	<update id="emailRealrtRandom">
+		UPDATE EMAIL_S_MACHINE 
+		SET REALRT_WHETH = CEIL(DBMS_RANDOM.VALUE(0, 2)) - 1
+		WHERE TO_CHAR(SEND_DAY, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+		AND RECEPT_WHETH = 1
+	</update>
+	
+	<update id="emailRealrtNone">
+		UPDATE EMAIL_S_MACHINE 
+		SET REALRT_WHETH = 0
+		WHERE TO_CHAR(SEND_DAY, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+		AND RECEPT_WHETH = 0
+	</update>
+	
+	<update id="letterReceptRandom">
+		UPDATE LETTER_S_MACHINE 
+		SET RECEPT_WHETH = CEIL(DBMS_RANDOM.VALUE(0, 2)) - 1
+		WHERE TO_CHAR(SEND_DAY, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+	</update>
+	
+	<update id="letterRealrtRandom">
+		UPDATE LETTER_S_MACHINE 
+		SET REALRT_WHETH = CEIL(DBMS_RANDOM.VALUE(0, 2)) - 1
+		WHERE TO_CHAR(SEND_DAY, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+		AND RECEPT_WHETH = 1
+	</update>
+	
+	<update id="letterRealrtNone">
+		UPDATE LETTER_S_MACHINE 
+		SET REALRT_WHETH = 0
+		WHERE TO_CHAR(SEND_DAY, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+		AND RECEPT_WHETH = 0
+	</update>
+	
+	<update id="cmpMachineEnd">
+		UPDATE CMP SET PROG_STAT = 6
+		WHERE TO_CHAR(EDATE + 1, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+		AND PROG_STAT = 5
+	</update>
+	
+	<select id="getContent" resultType="hashmap">
+		select * 
+		from email_s_machine
+	</select>
+</mapper>

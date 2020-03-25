@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lead">
+	<select id="getLeadlist" parameterType="hashmap"
+		resultType="hashmap">
+		SELECT *
+		FROM (
+		SELECT L.LEAD_NO AS L_NO, L.LEAD_NAME AS L_NM, C1.CLIENT_NAME AS C1_NM,
+			   C2.COMP_NAME AS C2_NM, CP.CONG_PATH_NAME CP_NM, C1.CLIENT_PH AS PH,
+			   LS.LEAD_STAT_NAME AS LS_NM, E.EMP_NAME AS E_NM, TO_CHAR(L.LEAD_DATE,'YYYY-MM-DD') AS L_DT,
+			   ROW_NUMBER() OVER(ORDER BY L.LEAD_NO DESC) AS RNUM, L.HISTORY_CHK AS L_CHK, E.EMP_NO AS E_NO
+		FROM LEAD L INNER JOIN CLIENT C1
+							ON L.CLIENT_NO = C1.CLIENT_NO
+					INNER JOIN COMP C2
+							ON C1.COMP_NO = C2.COMP_NO
+					INNER JOIN EMP_INFO E
+							ON L.EMP_NO = E.EMP_NO
+					INNER JOIN LEAD_STAT LS
+							ON L.LEAD_STAT_NO = LS.LEAD_STAT_NO
+					INNER JOIN CONG_PATH CP
+							ON L.CONG_PATH_NO = CP.CONG_PATH_NO
+							AND L.DEL_YN = 1
+							
+		<if test="searchTxt != null and searchTxt != ''">
+			<choose>
+				<when test="searchGbn2 eq 0">
+					AND C1.CLIENT_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn2 eq 1">
+					AND C2.COMP_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn2 eq 2">
+					AND E.EMP_NAME LIKE'%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn2 eq 3">
+					AND LS.LEAD_STAT_NAME LIKE'%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn2 eq 4">
+					AND C1.CLIENT_NAME LIKE '%' || #{searchTxt} || '%'
+					OR C2.COMP_NAME LIKE '%' || #{searchTxt} || '%'
+					OR E.EMP_NAME LIKE'%' || #{searchTxt} || '%'
+					OR LS.LEAD_STAT_NAME LIKE'%' || #{searchTxt} || '%'
+					OR L.LEAD_NAME LIKE'%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn2 eq 5">
+					AND L.LEAD_NAME LIKE'%' || #{searchTxt} || '%'
+				</when>
+			</choose>
+		</if>
+		<if test="searchGbn1 != null">
+			<choose>
+				<when test = "searchGbn1 eq 0">
+					
+				</when>
+				<when test = "searchGbn1 eq 1">
+					AND L.LEAD_DATE LIKE TO_DATE(SYSDATE,'YYYY-MM-DD')
+				</when>
+				<when test = "searchGbn1 eq 2">
+					AND L.HISTORY_CHK = 1
+				</when>
+			</choose>
+		</if>
+		) SQ
+		WHERE SQ.RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	<select id="getleadCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*)
+		FROM (
+		SELECT L.LEAD_NO AS L_NO, L.LEAD_NAME AS L_NM, C1.CLIENT_NAME AS C1_NM,
+			   C2.COMP_NAME AS C2_NM, CP.CONG_PATH_NAME CP_NM, C1.CLIENT_PH AS PH,
+			   LS.LEAD_STAT_NAME AS LS_NM, E.EMP_NAME AS E_NM, TO_CHAR(L.LEAD_DATE,'YYYY-MM-DD') AS L_DT,
+			   ROW_NUMBER() OVER(ORDER BY L.LEAD_NO DESC) AS RNUM, L.HISTORY_CHK AS L_CHK
+		FROM LEAD L INNER JOIN CLIENT C1
+							ON L.CLIENT_NO = C1.CLIENT_NO
+					INNER JOIN COMP C2
+							ON C1.COMP_NO = C2.COMP_NO
+					INNER JOIN EMP_INFO E
+							ON L.EMP_NO = E.EMP_NO
+					INNER JOIN LEAD_STAT LS
+							ON L.LEAD_STAT_NO = LS.LEAD_STAT_NO
+					INNER JOIN CONG_PATH CP
+							ON L.CONG_PATH_NO = CP.CONG_PATH_NO
+							AND L.DEL_YN = 1
+		<if test="searchTxt != null and searchTxt != ''">
+			<choose>
+				<when test="searchGbn2 eq 0">
+					AND C1.CLIENT_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn2 eq 1">
+					AND C2.COMP_NAME LIKE '%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn2 eq 2">
+					AND E.EMP_NAME LIKE'%' || #{searchTxt} || '%'
+				</when>
+				<when test="searchGbn2 eq 3">
+					AND LS.LEAD_STAT_NAME LIKE'%' || #{searchTxt} || '%'
+				</when>
+			</choose>
+		</if>
+		<if test="searchGbn1 != null">
+			<choose>
+				<when test = "searchGbn1 eq 0">
+					
+				</when>
+				<when test = "searchGbn1 eq 1">
+					AND L.LEAD_DATE LIKE TO_DATE(SYSDATE,'YYYY-MM-DD')
+				</when>
+				<when test = "searchGbn1 eq 2">
+					AND L.HISTORY_CHK = 1
+				</when>
+			</choose>
+		</if>
+		) SQ
+	</select>
+	<update id="editLs" parameterType="hashmap">
+		UPDATE LEAD SET LEAD_STAT_NO = (SELECT LEAD_STAT_NO
+		                                FROM LEAD_STAT
+		                                WHERE LEAD_STAT_NAME = #{lsNm})
+		WHERE LEAD_NO = ${lNo}
+	</update>	
+	<select id = "getclientList" parameterType = "hashmap" resultType = "hashmap">
+		SELECT *
+		FROM(SELECT C.CLIENT_NO , C.CLIENT_NAME , C2.COMP_NAME, C2.COMP_NO
+			 		,C2.COMP_ZC, C2.COMP_ADDR, C2.COMP_DETAIL_ADDR,
+             ROW_NUMBER() OVER(ORDER BY CLIENT_NO ASC) AS RNUM
+     		 FROM CLIENT C INNER JOIN COMP C2
+               		               ON C.COMP_NO = C2.COMP_NO) Z
+            WHERE Z.RNUM BETWEEN #{startCnt} AND #{endCnt}
+        <if test="searchTxt != null and searchTxt != ''">
+        	AND CLIENT_NAME LIKE'%' || #{searchTxt} || '%'
+        </if>
+	</select>
+	<select id = "getpopCnt" parameterType = "hashmap" resultType = "Integer">
+		SELECT COUNT(*)
+		FROM(SELECT C.CLIENT_NO , C.CLIENT_NAME , C2.COMP_NAME, C2.COMP_NO
+					,C2.COMP_ZC, C2.COMP_ADDR, C2.COMP_DETAIL_ADDR
+     		 FROM CLIENT C INNER JOIN COMP C2
+               				       ON C.COMP_NO = C2.COMP_NO
+			<if test="searchTxt != null and searchTxt != ''">
+        	AND CLIENT_NAME LIKE'%' || #{searchTxt} || '%'
+        	</if>
+        	) A
+	</select>
+	<select id="getLeadData" parameterType="hashmap" resultType="hashmap">
+		SELECT L.LEAD_NO, L.LEAD_NAME, LS.LEAD_STAT_NAME, CM.COMP_NAME, CM.COMP_PH, C.CLIENT_NAME, L.EMP_NO,
+		                    C.CLIENT_PH, C.CLIENT_EMAIL, C.CLIENT_WEBSITE, C.CLIENT_FAX, CP.CONG_PATH_NAME, 
+		                    T.TEAM_NAME, T.TEAM_CALL, EI.EMP_NAME, EI.EMP_PHONE, CM.COMP_ZC, CM.COMP_ADDR, CM.COMP_DETAIL_ADDR
+		FROM LEAD L INNER JOIN CLIENT C
+		                    ON L.CLIENT_NO = C.CLIENT_NO                    
+		            INNER JOIN EMP_INFO EI
+		                    ON L.EMP_NO = EI.EMP_NO
+		            INNER JOIN LEAD_STAT LS
+		                    ON L.LEAD_STAT_NO = LS.LEAD_STAT_NO
+		            INNER JOIN CONG_PATH CP
+		                    ON L.CONG_PATH_NO = CP.CONG_PATH_NO
+		            INNER JOIN COMP CM
+		                    ON C.COMP_NO = CM.COMP_NO
+		            INNER JOIN TEAM T
+		                    ON EI.TEAM_NO = T.TEAM_NO
+		                    AND L.LEAD_NO = #{lead_no}
+	</select>
+	<insert id = "insertLead" parameterType = "hashmap">
+		INSERT INTO LEAD(LEAD_NO, CLIENT_NO, EMP_NO, LEAD_STAT_NO, CONG_PATH_NO, LEAD_NAME)
+		VALUES(LEAD_SEQ.NEXTVAL,#{cl_no},#{emp_no},#{lead_stat},#{cong_path},#{lead_name})
+	</insert>
+	<select id="getClient" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM (SELECT C.CLIENT_NO, C.CLIENT_NAME, C.CLIENT_DEPART_NAME, C.CLIENT_PH , C.CLIENT_EMAIL, ROW_NUMBER() OVER ( ORDER BY CLIENT_NO DESC) AS RNUM
+		      FROM CLIENT C INNER JOIN (SELECT C.COMP_NO
+		                                FROM CLIENT C INNER JOIN LEAD L
+		                                                      ON C.CLIENT_NO = L.CLIENT_NO
+		                                                      AND L.LEAD_NO = #{lead_no}) A
+		                            ON 1 = 1
+		                            AND C.COMP_NO = A.COMP_NO) B
+		WHERE B.RNUM BETWEEN 1 AND #{view_cnt}                            	
+	</select>
+	<select id="getClientCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM CLIENT C INNER JOIN (SELECT C.COMP_NO
+		                          FROM CLIENT C INNER JOIN LEAD L
+		                                                ON C.CLIENT_NO = L.CLIENT_NO
+		                                                AND L.LEAD_NO = #{lead_no}) A
+		                      ON 1 = 1
+		                      AND C.COMP_NO = A.COMP_NO
+	</select>
+	<update id = "deleteLead" parameterType = "hashmap">
+		UPDATE LEAD SET DEL_YN = 0
+		WHERE DEL_YN = 1
+		AND LEAD_NO = #{lead_no}
+	</update>
+	<select id="getLeadOpin" parameterType="hashmap" resultType="hashmap">
+		SELECT LO.LEAD_OPIN_NO, LO.LEAD_OPIN_CON, TO_CHAR(LO.LEAD_OPIN_DATE,'YYYY-MM-DD HH24:MI:SS') AS LEAD_OPIN_DATE, EI.EMP_NAME, EP.EMP_POSI_NAME, EI.EMP_NO
+		FROM LEAD_OPIN LO INNER JOIN EMP_INFO EI
+		                          ON LO.EMP_NO = EI.EMP_NO
+		                  INNER JOIN EMP_POSI EP
+		                          ON EI.EMP_POSI_NO = EP.EMP_POSI_NO
+		                          AND LO.LEAD_OPIN_DEL_YN = 1
+		                          AND LO.LEAD_NO = #{lead_no}
+	</select>
+	<select id="getLeadOpinCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*)
+		FROM LEAD_OPIN LO INNER JOIN EMP_INFO EI
+		                          ON LO.EMP_NO = EI.EMP_NO
+		                  INNER JOIN EMP_POSI EP
+		                          ON EI.EMP_POSI_NO = EP.EMP_POSI_NO
+		                          AND LO.LEAD_OPIN_DEL_YN = 1
+		                          AND LO.LEAD_NO = #{lead_no}
+	</select>
+	<insert id="addLeadOpin" parameterType="hashmap">
+		INSERT INTO LEAD_OPIN (LEAD_OPIN_NO, EMP_NO, LEAD_NO, LEAD_OPIN_CON) VALUES (LEAD_OPIN_SEQ.NEXTVAL, #{sEmpNo}, #{lead_no}, #{opinCon})
+	</insert>
+	<update id="delLeadOpin" parameterType="hashmap">
+		UPDATE LEAD_OPIN 
+		SET LEAD_OPIN_DEL_YN = '0'
+		WHERE LEAD_OPIN_NO = #{opin_no}
+	</update>
+	<update id="modLeadStat" parameterType="hashmap">
+		UPDATE LEAD
+		SET LEAD_STAT_NO = (SELECT LEAD_STAT_NO
+		                    FROM LEAD_STAT
+		                    WHERE LEAD_STAT_NAME = #{lead_nm})
+		WHERE LEAD_NO = #{lead_no}
+	</update>
+	<select id="getLeadSche" parameterType="hashmap" resultType="hashmap">
+		SELECT S.SCHE_NO, S.SCHE_CON, S.SCHE_RES, TO_CHAR(S.SCHE_SDATE,'YY / MM / DD') AS SDATE, TO_CHAR(S.SCHE_EDATE,'YY / MM / DD') AS EDATE, S.SCHE_IMPORTANCE AS SC_IP , EI.EMP_NAME,
+		        EP.EMP_POSI_NAME AS EMP_PNM, L.LEAD_NAME, C.CLIENT_POSI_NAME AS CLIENT_PNM, CC2.CODE_S_CATE, CC2.CODE_NAME
+		FROM SCHE S INNER JOIN EMP_INFO EI
+		                    ON S.EMP_NO = EI.EMP_NO
+		            INNER JOIN EMP_POSI EP
+		                    ON EI.EMP_POSI_NO = EP.EMP_POSI_NO
+		            INNER JOIN SCHE_LEAD SL
+		                    ON S.SCHE_NO =  SL.SCHE_NO
+		                    AND S.DEL_YN = 1
+		            INNER JOIN LEAD L
+		                    ON SL.LEAD_NO = L.LEAD_NO
+		            INNER JOIN CLIENT C
+		                    ON L.CLIENT_NO = C.CLIENT_NO        
+		            INNER JOIN COMMON_CODE CC1
+		                    ON S.SCHE_DIV_NO = CC1.CODE_S_CATE
+		                    AND CC1.CODE_L_CATE = 2
+		            INNER JOIN COMMON_CODE CC2
+		                    ON S.SCHE_ACTI_NO = CC2.CODE_S_CATE
+		                    AND CC2.CODE_L_CATE = 3
+		WHERE SL.LEAD_NO = #{lead_no}
+		AND ( ${filter} )
+		
+	</select>
+	
+	<insert id = "insertattach" parameterType="hashmap">
+		INSERT INTO LEAD_ATTACH(LEAD_ATTACH_NO, LEAD_NO, LEAD_ATTACH_NAME)
+		VALUES(LEAD_ATTACH_SEQ.NEXTVAL, #{lead_no}, #{upload_file})
+	</insert>
+	
+	<select id = "getattachlist" parameterType = "hashmap" resultType = "hashmap">
+		SELECT *
+		FROM LEAD_ATTACH
+		WHERE LEAD_NO = #{lead_no}
+		AND DEL_YN = 1
+	</select>
+	
+	<update id = "updateattach" parameterType = "hashmap">
+		UPDATE LEAD_ATTACH SET DEL_YN = 0
+		WHERE DEL_YN = 1
+		AND LEAD_ATTACH_NO = #{lead_att_no}
+	</update>
+	<select id = "updateList" parameterType = "hashmap" resultType = "hashmap">
+		SELECT *
+		FROM (
+		SELECT L.LEAD_NO AS L_NO, L.LEAD_NAME AS L_NM, C1.CLIENT_NO AS C1_NO, C1.CLIENT_NAME AS C1_NM, C2.COMP_NAME AS C2_NM , CP.CONG_PATH_NO AS CP_NO, CP.CONG_PATH_NAME CP_NM, C1.CLIENT_PH AS PH, 
+		       LS.LEAD_STAT_NAME AS LS_NM, LS.LEAD_STAT_NO AS LS_NO, E.EMP_NO AS E_NO , E.EMP_NAME AS E_NM, C2.COMP_ZC AS FA, C2.COMP_ADDR AS MA, C2.COMP_DETAIL_ADDR AS LA
+		FROM LEAD L INNER JOIN CLIENT C1
+		            ON L.CLIENT_NO = C1.CLIENT_NO
+		            INNER JOIN COMP C2
+		            ON C1.COMP_NO = C2.COMP_NO
+		            INNER JOIN EMP_INFO E
+		            ON L.EMP_NO = E.EMP_NO
+		            INNER JOIN LEAD_STAT LS
+		            ON L.LEAD_STAT_NO = LS.LEAD_STAT_NO
+		            INNER JOIN CONG_PATH CP
+		            ON L.CONG_PATH_NO = CP.CONG_PATH_NO
+		            -- 필터링
+		) SQ
+		WHERE SQ.L_NO = #{lead_no}
+	</select>
+	<update id = "updateLead" parameterType = "hashmap">
+		UPDATE LEAD SET CLIENT_NO = #{ci_no} , EMP_NO = #{em_no}, LEAD_STAT_NO = #{lead_stat}, CONG_PATH_NO = #{cong_path}, LEAD_NAME = #{lead_name}
+		WHERE LEAD_NO = #{lead_no}
+	</update>
+	<!-- 리드에서 기회로 정보 넘기기 -->
+	<insert id="insertChn" parameterType="hashmap">
+		INSERT INTO BSS_CHN(CHN_NO, LEAD_NO, CHN_NAME, EMP_NO)
+		VALUES(BSS_CHN_SEQ.nextval, #{lead_no}, #{lead_nm}, #{empNo})
+	</insert>
+	
+	<!-- 이미 넘어간 리드인지 확인 -->
+	<select id="chkBssChn" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM BSS_CHN
+		WHERE LEAD_NO = #{lead_no}
+	</select>
+
+	<update id = "leadchk" parameterType = "hashmap">
+		UPDATE LEAD SET HISTORY_CHK = 1
+		WHERE LEAD_NO = #{lead_no}
+	</update>
+	<update id = "leadchkreset" parameterType = "hashmap">
+		UPDATE LEAD SET HISTORY_CHK = 0
+	</update>
+	<select id="getLeadCard" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM (
+		SELECT L.LEAD_NO AS L_NO, L.LEAD_NAME AS L_NM, C1.CLIENT_NAME AS C1_NM,
+			   C2.COMP_NAME AS C2_NM, CP.CONG_PATH_NAME CP_NM, C1.CLIENT_PH AS PH,
+			   LS.LEAD_STAT_NAME AS LS_NM, E.EMP_NAME AS E_NM, TO_CHAR(L.LEAD_DATE,'YYYY-MM-DD') AS L_DT,
+			   ROW_NUMBER() OVER(ORDER BY L.LEAD_NO DESC) AS RNUM, L.HISTORY_CHK AS L_CHK, E.EMP_NO AS E_NO
+		FROM LEAD L INNER JOIN CLIENT C1
+							ON L.CLIENT_NO = C1.CLIENT_NO
+					INNER JOIN COMP C2
+							ON C1.COMP_NO = C2.COMP_NO
+					INNER JOIN EMP_INFO E
+							ON L.EMP_NO = E.EMP_NO
+					INNER JOIN LEAD_STAT LS
+							ON L.LEAD_STAT_NO = LS.LEAD_STAT_NO
+					INNER JOIN CONG_PATH CP
+							ON L.CONG_PATH_NO = CP.CONG_PATH_NO
+							AND L.DEL_YN = 1
+		) SQ
+	</select>
+</mapper>

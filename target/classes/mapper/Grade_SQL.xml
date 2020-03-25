@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="grade">
+	<select id="getGrade" resultType="hashmap">
+		SELECT RANK() OVER(ORDER BY G.CC_GRADE_NO DESC) AS RNK, G.CC_GRADE_NO, G.CC_GRADE_NAME, G.CC_GRADE_COLOR, NVL(C.CNT, 0) AS CNT
+		FROM( SELECT CC_GRADE_NO, COUNT(*) AS CNT
+		      FROM COMP
+		      GROUP BY CC_GRADE_NO) C RIGHT OUTER JOIN COMP_CLIENT_GRADE G
+		                                      		ON C.CC_GRADE_NO = G.CC_GRADE_NO
+	</select>
+	<select id="getGradeList" parameterType="hashmap" resultType="hashmap">
+		SELECT RNUM, COMP_NO, CC_GRADE_NAME, COMP_NAME, COMP_SECT_NAME, COMP_STAT_NAME, EMP_NAME
+		FROM ( SELECT C.COMP_NO, G.CC_GRADE_NAME, C.COMP_NAME, ST.COMP_STAT_NAME, SE.COMP_SECT_NAME, E.EMP_NAME,
+					  <choose>
+						<when test="srchVal eq '전체'">
+							ROW_NUMBER() OVER(ORDER BY C.COMP_NO DESC) AS RNUM
+						</when>
+						<when test="srchVal eq '등급'">
+							ROW_NUMBER() OVER(ORDER BY G.CC_GRADE_NO DESC) AS RNUM
+						</when>
+						<when test="srchVal eq '회사명'">
+							ROW_NUMBER() OVER(ORDER BY CASE
+		                                                  WHEN C.COMP_NAME BETWEEN '가' AND '힣' THEN 1
+		                                                  <![CDATA[
+		                                                  WHEN (C.COMP_NAME < '가' OR C.COMP_NAME > '힣') THEN 2
+		                                                  ]]>
+		                                                  ELSE 3
+		                                               END ASC, C.COMP_NAME ASC) AS RNUM
+						</when>
+						<when test="srchVal eq '업종'">
+							ROW_NUMBER() OVER(ORDER BY SE.COMP_SECT_NO DESC) AS RNUM
+						</when>
+						<when test="srchVal eq '상태'">
+							ROW_NUMBER() OVER(ORDER BY ST.COMP_STAT_NO DESC) AS RNUM
+						</when>
+						<when test="srchVal eq '담당자'">
+							ROW_NUMBER() OVER(ORDER BY CASE
+		                                                  WHEN E.EMP_NAME BETWEEN '가' AND '힣' THEN 1
+		                                                  <![CDATA[
+		                                                  WHEN (E.EMP_NAME < '가' OR E.EMP_NAME > '힣') THEN 2
+		                                                  ]]>
+		                                                  ELSE 3
+		                                               END ASC, E.EMP_NAME ASC) AS RNUM
+						</when>
+					</choose>
+		       FROM COMP C INNER JOIN COMP_STAT ST
+		                           ON C.COMP_STAT_NO = ST.COMP_STAT_NO
+		                   INNER JOIN COMP_CLIENT_GRADE G
+		                           ON C.CC_GRADE_NO = G.CC_GRADE_NO
+		                   INNER JOIN COMP_SECT SE
+                                   ON C.COMP_SECT_NO = SE.COMP_SECT_NO
+                           INNER JOIN EMP_INFO E
+                           		   ON C.EMP_NO = E.EMP_NO
+               WHERE C.COMP_STAT_NO != 0
+               <if test="grade_srch_txt != '' and grade_srch_txt != null">
+               	<choose>
+               		<when test="srchVal eq '전체'">
+						AND (UPPER(C.COMP_NO) LIKE UPPER('%' || #{grade_srch_txt} || '%') OR
+							 UPPER(G.CC_GRADE_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%') OR
+							 UPPER(C.COMP_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%') OR
+							 UPPER(SE.COMP_SECT_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%') OR
+							 UPPER(ST.COMP_STAT_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%') OR
+							 UPPER(E.EMP_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%'))
+					</when>
+					<when test="srchVal eq '등급'">
+						AND UPPER(G.CC_GRADE_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%')
+					</when>
+					<when test="srchVal eq '회사명'">
+						AND UPPER(C.COMP_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%')
+					</when>
+					<when test="srchVal eq '업종'">
+						AND UPPER(SE.COMP_SECT_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%')
+					</when>
+					<when test="srchVal eq '상태'">
+						AND UPPER(ST.COMP_STAT_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%')
+					</when>
+					<when test="srchVal eq '담당자'">
+						AND UPPER(E.EMP_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%')
+					</when>
+               	</choose>
+               </if>)
+		WHERE RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	<select id="gradeListCnt" resultType="integer">
+		SELECT COUNT(*)
+		FROM COMP C INNER JOIN COMP_STAT ST
+				            ON C.COMP_STAT_NO = ST.COMP_STAT_NO
+				    INNER JOIN COMP_CLIENT_GRADE G
+				            ON C.CC_GRADE_NO = G.CC_GRADE_NO
+				    INNER JOIN COMP_SECT SE
+		                    ON C.COMP_SECT_NO = SE.COMP_SECT_NO
+		            INNER JOIN EMP_INFO E
+                           	ON C.EMP_NO = E.EMP_NO
+		WHERE C.COMP_STAT_NO != 0
+		<if test="grade_srch_txt != '' and grade_srch_txt != null">
+            <choose>
+            	<when test="srchVal eq '전체'">
+					AND (UPPER(C.COMP_NO) LIKE UPPER('%' || #{grade_srch_txt} || '%') OR
+						 UPPER(G.CC_GRADE_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%') OR
+						 UPPER(C.COMP_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%') OR
+						 UPPER(SE.COMP_SECT_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%') OR
+						 UPPER(ST.COMP_STAT_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%') OR
+						 UPPER(E.EMP_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%'))
+				</when>
+				<when test="srchVal eq '등급'">
+					AND UPPER(G.CC_GRADE_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%')
+				</when>
+				<when test="srchVal eq '회사명'">
+					AND UPPER(C.COMP_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%')
+				</when>
+				<when test="srchVal eq '업종'">
+					AND UPPER(SE.COMP_SECT_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%')
+				</when>
+				<when test="srchVal eq '상태'">
+					AND UPPER(ST.COMP_STAT_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%')
+				</when>
+				<when test="srchVal eq '담당자'">
+					AND UPPER(E.EMP_NAME) LIKE UPPER('%' || #{grade_srch_txt} || '%')
+				</when>
+            </choose>
+        </if>
+	</select>
+	
+	<update id="editGrade" parameterType="hashmap">
+		UPDATE COMP_CLIENT_GRADE SET CC_GRADE_COLOR = #{gradeColor}<if test="gradeNm != null and gradeNm != ''">, CC_GRADE_NAME = #{gradeNm}</if>
+		WHERE CC_GRADE_NO = #{gradeNo}
+	</update>
+	<update id="updateGrade" parameterType="hashmap">
+		UPDATE COMP SET CC_GRADE_NO = #{gradeNo}
+		WHERE COMP_NO = #{compNo}
+	</update>
+	
+	<delete id="delGrade" parameterType="hashmap">
+		DELETE COMP_CLIENT_GRADE
+		WHERE CC_GRADE_NO = #{gradeNo}
+	</delete>
+	
+	<insert id="insertGrade" parameterType="hashmap">
+		INSERT INTO COMP_CLIENT_GRADE (CC_GRADE_NO, CC_GRADE_NAME, CC_GRADE_COLOR)
+		VALUES(#{gradeNo}, #{gradeNm}, #{gradeColor})
+	</insert>
+</mapper>

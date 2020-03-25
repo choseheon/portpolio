@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="msg">
+
+		
+	<select id="getMsgDepartList" parameterType="hashmap" resultType="hashmap">
+	SELECT DEPART_NO, DEPART_NAME
+	FROM DEPART
+	ORDER BY DEPART_NAME
+	</select>
+	
+	<select id="getMsgTeamList" parameterType="hashmap" resultType="hashmap">
+		SELECT TEAM_NO, TEAM_NAME
+		FROM TEAM
+		WHERE DEPART_NO = #{depart_no}
+	</select>
+
+	<select id="getMsgInviteList" parameterType="hashMap" resultType="hashMap">
+		SELECT EMP_NO, EMP_POSI_NO, TEAM_NO, EMP_NAME, EMP_PHONE, TEAM_NAME, TEAM_TASK,
+        DEPART_NAME, DEPART_TASK
+		FROM (  SELECT EMP.EMP_NO AS EMP_NO, EMP.EMP_POSI_NO AS EMP_POSI_NO, EMP.TEAM_NO AS TEAM_NO, EMP_NAME, EMP_PHONE, TEAM_NAME, TEAM_TASK,
+        		DEPART_NAME, DEPART_TASK, EMP_RESIGN_DATE,
+        		ROW_NUMBER() OVER(ORDER BY EMP.EMP_NAME ASC) AS RNUM
+        		FROM EMP_INFO EMP INNER JOIN EMP_POSI PO
+		                                  ON EMP.EMP_POSI_NO = PO.EMP_POSI_NO
+		                          INNER JOIN TEAM
+		                                  ON EMP.TEAM_NO = TEAM.TEAM_NO
+		                          INNER JOIN DEPART
+		                                  ON TEAM.DEPART_NO = DEPART.DEPART_NO
+				WHERE EMP_RESIGN_DATE IS NULL
+				<if test="srch_input != null and srch_input != ''">
+					<if test="select_depart neq null and select_depart neq '0'">
+						AND TEAM.DEPART_NO = #{select_depart}
+					</if>
+					<if test="select_depart neq null and select_team neq '0'">
+						AND EMP.TEAM_NO = #{select_team}
+					</if>			
+					AND EMP.EMP_NAME LIKE '%' || #{srch_input} || '%'
+				</if>
+			) A
+		WHERE A.EMP_NO != #{sEmpNo}
+		ORDER BY A.EMP_NAME
+	</select>
+	
+	<select id="getChatBookmarkList" parameterType="hashmap" resultType="hashmap">
+	
+	</select>
+	
+	<!-- 시퀀스 조회 -->
+	<select id="getChatNumSeq" parameterType="hashmap" resultType="Integer">
+	SELECT MSG_CHATROOM_SEQ.NEXTVAL FROM DUAL
+	</select>
+	
+	<!-- 채팅방 생성 -->
+	<insert id="insertChatRoom" parameterType="hashmap">
+	INSERT INTO CHAT_ROOM(CHAT_ROOM_NO)
+	VALUES(#{seq})
+	</insert>
+	
+	<!-- 채팅방에 회원입장시키기 -->
+	<insert id="insertEmp" parameterType="hashmap">
+	INSERT INTO CHAT_ENTER(CHAT_ROOM_NO, EMP_NO)
+	VALUES(#{seq}, #{emp})
+	</insert>
+	
+	<!-- 참여회원 이름가져오기 -->
+	<select id="getEmpName" parameterType="hashmap" resultType="String">
+	SELECT EMP_NAME
+	FROM EMP_INFO
+	WHERE EMP_NO = #{emp}
+	</select>
+	
+	<!-- 회원 참여 알리기 -->
+	<insert id="chatEmpAlert" parameterType="hashmap">
+	INSERT INTO CHAT(CHAT_NO, CHAT_ROOM_NO, EMP_NO, CONTENTS)
+	VALUES(MSG_CHAT_SEQ.NEXTVAL, #{seq}, #{emp}, #{empName}||'님이 입장하셨습니다.')
+	</insert>
+	
+	<!-- 로그인 사용자가 참여한 채팅방 목록 가져오기-->
+	<select id="getChatList" parameterType="hashmap" resultType="hashmap">
+	SELECT *
+	FROM ( SELECT CHAT_ENTER.CHAT_ROOM_NO AS CHAT_ROOM_NO, CHAT.EMP_NO AS EMP_NO, CHAT_ROOM_NAME, 
+           		  TO_CHAR(CHAT_ROOM.CHAT_ROOM_DATE, 'YYYY-MM-DD') AS CHAT_ROOM_DATE, TO_CHAR(CHAT.SDATE,'YY-MM-DD HH24:MI') AS SDATE,
+		          EMP_INFO.EMP_NAME AS EMP_NAME, CHAT.CONTENTS AS CONTENTS,
+		          RANK() OVER(PARTITION BY CHAT_ROOM.CHAT_ROOM_NO ORDER BY CHAT_NO DESC) AS RANK
+           FROM CHAT_ENTER INNER JOIN CHAT_ROOM
+                                   ON CHAT_ENTER.CHAT_ROOM_NO = CHAT_ROOM.CHAT_ROOM_NO
+                                  AND CHAT_ENTER.EMP_NO = #{sEmpNo}
+                           INNER JOIN CHAT
+                                   ON CHAT_ENTER.CHAT_ROOM_NO = CHAT.CHAT_ROOM_NO 
+                           INNER JOIN EMP_INFO
+                                   ON CHAT.EMP_NO = EMP_INFO.EMP_NO
+           ORDER BY CHAT.SDATE DESC
+        ) A
+	WHERE A.RANK = 1
+	
+	<!-- 여기서 CONTENTS가 다르게 나와야 하는게 왜 동일하게 나오는지. -->
+	
+	</select>
+	
+	<!-- 채팅방입장시 채팅, 참여자 가져오기 -->
+	<select id="getChat" parameterType="hashmap" resultType="hashmap">
+	SELECT EMP_POSI.EMP_POSI_NAME, EMP_INFO.EMP_NO, EMP_INFO.EMP_NAME, DEPART.DEPART_NAME, TEAM.TEAM_NAME, CHAT_ROOM.CHAT_ROOM_NAME,
+		   CHAT.CONTENTS, TO_CHAR(CHAT.SDATE,'YYYY-MM-DD HH24:MI:SS') AS SDATE
+	FROM CHAT INNER JOIN CHAT_ROOM
+	                  ON CHAT.CHAT_ROOM_NO = CHAT_ROOM.CHAT_ROOM_NO
+	                 AND CHAT_ROOM.CHAT_ROOM_NO = #{chatNo}
+			  INNER JOIN EMP_INFO
+	                  ON CHAT.EMP_NO = EMP_INFO.EMP_NO
+	          INNER JOIN EMP_POSI
+	                  ON EMP_INFO.EMP_POSI_NO = EMP_POSI.EMP_POSI_NO
+	          INNER JOIN TEAM
+	                  ON EMP_INFO.TEAM_NO = TEAM.TEAM_NO
+	          INNER JOIN DEPART
+	                  ON TEAM.DEPART_NO = DEPART.DEPART_NO
+	ORDER BY CHAT.SDATE ASC
+	</select>
+	
+	<!-- 채팅입력 -->
+	<insert id="insertChat" parameterType="hashmap">
+	INSERT INTO CHAT(CHAT_NO, CHAT_ROOM_NO, EMP_NO, CONTENTS)
+	VALUES(MSG_CHAT_SEQ.NEXTVAL, #{chatNo}, #{sEmpNo}, #{write})
+	</insert>
+	
+	<select id="getAddChat" parameterType="hashmap" resultType="hashmap">
+	SELECT CHAT.CHAT_ROOM_NO AS CHAT_ROOM_NO, CHAT.EMP_NO AS EMP_NO, CHAT.CHAT_NO AS CHAT_NO, CHAT_ROOM_NAME, EMP_POSI.EMP_POSI_NAME AS EMP_POSI_NAME,
+	       EMP_NAME, DEPART_NAME, TEAM_NAME, CONTENTS, TO_CHAR(SDATE, 'YYYY-MM-DD HH24:MI:SS') AS SDATE
+	FROM CHAT_ROOM INNER JOIN CHAT
+		                  ON CHAT.CHAT_ROOM_NO = CHAT_ROOM.CHAT_ROOM_NO
+		                 AND CHAT_ROOM.CHAT_ROOM_NO = #{chatNo}
+		          INNER JOIN EMP_INFO
+		                  ON CHAT.EMP_NO = EMP_INFO.EMP_NO
+		          INNER JOIN EMP_POSI
+		                  ON EMP_INFO.EMP_POSI_NO = EMP_POSI.EMP_POSI_NO
+		          INNER JOIN TEAM
+		                  ON EMP_INFO.TEAM_NO = TEAM.TEAM_NO
+		          INNER JOIN DEPART
+		                  ON TEAM.DEPART_NO = DEPART.DEPART_NO
+	WHERE CHAT_NO = (SELECT MAX(CHAT_NO)
+	                 FROM CHAT INNER JOIN CHAT_ENTER
+	                                   ON CHAT.EMP_NO = CHAT_ENTER.EMP_NO
+	                 WHERE CHAT_ENTER.EMP_NO = #{sEmpNo})
+	</select>
+	
+	<select id="getChatInviteList" parameterType="hashmap" resultType="hashmap">
+	SELECT DEPART.DEPART_NAME, TEAM.TEAM_NAME,
+			EMP_POSI.EMP_POSI_NO, EMP_POSI.EMP_POSI_NAME, EMP_INFO.EMP_NAME
+	FROM CHAT_ROOM INNER JOIN CHAT_ENTER
+	                       ON CHAT_ROOM.CHAT_ROOM_NO = CHAT_ENTER.CHAT_ROOM_NO
+	                      AND CHAT_ROOM.CHAT_ROOM_NO = #{chatNo}
+	               INNER JOIN EMP_INFO
+	                       ON CHAT_ENTER.EMP_NO = EMP_INFO.EMP_NO
+	               INNER JOIN EMP_POSI
+	                       ON EMP_INFO.EMP_POSI_NO = EMP_POSI.EMP_POSI_NO
+	               INNER JOIN TEAM
+	                       ON EMP_INFO.TEAM_NO = TEAM.TEAM_NO
+	               INNER JOIN DEPART
+	                       ON TEAM.DEPART_NO = DEPART.DEPART_NO
+	ORDER BY DEPART.DEPART_NAME, TEAM.TEAM_NAME, EMP_POSI.EMP_POSI_NO DESC, EMP_INFO.EMP_NAME ASC
+	</select>
+	
+	
+	<select id="getChatroomInviteList" parameterType="hashmap" resultType="hashmap">
+	SELECT EMP_NO, EMP_NAME, TEAM_NAME,
+			EMP_POSI.EMP_POSI_NAME, DEPART_NAME
+	FROM EMP_INFO INNER JOIN EMP_POSI
+	                      ON EMP_INFO.EMP_POSI_NO = EMP_POSI.EMP_POSI_NO
+	              INNER JOIN TEAM
+	                      ON EMP_INFO.TEAM_NO = TEAM.TEAM_NO
+	              INNER JOIN DEPART
+	                      ON TEAM.DEPART_NO = DEPART.DEPART_NO
+	WHERE EMP_NO NOT IN (SELECT EMP_INFO.EMP_NO
+						 FROM CHAT_ROOM INNER JOIN CHAT_ENTER
+						                        ON CHAT_ROOM.CHAT_ROOM_NO = CHAT_ENTER.CHAT_ROOM_NO
+						                       AND CHAT_ROOM.CHAT_ROOM_NO = #{chatNo}
+						                INNER JOIN EMP_INFO
+						                        ON CHAT_ENTER.EMP_NO = EMP_INFO.EMP_NO
+						                INNER JOIN EMP_POSI
+						                        ON EMP_INFO.EMP_POSI_NO = EMP_POSI.EMP_POSI_NO
+						                INNER JOIN TEAM
+						                        ON EMP_INFO.TEAM_NO = TEAM.TEAM_NO
+						                INNER JOIN DEPART
+						                        ON TEAM.DEPART_NO = DEPART.DEPART_NO
+						)
+	AND EMP_NO != #{sEmpNo}
+	AND EMP_RESIGN_DATE IS NULL
+	</select>
+	
+	<insert id="chatroomInvite" parameterType="hashmap">
+	INSERT INTO CHAT_ENTER(CHAT_ROOM_NO, EMP_NO)
+	VALUES(#{chatroomNo}, #{empRoom})
+	</insert>
+	
+	<!-- 참여회원 이름가져오기 -->
+	<select id="getEmpNm" parameterType="hashmap" resultType="String">
+	SELECT EMP_NAME
+	FROM EMP_INFO
+	WHERE EMP_NO = #{empRoom}
+	</select>
+	
+	<!-- 회원 참여 알리기 -->
+	<insert id="chatroomEmpAlert" parameterType="hashmap">
+	INSERT INTO CHAT(CHAT_NO, CHAT_ROOM_NO, EMP_NO, CONTENTS)
+	VALUES(MSG_CHAT_SEQ.NEXTVAL, #{chatroomNo}, #{empRoom}, #{empName}||'님이 입장하셨습니다.')
+	</insert>
+	
+	<!-- 채팅방 나가기 -->
+	<delete id="chatroomExit" parameterType="hashmap">
+	DELETE CHAT_ENTER
+	WHERE CHAT_ROOM_NO = #{chatNo}
+	AND EMP_NO = #{sEmpNo}
+	</delete>
+	
+	<!-- 채팅방명 변경 -->
+	<update id="chatRoomEdit" parameterType="hashmap">
+	UPDATE CHAT_ROOM
+	SET CHAT_ROOM_NAME = #{chat_name}
+	WHERE CHAT_ROOM_NO = #{chatroomNo}
+	</update>
+	
+</mapper>

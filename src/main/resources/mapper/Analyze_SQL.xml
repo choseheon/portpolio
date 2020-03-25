@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="analyze">
+	
+	<select id="getCmpTitle" parameterType="hashmap" resultType="hashmap">
+	SELECT CMP_NAME
+	FROM CMP
+	WHERE CMP_NO = #{cmpNo}
+	</select>
+	
+	<select id="getFeedbCnt" parameterType="hashmap" resultType="Integer">
+	SELECT COUNT(*)
+	FROM CMP_PERF_ANALYZE
+	WHERE CMP_NO = #{cmpNo}
+	</select>
+	
+	<select id="getFeedbList" parameterType="hashmap" resultType="hashmap">
+	SELECT *
+	FROM ( SELECT OPIN_ADD_EMP_NO, OPIN, EMP_NAME, TO_CHAR(CMP_PERF_ANALYZE.ADD_DAY,'YYYY-MM-DD') AS ADD_DAY, CMP.CMP_NAME,
+	       ROW_NUMBER() OVER(ORDER BY CMP_PERF_ANALYZE.ADD_DAY DESC) RNUM
+	       FROM CMP_PERF_ANALYZE INNER JOIN EMP_INFO
+	                                     ON CMP_PERF_ANALYZE.OPIN_ADD_EMP_NO = EMP_INFO.EMP_NO
+	                             INNER JOIN TEAM
+	                                     ON EMP_INFO.TEAM_NO = TEAM.TEAM_NO
+	                             INNER JOIN DEPART
+	                                     ON TEAM.DEPART_NO = DEPART.DEPART_NO
+	                             INNER JOIN CMP
+	                                     ON CMP_PERF_ANALYZE.CMP_NO = CMP.CMP_NO
+	       WHERE CMP_PERF_ANALYZE.CMP_NO = #{cmpNo}
+	     ) A
+	WHERE A.RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	
+	<insert id="insertFeedb" parameterType="hashmap">
+	INSERT INTO CMP_PERF_ANALYZE(PERF_ANALYZE_NO, CMP_NO, OPIN_ADD_EMP_NO, OPIN, ADD_DAY)
+	VALUES(PERF_ANALYZE_SEQ.NEXTVAL, #{cmpNo}, #{sEmpNo}, #{review_bar}, SYSDATE)
+	</insert>
+	
+	
+</mapper>

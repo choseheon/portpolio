@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sche">
+	
+	
+	<!--////////////////////////////// 일정 등록,수정,세부사항  /////////////////////////////////-->
+	
+	<!-- 의견 등록 -->
+	<insert id="insertOpin" parameterType="hashmap">
+		INSERT INTO SCHE_OPIN(SCHE_OPIN_NO, EMP_NO, SCHE_NO, SCHE_OPIN_CON)
+		VALUES (SCHE_OPIN_SEQ.NEXTVAL, #{sEmpNo}, #{sche_no_opin} , #{sche_opin_con})
+	</insert>
+	
+	<!-- 의견 삭제 -->
+	<update id="deleteOpin" parameterType="hashmap">
+		UPDATE SCHE_OPIN SET SCHE_OPIN_DEL_YN = 0
+		WHERE EMP_NO =  #{sEmpNo} AND SCHE_OPIN_NO = #{opin_no}
+	</update>
+	
+	<!-- 의견 수 조회 -->
+	<select id="getOpinCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*)
+		FROM SCHE_OPIN 
+		WHERE SCHE_NO = #{sche_no} AND SCHE_OPIN_DEL_YN = 1
+	</select>
+	
+	<!-- 의견 조회 -->
+	<select id="getOpinList" parameterType="hashmap" resultType="hashmap">
+		SELECT SO.SCHE_OPIN_NO,SO.EMP_NO, EI.EMP_NAME || ' ' || EP.EMP_POSI_NAME AS EMP
+        , TO_CHAR(SO.SCHE_DATE,'YYYY-MM-DD HH24:MI:SS') AS SCHE_DATE,SO.SCHE_OPIN_CON
+		FROM SCHE_OPIN SO INNER JOIN EMP_INFO EI
+                          ON SO.EMP_NO = EI.EMP_NO
+                  INNER JOIN EMP_POSI EP
+                          ON EI.EMP_POSI_NO = EP.EMP_POSI_NO
+		WHERE SO.SCHE_NO = #{sche_no} AND SO.SCHE_OPIN_DEL_YN = 1
+		ORDER BY SO.SCHE_OPIN_NO DESC
+	</select>
+	
+	<!-- list Test용 -->
+	<select id="scheList" parameterType="hashmap" resultType="hashmap">
+		SELECT SC.SCHE_NO, SC.SCHE_DIV_NO, SC.SCHE_ACTI_NO,CL.CLIENT_NAME ,SC.SCHE_IMPORTANCE, EI.EMP_NAME || ' ' || EP.EMP_POSI_NAME AS NAME
+		FROM SCHE SC INNER JOIN EMP_INFO EI
+                  ON SC.EMP_NO = EI.EMP_NO
+          INNER JOIN EMP_POSI EP
+                  ON EI.EMP_POSI_NO = EP.EMP_POSI_NO
+         LEFT OUTER JOIN SCHE_CLIENT_INFO SCI
+                      ON SC.SCHE_NO = SCI.SCHE_NO
+         LEFT OUTER JOIN CLIENT CL
+                      ON SCI.CLIENT_NO = CL.CLIENT_NO 
+         WHERE SC.DEL_YN = 1
+        ORDER BY SC.SCHE_NO DESC
+	</select>
+	
+	<!-- 일정구분 리스트 출력 -->
+	<select id="getRadioList" parameterType="hashmap" resultType="hashmap">
+	SELECT CODE_S_CATE, CODE_NAME
+	FROM COMMON_CODE 
+	WHERE CODE_L_CATE = 2
+	</select>
+	
+	<!-- 활동분류 리스트 출력 -->
+	<select id="getOptionList" parameterType="hashmap" resultType="hashmap">
+	SELECT CODE_S_CATE, CODE_NAME
+	FROM COMMON_CODE 
+	WHERE CODE_L_CATE = 3
+	<choose>
+		<when test="scheDivNoM eq 0">
+			AND CODE_S_CATE IN(0,1,2,3)
+		</when>
+		<when test="scheDivNoM eq 1">
+			AND CODE_S_CATE IN(0,1,2,3)
+		</when>
+	</choose>
+	</select>
+	
+	<!-- 고객 검색 Cnt -->
+	<select id = "getClientCnt" parameterType = "hashmap" resultType = "Integer">
+		SELECT COUNT(*)
+		FROM(SELECT C.CLIENT_NO , C.CLIENT_NAME , C2.COMP_NAME, C2.COMP_NO
+					,C2.COMP_ZC, C2.COMP_ADDR, C2.COMP_DETAIL_ADDR
+     		 FROM CLIENT C INNER JOIN COMP C2
+               				       ON C.COMP_NO = C2.COMP_NO
+			<if test="searchTxt != null and searchTxt != ''">
+        	AND (CLIENT_NAME LIKE'%' || #{searchTxt} || '%' OR COMP_NAME LIKE'%' || #{searchTxt} || '%')
+        	</if>
+        	) A
+	</select>
+	
+	<!-- 고객 검색 고객리스트-->
+	<select id = "getClientList" parameterType = "hashmap" resultType = "hashmap">
+		SELECT *
+		FROM(SELECT C.CLIENT_NO , C.CLIENT_NAME , C2.COMP_NAME,
+             ROW_NUMBER() OVER(ORDER BY CLIENT_NO ASC) AS RNUM
+     		 FROM CLIENT C INNER JOIN COMP C2
+               		               ON C.COMP_NO = C2.COMP_NO) Z
+            WHERE Z.RNUM BETWEEN #{startCnt} AND #{endCnt}
+        <if test="searchTxt != null and searchTxt != ''">
+        	AND (CLIENT_NAME LIKE'%' || #{searchTxt} || '%' OR COMP_NAME LIKE'%' || #{searchTxt} || '%')
+        </if>
+	</select>
+	
+	<!-- 리드 검색 Cnt -->
+	<select id = "getLeadCnt" parameterType = "hashmap" resultType = "Integer">
+		SELECT COUNT(*)
+		FROM(SELECT LD.LEAD_NO, LD.LEAD_NAME, EI.EMP_NAME
+			 FROM LEAD LD INNER JOIN EMP_INFO EI
+                     			  ON LD.EMP_NO = EI.EMP_NO
+			<if test="searchTxt != null and searchTxt != ''">
+        	AND (LEAD_NAME LIKE'%' || #{searchTxt} || '%' OR EMP_NAME LIKE'%' || #{searchTxt} || '%')
+        	</if>
+        	) A
+	</select>
+	
+	<!-- 리드 검색 리드리스트-->
+	<select id = "getLeadList" parameterType = "hashmap" resultType = "hashmap">
+		SELECT *
+		FROM(SELECT LEAD_NO, LEAD_NAME, EMP_NAME,
+			 ROW_NUMBER() OVER(ORDER BY LEAD_NO ASC) AS RNUM
+			 FROM LEAD LD INNER JOIN EMP_INFO EI
+                     			  ON LD.EMP_NO = EI.EMP_NO) Z
+            WHERE Z.RNUM BETWEEN #{startCnt} AND #{endCnt}
+        <if test="searchTxt != null and searchTxt != ''">
+        	AND (LEAD_NAME LIKE'%' || #{searchTxt} || '%' OR EMP_NAME LIKE'%' || #{searchTxt} || '%')
+        </if>
+	</select>
+	
+	<!-- 기회 검색 Cnt -->
+	<select id = "getBssCnt" parameterType = "hashmap" resultType = "Integer">
+		SELECT COUNT(*)
+		FROM(SELECT CHN_NO,CHN_NAME,EMP_NAME
+			 FROM BSS_CHN BC INNER JOIN EMP_INFO EI
+                    		         ON BC.EMP_NO = EI.EMP_NO
+			<if test="searchTxt != null and searchTxt != ''">
+        	AND (CHN_NAME LIKE'%' || #{searchTxt} || '%' OR EMP_NAME LIKE'%' || #{searchTxt} || '%')
+        	</if>
+        	) A
+	</select>
+	
+	<!-- 기회 검색 기회리스트-->
+	<select id = "getBssList" parameterType = "hashmap" resultType = "hashmap">
+		SELECT *
+		FROM(SELECT CHN_NO,CHN_NAME,EMP_NAME,
+			 ROW_NUMBER() OVER(ORDER BY CHN_NO ASC) AS RNUM
+			 FROM BSS_CHN BC INNER JOIN EMP_INFO EI
+                    		         ON BC.EMP_NO = EI.EMP_NO) Z
+            WHERE Z.RNUM BETWEEN #{startCnt} AND #{endCnt}
+        <if test="searchTxt != null and searchTxt != ''">
+        	AND (CHN_NAME LIKE'%' || #{searchTxt} || '%' OR EMP_NAME LIKE'%' || #{searchTxt} || '%')
+        </if>
+	</select>
+	
+	<!-- 일정 데이터 출력-->
+	<select id="getScheData" parameterType="hashmap" resultType="hashmap">
+	SELECT CC.CODE_NAME AS CN ,CD.CODE_NAME AS DN, EI.TEAM_NO,'(' || SUBSTR(SCHE_PLACE,'0','5') || ')' || REPLACE(SUBSTR(SCHE_PLACE,'6'),',',' ') AS ADDR, SCHE_CON, SCHE_RES ,  TO_CHAR(SCHE_SDATE,'YYYY-MM-DD') AS SDATE, TO_CHAR(SCHE_SDATE,'HH24:MI:SS') AS STIME,TO_CHAR(SCHE_EDATE,'YYYY-MM-DD') AS EDATE,TO_CHAR(SCHE_EDATE,'HH24:MI:SS') AS ETIME, SCHE_IMPORTANCE
+	FROM SCHE SC INNER JOIN COMMON_CODE CC
+                         ON SC.SCHE_DIV_NO = CC.CODE_S_CATE
+                         AND CC.CODE_L_CATE = 2
+                 INNER JOIN COMMON_CODE CD
+                         ON SCHE_ACTI_NO = CD.CODE_S_CATE
+                         AND CD.CODE_L_CATE = 3
+                 INNER JOIN EMP_INFO EI
+                         ON SC.EMP_NO = EI.EMP_NO
+	WHERE SCHE_NO = #{sche_no}
+	</select>
+	
+	<!-- 일정 고객 데이터 출력 -->
+	<select id="getCiData" parameterType="hashmap" resultType="hashmap">
+	SELECT SCI.SCHE_CI_PARTICIPANT, CI.CLIENT_NAME, CP.COMP_NAME, CI.CLIENT_NO
+	FROM SCHE_CLIENT_INFO SCI LEFT OUTER JOIN CLIENT CI
+                                       ON SCI.CLIENT_NO = CI.CLIENT_NO
+                          LEFT OUTER JOIN COMP CP
+                                       ON CI.COMP_NO = CP.COMP_NO
+	WHERE SCI.SCHE_NO = #{sche_no}
+	</select>
+	
+	<!-- 일정 리드 데이터 출력 -->
+	<select id="getLeadData" parameterType="hashmap" resultType="hashmap">
+		SELECT LEAD_NAME, EMP_NAME,SCHE_CI_PARTICIPANT,SL.LEAD_NO
+		FROM SCHE_LEAD SL INNER JOIN LEAD LD
+                          ON SL.LEAD_NO = LD.LEAD_NO
+                  INNER JOIN EMP_INFO EI
+                          ON LD.EMP_NO = EI.EMP_NO
+                  LEFT OUTER JOIN SCHE_CLIENT_INFO SCI 
+                               ON SL.SCHE_NO = SCI.SCHE_NO
+		WHERE SL.SCHE_NO = #{sche_no}
+	</select>
+	
+	<!-- 일정 기회 데이터 출력 -->
+	<select id="getBssData" parameterType="hashmap" resultType="hashmap">
+		SELECT CHN_NAME, EMP_NAME,SCHE_CI_PARTICIPANT,SC.CHN_NO
+		FROM SCHE_CHN SC INNER JOIN BSS_CHN BC
+                         ON SC.CHN_NO = BC.CHN_NO
+                 INNER JOIN EMP_INFO EI 
+                         ON BC.EMP_NO = EI.EMP_NO
+                 LEFT OUTER JOIN SCHE_CLIENT_INFO SCI 
+                               ON SC.SCHE_NO = SCI.SCHE_NO
+		WHERE SC.SCHE_NO = #{sche_no}
+	</select>
+	
+	<!-- 첨부자료 수 조회 -->
+	<select id="getAttachCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*)
+		FROM SCHE_ATTACH 
+		WHERE SCHE_NO = #{sche_no}
+	</select>
+	
+	<!-- 일정 세부사항, 수정 첨부자료 리스트 출력 -->
+	<select id="getAttachList" parameterType="hashmap" resultType="hashmap">
+	SELECT SCHE_ATTACH_NO,EI.TEAM_NO,SCHE_ATTACH_NAME, EMP_NAME || ' ' || EMP_POSI_NAME AS EMP,EI.EMP_NO,
+	TO_CHAR(SYSDATE,'YYYY-MM-DD HH24:MI:SS') AS DT
+	FROM SCHE_ATTACH SA INNER JOIN SCHE SC
+                            ON SA.SCHE_NO = SC.SCHE_NO
+                   		INNER JOIN EMP_INFO EI
+                            ON SC.EMP_NO = EI.EMP_NO
+                        INNER JOIN EMP_POSI EP
+                            ON EI.EMP_POSI_NO = EP.EMP_POSI_NO
+	WHERE SA.SCHE_NO = #{sche_no}
+	ORDER BY SA.SCHE_ATTACH_NO DESC
+	</select>
+	
+	<!-- 회의록 수 조회 -->
+	<select id="getMinutesCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*)
+		FROM ML 
+		WHERE SCHE_NO = #{sche_no} AND ML_DEL_YN = 1
+	</select>
+	
+	<!-- 일정 세부사항, 수정 회의록 리스트 출력 -->
+	<select id="getMinutesList" parameterType="hashmap" resultType="hashmap">
+		SELECT ML_NO,ML_NAME,EMP_NAME || ' ' || EMP_POSI_NAME AS EMP,TO_CHAR(ML_DATE,'YYYY-MM-DD HH24:MI:SS') AS ML_DATE,EMP_INFO.EMP_NO,TEAM_NO
+		FROM ML INNER JOIN EMP_INFO
+	                ON ML.EMP_NO = EMP_INFO.EMP_NO
+       			INNER JOIN EMP_POSI
+	                ON EMP_INFO.EMP_POSI_NO = EMP_POSI.EMP_POSI_NO
+		WHERE ML.SCHE_NO = #{sche_no} AND ML.ML_DEL_YN = 1
+		ORDER BY ML_NO DESC
+	</select>
+	
+	<!-- 일정상품 수 조회 -->
+	<select id="getProdCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*)
+		FROM SCHE_PROD
+		WHERE SCHE_NO = #{sche_no}
+	</select>
+	
+	<!-- 일정 세부사항, 수정 일정상품 리스트 출력 -->
+	<select id="getProdList" parameterType="hashmap" resultType="hashmap">
+	SELECT GOODS_NO,SERVICE_NO,EI.TEAM_NO ,PROD_NAME,EMP_NAME || ' ' || EMP_POSI_NAME AS EMP, TO_CHAR(SYSDATE,'YYYY-MM-DD HH24:MI:SS') AS DT,EI.EMP_NO, PR.DIV_NO,SP.SCHE_PROD_NO
+	FROM SCHE_PROD SP INNER JOIN SCHE SC
+                          ON SP.SCHE_NO = SC.SCHE_NO
+                  INNER JOIN EMP_INFO EI
+                          ON SC.EMP_NO = EI.EMP_NO
+                  INNER JOIN EMP_POSI EP
+                          ON EI.EMP_POSI_NO = EP.EMP_POSI_NO
+                  INNER JOIN PROD PR
+                          ON SP.PROD_NO = PR.PROD_NO
+                  LEFT OUTER JOIN GOODS GD
+                  		  ON PR.PROD_NO = GD.PROD_NO
+                  LEFT OUTER JOIN SERVICE SR
+                  		  ON PR.PROD_NO = SR.PROD_NO
+    WHERE SP.SCHE_NO = #{sche_no}
+	ORDER BY SP.SCHE_PROD_NO DESC
+	</select>
+	
+	<!--////////////////////////////// 일정 등록,수정,세부사항 end  /////////////////////////////////-->
+	
+	<!--/////////////////////////////////////////// 일정 등록  /////////////////////////////////////-->
+	
+	<!-- 일정 등록  -->
+	<insert id="insertSche" parameterType="hashmap">
+		INSERT INTO SCHE(SCHE_NO, SCHE_DIV_NO, SCHE_ACTI_NO, SCHE_PLACE, SCHE_CON, SCHE_RES, SCHE_SDATE, 
+		<if test="sche_edate neq null and sche_edate neq ''">
+		SCHE_EDATE, 
+		</if>
+		SCHE_IMPORTANCE, EMP_NO)  
+		VALUES (SCHE_SEQ.NEXTVAL, #{sche_div_no}, #{scheActiNo}
+		<choose>
+		<when test="sche_postcode != '' or sche_addr != '' or sche_det_addr != ''">, 	#{sche_postcode} || ',' ||#{sche_addr} || ',' || #{sche_det_addr}</when>
+		<otherwise>, NULL</otherwise>
+		</choose> 
+		,#{sche_con} 
+		<choose><when test="sche_res != ''">, #{sche_res}</when><otherwise>, NULL</otherwise></choose>
+				,TO_DATE(#{sche_sdate} || ' ' || #{sche_stime}, 'YYYY-MM-DD HH24:MI:SS'),
+				<if test="sche_edate neq null and sche_edate neq ''">
+				TO_DATE(#{sche_edate} || ' ' || #{sche_etime}, 'YYYY-MM-DD HH24:MI:SS'),
+				</if>
+				 #{scheImportance}, #{sEmpNo})
+	</insert>
+	
+	<!-- 일정고객테이블에 넣을 일정 번호  -->
+	<select id="getScheNo" parameterType="hashmap" resultType="Integer">
+		SELECT SCHE_NO
+		FROM(
+		SELECT SCHE_NO,RANK() OVER(ORDER BY SCHE_NO DESC) AS RNK
+		FROM SCHE
+		)
+		WHERE RNK = 1
+	</select>
+	
+	<!-- 일정 고객 등록 -->
+	<insert id="insertScheClient" parameterType="hashmap">
+		INSERT INTO SCHE_CLIENT_INFO(SCHE_CI_NO,SCHE_NO,CLIENT_NO,SCHE_CI_PARTICIPANT)
+		VALUES (SCHE_CI_SEQ.NEXTVAL,#{ScheNo}
+		<choose><when test="cNo != ''">, #{cNo}</when><otherwise>, NULL</otherwise></choose>
+		<choose><when test="sche_ci_participant != ''">, #{sche_ci_participant}</when><otherwise>, NULL</otherwise></choose>)
+	</insert>
+	
+	<!-- 일정 기회 프로그램 상태 번호 -->
+	<select id="getScheBssProgNo" parameterType="hashmap" resultType="Integer">
+		SELECT PROG_NO
+		FROM BSS_CHN
+		WHERE CHN_NO = #{cNo}
+	</select>
+	
+	<!-- 일정 기회 등록 -->
+	<insert id="insertScheBss" parameterType="hashmap">
+		INSERT INTO SCHE_CHN(CHN_NO,SCHE_NO,PROG_NO)
+		VALUES (#{cNo},#{ScheNo},#{progCnt})
+	</insert>
+	
+	<!-- 일정 리드 등록 -->
+	<insert id="insertScheLead" parameterType="hashmap">
+		INSERT INTO SCHE_LEAD(LEAD_NO,SCHE_NO)
+		VALUES (#{cNo},#{ScheNo})
+	</insert>
+	
+	<!--////////////////////////////////////// 일정 등록end  ////////////////////////////////////-->
+	
+	<!-- ///////////////////////////////////////일정 수정///////////////////////////////////  -->
+	
+	<!-- 일정 데이터 출력-->
+	<select id="getScheFixData" parameterType="hashmap" resultType="String">
+	SELECT SCHE_PLACE AS ADDR
+	FROM SCHE SC INNER JOIN COMMON_CODE CC
+                         ON SC.SCHE_DIV_NO = CC.CODE_S_CATE
+                         AND CC.CODE_L_CATE = 2
+                 INNER JOIN COMMON_CODE CD
+                         ON SCHE_ACTI_NO = CD.CODE_S_CATE
+                         AND CD.CODE_L_CATE = 3
+	WHERE SCHE_NO = #{sche_no}
+	</select>
+	
+	<update id="updateSche" parameterType="hashmap">
+	UPDATE SCHE SET 
+			SCHE_DIV_NO =  #{scheDivNoM},
+			SCHE_ACTI_NO = #{scheActiNo},
+			SCHE_PLACE = 
+			<choose>
+			<when test="sche_postcode != '' or sche_addr != '' or sche_det_addr != ''">#{sche_postcode} || ',' ||#{sche_addr} || ',' || #{sche_det_addr}</when>
+			<otherwise>NULL</otherwise>
+			</choose>,
+			SCHE_CON = #{sche_con},
+			SCHE_RES = <choose><when test="sche_res != ''">#{sche_res}</when><otherwise>NULL</otherwise></choose>,
+			SCHE_SDATE = TO_DATE(#{sche_sdate} || ' ' || #{sche_stime}, 'YYYY-MM-DD HH24:MI:SS'),
+			SCHE_EDATE = TO_DATE(#{sche_edate} || ' ' || #{sche_etime}, 'YYYY-MM-DD HH24:MI:SS'),
+			SCHE_IMPORTANCE = #{scheImportance}
+	WHERE SCHE_NO = #{sche_no}
+	</update>
+	
+	<update id="updateScheClient" parameterType="hashmap">
+	UPDATE SCHE_CLIENT_INFO SET 
+			CLIENT_NO = <choose><when test="cNo != ''">#{cNo}</when><otherwise>NULL</otherwise></choose>,
+			SCHE_CI_PARTICIPANT = <choose><when test="sche_ci_participant != ''">#{sche_ci_participant}</when><otherwise>NULL</otherwise></choose>
+	WHERE SCHE_NO = #{sche_no}
+	</update>
+	
+	<update id="updateScheLead" parameterType="hashmap">
+	UPDATE SCHE_LEAD SET 
+			LEAD_NO = #{cNo}
+	WHERE SCHE_NO = #{sche_no}
+	</update>
+	
+	<update id="updateScheBss" parameterType="hashmap">
+	UPDATE SCHE_CHN SET 
+			CHN_NO = #{cNo},
+			PROG_NO = #{progCnt}
+	WHERE SCHE_NO = #{sche_no}
+	</update>
+	
+	<update id="deleteSche" parameterType="hashmap">
+	UPDATE SCHE SET DEL_YN = 0 
+	WHERE SCHE_NO = #{sche_no}
+	</update>
+	
+	<insert id="insertScheAttach" parameterType="hashmap">
+	INSERT INTO SCHE_ATTACH(SCHE_ATTACH_NO, SCHE_NO, SCHE_ATTACH_NAME)
+	VALUES (SCHE_ATTACH_SEQ.NEXTVAL,#{sche_no_attach},#{attachFile})
+	</insert>
+	
+	<delete id="deleteAttach" parameterType="hashmap">
+	DELETE 
+	FROM SCHE_ATTACH
+	WHERE SCHE_ATTACH_NO = #{attach_no}
+	</delete>
+	
+	<insert id="insertScheMinutes" parameterType="hashmap">
+	INSERT INTO ML(ML_NO, EMP_NO, SCHE_NO,ML_NAME,ML_PARTICIPANT,ML_CON)
+	VALUES (ML_SEQ.NEXTVAL,#{sEmpNo},#{minutes_sche_no},#{minutes_title},
+	<choose><when test="minutes_participant != ''">#{minutes_participant}</when><otherwise>NULL</otherwise></choose>
+	,#{minutes_con})
+	</insert>
+	
+	<update id="deleteMinutes" parameterType="hashmap">
+	UPDATE ML SET ML_DEL_YN = 0 
+	WHERE ML_NO = #{minutes_no}
+	</update>
+	
+	<update id="updatesMinutes" parameterType="hashmap">
+	UPDATE ML SET ML_NAME = #{minutes_title},ML_CON = #{minutes_con}, EMP_NO = #{sEmpNo},ML_PARTICIPANT = <choose><when test="minutes_participant != ''">#{minutes_participant}</when><otherwise>NULL</otherwise></choose>
+	WHERE ML_NO = #{minutes_sche_no}
+	</update>
+	
+	<!-- 일정상품 데이터 리스트 출력-->
+	<select id="schePordList" parameterType="hashmap" resultType="hashmap">
+	SELECT PROD_NO,PROD_NAME 
+	FROM PROD
+	WHERE 1 = 1
+	<if test="searchTxt != null and searchTxt !=''">
+			<choose>
+				<when test="prod_type eq 1">
+					AND TYPE_NO = 1
+				</when>
+				<when test="prod_type eq 2">
+					AND TYPE_NO = 2
+				</when>
+			</choose>
+			<choose>
+				<when test="prod_div eq 1">
+					AND DIV_NO = 1
+				</when>
+				<when test="prod_div eq 2">
+					AND DIV_NO = 2
+				</when>
+			</choose>
+			AND PROD_NAME LIKE '%' || #{searchTxt} || '%'
+	</if>
+	ORDER BY PROD_NO DESC
+	</select>
+	
+	<!-- 일정상품 등록 -->
+	<insert id="insertScheProd" parameterType="hashmap">
+	INSERT INTO SCHE_PROD(SCHE_PROD_NO,SCHE_NO,PROD_NO)
+	VALUES (SCHE_PROD_SEQ.NEXTVAL,#{prod_sche_no},#{prodNo})
+	</insert>
+	
+	<delete id="deleteProd" parameterType="hashmap">
+	DELETE 
+	FROM SCHE_PROD
+	WHERE SCHE_PROD_NO = #{prod_no}
+	</delete>
+	
+	<!-- 일정 데이터 출력-->
+	<select id="getMinutesData" parameterType="hashmap" resultType="hashmap">
+	SELECT ML_NAME, ML_PARTICIPANT, ML_CON
+	FROM ML 
+	WHERE ML_NO =  #{minutes_no}
+	</select>
+	
+	
+	<!-- ///////////////////////////////////////일정 수정end///////////////////////////////////  -->
+	
+	<!-- /////////////////////////////////// 일정 list ////////////////////////////////// -->
+	<!-- 일정리스트 갯수 -->
+	<select id="getScheListCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM SCHE SC 
+            LEFT OUTER JOIN SCHE_CLIENT_INFO CI ON SC.SCHE_NO = CI.SCHE_NO 
+            LEFT OUTER JOIN CLIENT CL ON CI.CLIENT_NO = CL.CLIENT_NO
+            LEFT OUTER JOIN COMP CO ON CL.COMP_NO = CO.COMP_NO
+            INNER JOIN COMMON_CODE C1 ON SC.SCHE_DIV_NO = C1.CODE_S_CATE AND C1.CODE_L_CATE = 2
+            INNER JOIN COMMON_CODE C2 ON SC.SCHE_ACTI_NO = C2.CODE_S_CATE AND C2.CODE_L_CATE = 3
+		WHERE SC.DEL_YN = 1
+		<if test="date != null and date != ''">
+				<![CDATA[
+					AND TO_CHAR(SC.SCHE_SDATE, 'YYYYMMDD') <= #{date} 
+	                AND TO_CHAR(SC.SCHE_EDATE, 'YYYYMMDD') >= #{date}
+                ]]>
+		</if>
+		<if test="srchText != null and srchText != ''">
+				<choose>
+					<when test="srchSelect eq 0">
+						AND COMP_NAME LIKE '%' || #{srchText} || '%'
+					</when>
+					<when test="srchSelect eq 1">
+						AND CLIENT_NAME LIKE '%' || #{srchText} || '%'
+					</when>
+					<when test="srchSelect eq 2">
+						AND (COMP_NAME LIKE '%' || #{srchText} || '%'
+						OR CLIENT_NAME LIKE '%' || #{srchText} || '%')
+					</when>
+				</choose>
+			</if>
+	</select>
+	<!-- 일정리스트 -->
+	<select id="getScheList" parameterType="hashmap" resultType="hashmap">
+		SELECT SCHE_NO, SDATE, EDATE, SCHE, SCHE_DIV_NO, TASKDIV, COMP_NAME, CLIENT_NAME
+		FROM (
+			SELECT SC.SCHE_NO, TO_CHAR(SC.SCHE_SDATE, 'YY-MM-DD HH24:MI:SS') AS SDATE,
+	        		TO_CHAR(SC.SCHE_EDATE, 'YY-MM-DD HH24:MI:SS') AS EDATE,
+	        		C1.CODE_NAME AS SCHE, C1.CODE_S_CATE AS SCHE_DIV_NO, C2.CODE_NAME AS TASKDIV, 
+	                NVL(COMP_NAME, '-') AS COMP_NAME, NVL(CLIENT_NAME, '-') AS CLIENT_NAME,
+	                ROW_NUMBER() OVER(ORDER BY SC.SCHE_NO DESC) AS RNUM
+			FROM SCHE SC 
+	            LEFT OUTER JOIN SCHE_CLIENT_INFO CI ON SC.SCHE_NO = CI.SCHE_NO 
+	            LEFT OUTER JOIN CLIENT CL ON CI.CLIENT_NO = CL.CLIENT_NO
+	            LEFT OUTER JOIN COMP CO ON CL.COMP_NO = CO.COMP_NO
+	            INNER JOIN COMMON_CODE C1 ON SC.SCHE_DIV_NO = C1.CODE_S_CATE AND C1.CODE_L_CATE = 2
+	            INNER JOIN COMMON_CODE C2 ON SC.SCHE_ACTI_NO = C2.CODE_S_CATE AND C2.CODE_L_CATE = 3
+			WHERE SC.DEL_YN = 1
+			<if test="date != null and date != ''">
+				<![CDATA[
+					AND TO_CHAR(SC.SCHE_SDATE, 'YYYYMMDD') <= #{date} 
+	                AND TO_CHAR(SC.SCHE_EDATE, 'YYYYMMDD') >= #{date}
+                ]]>
+			</if>
+			<if test="srchText != null and srchText != ''">
+				AND
+				<choose>
+					<when test="srchSelect eq 0">
+						COMP_NAME LIKE '%' || #{srchText} || '%'
+					</when>
+					<when test="srchSelect eq 1">
+						CLIENT_NAME LIKE '%' || #{srchText} || '%'
+					</when>
+					<when test="srchSelect eq 2">
+						(COMP_NAME LIKE '%' || #{srchText} || '%'
+						OR CLIENT_NAME LIKE '%' || #{srchText} || '%')
+					</when>
+				</choose>
+			</if>
+		)
+		WHERE RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	<!-- 일정 캘린더 -->
+	<select id="getScheCalendar" parameterType="hashmap" resultType="hashmap">
+		SELECT SCHE_NO AS NO, SCHE_CON AS TITLE, SCHE_DIV_NO AS DIV_NO,
+        		TO_CHAR(SCHE_SDATE, 'YYYY-MM-DD') || 'T' || TO_CHAR(SCHE_SDATE, 'HH24:MI:SS') AS "START",
+        		TO_CHAR(SCHE_EDATE, 'YYYY-MM-DD') || 'T' || TO_CHAR(SCHE_EDATE, 'HH24:MI:SS') AS "END"
+		FROM SCHE
+	</select>
+</mapper>

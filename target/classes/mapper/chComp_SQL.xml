@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chComp">
+
+	<select id="getComp" parameterType="hashmap" resultType="hashmap">
+	
+	SELECT A.* 
+	FROM (
+		SELECT CH.CHANNEL_NAME AS CHANNEL_NAME , CH.CHANNEL_NO AS CHANNEL_NO ,
+	        CC.CHANNEL_COMP_NO AS CHANNEL_COMP , CC.COMPANY_NAME AS COMPANY_NAME , 
+	        TO_CHAR(CC.SDATE,'YY/MM/DD') AS SDATE , TO_CHAR(CC.EDATE,'YY/MM/DD') AS EDATE  , CC.MONEY AS MONEY
+	        ,ROW_NUMBER() OVER (ORDER BY CC.CHANNEL_COMP_NO DESC) AS RNUM
+	        ,CC.CHANNEL_COMP_NO AS CHANNEL_COMP_NO
+		FROM CHANNEL CH INNER JOIN CHANNEL_COMP CC ON CH.CHANNEL_NO = CC.CHANNEL_NO
+			<choose>
+		        <when test="content_srch_txt != null and content_srch_txt != '' and content_srch_DD != 3">
+						<choose>
+							<when test="content_srch_DD eq 1">
+								AND CHANNEL_NAME LIKE '%' || #{content_srch_txt} || '%'
+							</when>
+							<when test="content_srch_DD eq 2">
+								AND COMPANY_NAME LIKE '%' || #{content_srch_txt} || '%'
+							</when>
+						</choose>
+				</when>
+				<when test="content_srch_date2 != null and content_srch_date1 != null and
+						  content_srch_date2 != '' and content_srch_date1 != ''">
+					<if test="content_srch_DD eq 3">
+						WHERE TO_CHAR(SDATE,'YYYY-MM-DD')
+	                	BETWEEN #{content_srch_date2} AND #{content_srch_date1}
+					</if>
+				</when>
+			</choose>
+	) A
+	WHERE A.RNUM BETWEEN #{startCnt} AND #{endCnt}
+
+	
+	</select>
+	
+	<select id="CompCnt" parameterType="hashmap" resultType="Integer">
+	
+	SELECT COUNT(*) AS CNT
+	FROM (
+		SELECT CH.CHANNEL_NAME AS CHANNEL_NAME , CH.CHANNEL_NO AS CHANNEL_NO ,
+	        CC.CHANNEL_COMP_NO AS CHANNEL_COMP , CC.COMPANY_NAME AS COMPANY_NAME , 
+	        TO_CHAR(CC.SDATE,'YY/MM/DD') AS SDATE , TO_CHAR(CC.EDATE,'YY/MM/DD') AS EDATE  , CC.MONEY AS MONEY
+	        ,ROW_NUMBER() OVER (ORDER BY CC.CHANNEL_COMP_NO DESC) AS RNUM
+		FROM CHANNEL CH INNER JOIN CHANNEL_COMP CC ON CH.CHANNEL_NO = CC.CHANNEL_NO
+
+		        <choose>
+		        <when test="content_srch_txt != null and content_srch_txt != '' and content_srch_DD != 3">
+						<choose>
+							<when test="content_srch_DD eq 1">
+								AND CHANNEL_NAME LIKE '%' || #{content_srch_txt} || '%'
+							</when>
+							<when test="content_srch_DD eq 2">
+								AND COMPANY_NAME LIKE '%' || #{content_srch_txt} || '%'
+							</when>
+						</choose>
+				</when>
+				<when test="content_srch_date2 != null and content_srch_date1 != null and
+						  content_srch_date2 != '' and content_srch_date1 != ''">
+					<if test="content_srch_DD eq 3">
+						WHERE TO_CHAR(SDATE,'YYYY-MM-DD')
+	                	BETWEEN #{content_srch_date2} AND #{content_srch_date1}
+					</if>
+				</when>
+				</choose>
+        )A
+	</select>
+	<select id="getCh" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM CHANNEL
+	</select>
+	<insert id="saveComp" parameterType="hashmap">
+	INSERT INTO CHANNEL_COMP (CHANNEL_COMP_NO , CHANNEL_NO , COMPANY_NAME , SDATE , EDATE , MONEY) 
+    VALUES (CHANNEL_COMP_SEQ.NEXTVAL , #{channel1} , #{compNM} , #{sdate} , #{edate} , #{money})
+	</insert>	
+</mapper>

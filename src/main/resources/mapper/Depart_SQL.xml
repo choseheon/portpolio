@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="depart">
+
+<select id="getEmpDepartList" parameterType="hashmap" resultType="hashmap">
+		SELECT SQ.NO, SQ.NAME, SQ.EMAIL, SQ.DEPART_NAME, SQ.POSI_NAME, SQ.FORM, SQ.PHONE, SQ.JDATE, SQ.ADDR, SQ.DEPART_NO, SQ.TEAM_NAME, SQ.TEAM_NO
+		FROM ( 	SELECT E.EMP_NO AS NO, E.EMP_NAME AS NAME, E.EMP_EMAIL AS EMAIL, D.DEPART_NAME, T.TEAM_NAME,T.TEAM_NO,
+					   EP.EMP_POSI_NAME AS POSI_NAME, CC.CODE_NAME AS FORM, E.EMP_PHONE AS PHONE, D.DEPART_NO,
+					   TO_CHAR(E.EMP_JOIN_DATE, 'YYYY-MM-DD') AS JDATE,
+					   (E.EMP_ADDR || ' ' || E.EMP_DETAIL_ADDR) AS ADDR,
+              		   ROW_NUMBER() OVER(ORDER BY E.EMP_NO DESC) AS RNUM
+       			FROM EMP_INFO E INNER JOIN TEAM T
+       							ON E.TEAM_NO = T.TEAM_NO
+       							INNER JOIN DEPART D
+       							ON T.DEPART_NO = D.DEPART_NO
+       							INNER JOIN EMP_POSI EP
+       							ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+       							INNER JOIN COMMON_CODE CC
+       							ON E.EMP_FORM = CC.CODE_S_CATE
+       							   AND CC.CODE_L_CATE = 1
+       							
+       			WHERE E.EMP_RESIGN_DATE IS NULL
+       			<choose>
+       			<when test="sAuthorNo eq 2 or sAuthorNo eq 3">
+	       				AND D.DEPART_DIV = 0
+	       			</when>
+	       			<when test="sAuthorNo eq 4 or sAuthorNo eq 5">
+						AND D.DEPART_DIV = 1
+					</when>
+       			</choose>
+       			<if test="depart_no != null and depart_no != ''"> 
+       				AND D.DEPART_NO = #{depart_no}
+       				</if>
+       				<if test="team_no != null and team_no != ''">       			
+	       			AND T.TEAM_NO = #{team_no}
+	       			</if>
+				<if test="searchTxt != null and searchTxt != ''">
+						AND E.EMP_NAME LIKE '%' || #{searchTxt} || '%'		 		 
+				</if>
+				ORDER BY E.EMP_NO DESC
+       	) SQ
+		WHERE SQ.RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	
+	<select id="getEmpDepartCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+       	FROM EMP_INFO E INNER JOIN TEAM T
+       					ON E.TEAM_NO = T.TEAM_NO
+       					INNER JOIN DEPART D
+       					ON T.DEPART_NO = D.DEPART_NO
+       					INNER JOIN EMP_POSI EP
+       					ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+       					INNER JOIN COMMON_CODE CC
+       					ON E.EMP_FORM = CC.CODE_S_CATE
+       					AND CC.CODE_L_CATE = 1		
+       			WHERE E.EMP_RESIGN_DATE IS NULL
+       			 <choose>
+	       			<when test="sAuthorNo eq 2 or sAuthorNo eq 3">
+	       				AND D.DEPART_DIV = 0
+	       			</when>
+	       			<when test="sAuthorNo eq 4 or sAuthorNo eq 5">
+						AND D.DEPART_DIV = 1
+					</when>
+       			</choose>
+       			<if test="depart_no != null and depart_no != ''"> 
+       				AND D.DEPART_NO = #{depart_no}
+       				</if>
+       				<if test="team_no != null and team_no != ''">       			
+	       			AND T.TEAM_NO = #{team_no}
+	       			</if>
+				<if test="searchTxt != null and searchTxt != ''">
+						AND E.EMP_NAME LIKE '%' || #{searchTxt} || '%'		 		 
+				</if>
+	</select>
+	
+<select id="getSuch" parameterType="hashmap" resultType="hashmap">
+					select S1.TEAM_NAME, S1.PEOPLE, EI1.EMP_NAME, S1.DEPART_NO
+					FROM(SELECT EI.TEAM_NO, COUNT(*) AS PEOPLE, D.DEPART_NO, T.TEAM_NAME
+					FROM DEPART D INNER JOIN TEAM T
+					ON D.DEPART_NO = T.DEPART_NO
+					INNER JOIN EMP_INFO EI
+					ON T.TEAM_NO = EI.TEAM_NO
+					INNER JOIN EMP_POSI EP
+					ON EI.EMP_POSI_NO = EP.EMP_POSI_NO
+					INNER JOIN AUTHOR A
+					ON EI.AUTHOR_NO = A.AUTHOR_NO
+					GROUP BY EI.TEAM_NO, D.DEPART_NO, T.TEAM_NAME
+					ORDER BY EI.TEAM_NO)S1 inner join TEAM T1
+					                ON S1.TEAM_NO = T1.TEAM_NO
+					                        INNER JOIN EMP_INFO EI1
+					                ON t1.teammgr_no = EI1.EMP_NO
+			<if test="searchTxt != null and searchTxt !=''">
+				<choose>
+					<when test="searchGbn2 eq 0">
+						WHERE A.AUTHOR_NO = 2 OR A.AUTHOR_NO = 4 
+						AND (EMP_NAME LIKE '%' ||  #{searchTxt} || '%')
+						OR (DEPART_NAME LIKE '%' ||  #{searchTxt} || '%'
+						AND TEAM_NAME LIKE '%' ||  #{searchTxt} || '%')
+					</when>
+					<when test="searchGbn2 eq 1">
+						WHERE A.AUTHOR_NO = 4 
+						AND (EMP_NAME LIKE '%' ||  #{searchTxt} || '%')
+					</when>
+					<when test="searchGbn2 eq 2">
+						WHERE A.AUTHOR_NO = 4 
+						AND (DEPART_NAME LIKE '%' ||  #{searchTxt} || '%'
+						AND TEAM_NAME LIKE '%' ||  #{searchTxt} || '%')
+					</when>
+					<when test="searchGbn2 eq 3">
+						WHERE A.AUTHOR_NO = 2  
+						AND (EMP_NAME LIKE '%' ||  #{searchTxt} || '%')
+					</when>
+					<when test="searchGbn2 eq 4">
+						WHERE A.AUTHOR_NO = 2 
+						AND (DEPART_NAME LIKE '%' ||  #{searchTxt} || '%'
+						AND TEAM_NAME LIKE '%' ||  #{searchTxt} || '%')
+					</when>
+				</choose>
+			</if>
+</select>
+
+<select id="getDepartList" parameterType="hashmap" resultType="hashmap">
+SELECT  SUM(S1.CNT) AS PEOPLE, S1.DEPART_NO, S1.DEPART_NAME
+FROM EMP_INFO SEI RIGHT OUTER JOIN (SELECT NVL(T.TEAMMGR_NO,0) AS TEAMMGR_NO, T.TEAM_NAME, NVL(T.TEAM_NO,0) AS TEAM_NO, D.DEPART_NAME, COUNT(EI.EMP_NO) - COUNT(EI.EMP_RESIGN_DATE)  AS CNT, D.DEPART_NO
+                                    FROM DEPART D LEFT OUTER JOIN TEAM T
+                                    ON D.DEPART_NO = T.DEPART_NO
+                                    LEFT OUTER JOIN EMP_INFO EI
+                                    ON T.TEAM_NO = EI.TEAM_NO
+                                    <choose>
+										<when test="sAuthorNo eq 2 or sAuthorNo eq 3">
+											WHERE D.DEPART_DIV = 0
+										</when>
+										<when test="sAuthorNo eq 4 or sAuthorNo eq 5">
+											WHERE D.DEPART_DIV = 1
+										</when>
+									</choose>
+                                    GROUP BY NVL(T.TEAMMGR_NO,0), T.TEAM_NAME, NVL(T.TEAM_NO,0), D.DEPART_NAME, D.DEPART_NO
+                                    )S1
+                ON SEI.EMP_NO = S1.TEAMMGR_NO
+WHERE S1.DEPART_NAME NOT LIKE 'SYSTEM'
+GROUP BY S1.DEPART_NO, S1.DEPART_NAME
+ORDER BY S1.DEPART_NO
+</select>
+
+<select id="getTeamList" parameterType="hashmap" resultType="hashmap">
+SELECT SEI.EMP_NAME, S1.TEAM_NAME, S1.TEAM_NO, S1.CNT, S1.DEPART_NO, S1.TEAM_TASK
+FROM EMP_INFO SEI RIGHT OUTER JOIN (SELECT NVL(T.TEAMMGR_NO,0) AS TEAMMGR_NO, T.TEAM_NAME, T.TEAM_NO, D.DEPART_NAME, COUNT(EI.EMP_NO) - COUNT(EI.EMP_RESIGN_DATE)  AS CNT, D.DEPART_NO, T.TEAM_TASK
+                                    FROM DEPART D INNER JOIN TEAM T
+                                    ON D.DEPART_NO = T.DEPART_NO
+                                    LEFT OUTER JOIN EMP_INFO EI
+                                    ON T.TEAM_NO = EI.TEAM_NO
+                                    GROUP BY NVL(T.TEAMMGR_NO,0), T.TEAM_NAME, T.TEAM_NO, D.DEPART_NAME, D.DEPART_NO,T.TEAM_TASK
+                                    )S1
+                ON SEI.EMP_NO = S1.TEAMMGR_NO 
+<if test="depart_no != null and depart_no != '' and flag == 'true'">
+WHERE S1.DEPART_NO = #{depart_no}
+</if>
+ORDER BY S1.DEPART_NO
+</select>
+
+<select id="getDepartInfo" parameterType="hashmap" resultType="hashmap">
+SELECT S2.CNT, SD.DEPART_NAME, SD.DEPART_NO, EI.EMP_NO, EI.EMP_NAME, SD.DEPART_TASK,
+EI.EMP_EMAIL, SD.DEPART_CALL, EI.EMP_PHONE,EI.EMP_IMAGE
+FROM DEPART SD INNER JOIN (SELECT  SUM(S1.CNT) AS CNT, S1.DEPART_NO, S1.DEPART_NAME
+                            FROM EMP_INFO SEI RIGHT OUTER JOIN (SELECT NVL(T.TEAMMGR_NO,0) AS TEAMMGR_NO, T.TEAM_NAME, NVL(T.TEAM_NO,0) AS TEAM_NO, D.DEPART_NAME, COUNT(EI.EMP_NO) - COUNT(EI.EMP_RESIGN_DATE)  AS CNT, D.DEPART_NO
+                                                                FROM DEPART D LEFT OUTER JOIN TEAM T
+                                                                ON D.DEPART_NO = T.DEPART_NO
+                                                                LEFT OUTER JOIN EMP_INFO EI
+                                                                ON T.TEAM_NO = EI.TEAM_NO
+                                                                GROUP BY NVL(T.TEAMMGR_NO,0), T.TEAM_NAME, NVL(T.TEAM_NO,0), D.DEPART_NAME, D.DEPART_NO
+                                                                )S1
+                                             ON SEI.EMP_NO = S1.TEAMMGR_NO
+                            WHERE S1.DEPART_NAME NOT LIKE 'SYSTEM'
+                            GROUP BY S1.DEPART_NO, S1.DEPART_NAME
+                            ORDER BY S1.DEPART_NO)S2
+                 ON SD.DEPART_NO = S2.DEPART_NO
+ LEFT OUTER JOIN EMP_INFO EI
+                ON SD.DEPARTMGR_NO = EI.EMP_NO
+WHERE SD.DEPART_NO = #{depart_no}
+</select>
+
+<select id="getTeamInfo" parameterType="hashmap" resultType="hashmap">
+SELECT SEI.EMP_NAME, S1.TEAM_NAME, S1.TEAM_NO, S1.CNT, S1.DEPART_NO, S1.TEAM_TASK
+FROM EMP_INFO SEI RIGHT OUTER JOIN (SELECT NVL(T.TEAMMGR_NO,0) AS TEAMMGR_NO, T.TEAM_NAME, T.TEAM_NO, D.DEPART_NAME, COUNT(EI.EMP_NO) - COUNT(EI.EMP_RESIGN_DATE)  AS CNT, D.DEPART_NO, T.TEAM_TASK
+                                    FROM DEPART D LEFT OUTER JOIN TEAM T
+                                    ON D.DEPART_NO = T.DEPART_NO
+                                    LEFT OUTER JOIN EMP_INFO EI
+                                    ON T.TEAM_NO = EI.TEAM_NO
+                                    GROUP BY NVL(T.TEAMMGR_NO,0), T.TEAM_NAME, T.TEAM_NO, D.DEPART_NAME, D.DEPART_NO, T.TEAM_TASK
+                                    )S1
+                ON SEI.EMP_NO = S1.TEAMMGR_NO 
+WHERE S1.TEAM_NO = #{team_no}
+ORDER BY S1.DEPART_NO
+</select>
+
+<insert id="insertDepart" parameterType="hashmap">
+INSERT INTO DEPART(DEPART_NO, DEPART_NAME, DEPART_TASK, DEPART_DIV, DEPART_CALL)
+VALUES (DEPART_SEQ.NEXTVAL, #{newDepartName}, #{newDepartTask}, #{newInAndOut}, #{newDepartCall})
+</insert>
+
+<insert id="insertTeam" parameterType="hashmap">
+INSERT INTO TEAM(TEAM_NO, TEAM_NAME, TEAM_TASK, DEPART_NO, TEAM_CALL)
+VALUES (TEAM_SEQ.NEXTVAL, #{newTeamName}, #{newTeamTask}, #{departNo}, #{newTeamCall})
+</insert>
+
+<update id="departEdit" parameterType="hashmap">
+UPDATE DEPART SET 
+<if test="DEMP_NO != null and DEMP_NO != ''">
+DEPARTMGR_NO = #{DEMP_NO}, 
+</if>
+DEPART_TASK = #{DEPART_TASK}, DEPART_CALL = #{DEPART_CALL}
+WHERE DEPART_NO = #{depart_no}
+</update>
+
+<update id="teamEdit" parameterType="hashmap">
+UPDATE TEAM SET 
+<if test="TEMP_NO != null and TEMP_NO != ''">
+TEAMMGR_NO = #{TEMP_NO}, 
+</if>
+TEAM_TASK = #{TEAM_TASK}
+WHERE TEAM_NO = #{team_no}
+</update>
+
+<select id="getMgr" parameterType="hashmap" resultType="hashmap">
+SELECT *
+FROM EMP_INFO
+WHERE EMP_NO = #{DEMP_NO}
+</select>
+
+<select id="getTMgr" parameterType="hashmap" resultType="hashmap">
+SELECT *
+FROM EMP_INFO
+WHERE EMP_NO = #{TEMP_NO}
+</select>
+
+<update id="departMgrEdit" parameterType="hashmap">
+UPDATE EMP_INFO SET EMP_POSI_NO = 4
+WHERE EMP_NO = #{DEMP_NO}
+</update>
+
+<update id="teamMgrEdit" parameterType="hashmap">
+UPDATE EMP_INFO SET EMP_POSI_NO = 3
+WHERE EMP_NO = #{TEMP_NO}
+</update>
+</mapper>

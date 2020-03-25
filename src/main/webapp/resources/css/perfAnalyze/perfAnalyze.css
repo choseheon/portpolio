@@ -1,0 +1,690 @@
+@@charset "UTF-8";
+
+
+.cmp_title {
+	display: block;
+	text-align: center;
+	font-size: 32pt;
+}
+
+.cmp_title_wrap {
+	display: block;
+	height: 75px;
+}
+
+.select_btn_area {
+	display: inline-block;
+	width: 100%;
+	height: 110px;
+}
+.select_area {
+	display: inline-block;
+	width: 210px;
+	height: 100px;
+	vertical-align: top;
+}
+
+.select_area > select {
+	display: inline-block;
+	font-size: 14pt;
+	width: 100px;
+	height: 25px;
+	text-align: center;
+	vertical-align: top;
+	font-family: "Malgun Gothic", "맑은 고딕", "serif";
+}
+
+.year_left_wrap {
+	display: inline-block;
+	width: calc(100% - 490px);
+	height: 100px;
+}
+
+.year_select {
+	display: inline-block;
+	border : 1px solid #ccc;
+    border-radius : 5px;
+}
+
+.month_select {
+	display: inline-block;
+	border : 1px solid #ccc;
+    border-radius : 5px;
+}
+
+.chart_btn_area {
+	display: inline-block;
+	width: 270px;
+	height: 160px;
+	min-width: 220px;
+	float: right;
+}
+
+.first_btn_area {
+	display: inline-block;
+	width: 270px;
+	height: 30px;
+	text-align: center;
+}
+.first_btn_area > div {
+	display: inline-block;
+	width : 80px;
+	height: 30px;
+	font-size: 10pt;
+	color: #595959;
+	text-align : center;
+	border-radius : 5px;
+	float : right;
+	background-color : #F2B807;
+	padding-top : 5px;
+	/* margin-top : 10px; */
+	margin-left : 10px;
+	font-family: "Malgun Gothic", "맑은 고딕", "serif";
+}
+
+/* .first_year_btn{
+	display: inline-block;
+	width : 80px;
+	height: 25px;
+	font-size: 10pt;
+	color: #595959;
+	text-align : center;
+	border-radius : 5px;
+	float : right;
+	background-color : #F2B807;
+	padding-top : 5px;
+	margin-top : 10px;
+	margin-left : 10px;
+} */
+
+.first_btn_area > div:hover {
+   background-color : #F2CB07;
+   cursor : pointer;
+}
+
+/* .first_month_btn{
+	display: inline-block;
+	width : 80px;
+	height: 25px;
+	font-size: 10pt;
+	color: #595959;
+	text-align : center;
+	border-radius : 5px;
+	float : right;
+	background-color : #F2B807;
+	padding-top : 5px;
+	margin-top : 10px;
+	margin-left : 10px;
+}
+
+.first_day_btn{
+	display: inline-block;
+	width: 80px;
+	height: 30px;
+	background-color: #F2B807;
+	border: 1px solid #707070;
+	border-radius: 3px;
+} */
+
+
+
+/* first_btn 끝 */
+
+
+
+/* 공백 */
+.first_vertical_btn_space {
+	display: block;
+	width: 250px;
+	height: 10px;
+}
+
+/* second_btn 시작 */
+
+
+
+
+.second_btn_area {
+	display: inline-block;
+	width: 270px;
+	height: 50px;
+	text-align: center;
+	
+}
+
+.second_btn_area > div {
+	display: inline-block;
+	width : 80px;
+	height: 30px;
+	font-size: 10pt;
+	color: #595959;
+	text-align : center;
+	border-radius : 5px;
+	float : right;
+	background-color : #F2B807;
+	padding-top : 5px;
+	/* margin-top : 10px; */
+	margin-left : 10px;
+	font-family: "Malgun Gothic", "맑은 고딕", "serif";
+}
+
+.second_btn_area > div:hover {
+	background-color : #F2CB07;
+    cursor : pointer;
+}
+
+
+/* 
+.second_btn_area > div{
+	vertical-align: top;
+	font-size: 12pt;
+}
+
+.second_btn_area > div > div {
+	display: table;
+	height: 100%;
+	width: 100%;
+	cursor: pointer;
+	
+}
+
+.second_btn_area > div > div > div {
+	display: table-cell;
+	vertical-align: middle;
+	
+}
+
+.second_btn_area > div > div > div:hover {
+	background-color: #F2CB07;
+}
+.second_economy_btn {
+	display: inline-block;
+	width: 80px;
+	height: 30px;
+	background-color: #F2B807;
+	border: 1px solid #707070;
+	border-radius: 3px;
+}
+
+.second_guest_btn {
+	display: inline-block;
+	width: 80px;
+	height: 30px;
+	background-color: #F2B807;
+	border: 1px solid #707070;
+	border-radius: 3px;
+}
+
+.second_visit_btn {
+	display: inline-block;
+	width: 80px;
+	height: 30px;
+	background-color: #F2B807;
+	border: 1px solid #707070;
+	border-radius: 3px;
+}
+ */
+.third_btn_area {
+	display: block;
+}
+
+
+.third_btn_area > div {
+	display: inline-block;
+	width : 120px;
+	height: 30px;
+	font-size: 10pt;
+	color: #595959;
+	text-align : center;
+	border-radius : 5px;
+	float : right;
+	background-color : #F2B807;
+	padding-top : 5px;
+	/* margin-top : 10px; */
+	margin-left : 150px;
+	font-family: "Malgun Gothic", "맑은 고딕", "serif";
+}
+
+.third_btn_area > div:hover {
+   background-color : #F2CB07;
+   cursor : pointer;
+}
+
+
+
+/* .visit_list_btn {
+	display: inline-block;
+	width: 120px;
+	height: 30px;
+	background-color: #F2B807;
+	border: 1px solid #707070;
+	border-radius: 3px;
+	text-align: center;
+	margin-top: 10px;
+	float: right;
+	margin-right: 45px;
+}
+
+
+.visit_list_btn > div {
+	display: inline-table;
+	width: 100%;
+	height: 100%;
+}
+
+.visit_list_btn > div > div {
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+}
+
+.visit_list_btn > div > div:hover {
+	background-color: #F2CB07;
+} */
+
+.graph_area {
+	min-width: 1040px;
+	width: calc(100% - 7px);
+	border: 1px solid #000000;
+}
+
+/* bottom_area 시작 */
+
+.bottom_title_wrap {
+	display: inline-block;
+	width: 100%;
+	height: 120px;
+}
+
+.bottom_title {
+	display: block;
+	width : 220px;
+	height: 50px;
+	font-size: 10pt;
+	color: #595959;
+	text-align : center;
+	margin: 0 auto;
+	margin-top: 50px;
+	font-size: 24pt;
+	font-weight: bold;
+}
+
+.bottom_btn_area > div:hover {
+   background-color : #F2CB07;
+   cursor : pointer;
+}
+
+
+
+/* 
+성과분석 테이블 영역
+ */
+.analyze_list_txt {
+	font-size: 22pt;
+	text-indent: 10px;
+}
+
+
+table {
+   width: 1200px;   
+   text-align: center;
+   border-collapse: collapse;
+   font-size : 10pt;
+   font-weight: bold;
+   margin: 0 auto;
+}
+tr{
+	border-bottom : 1px solid #CCC;
+}
+/*주제열입니다.
+*/
+th {
+	background-color : #EEEEEE;
+	border-right : 1px solid #CCC;
+	height : 45px;
+	padding : 0px;
+}
+/*내용열입니다.*/
+td{
+	padding : 10px 15px;
+}
+/*내용열에 들어가는 텍스트 박스의 속성입니다.
+  기본적으로 내용열에 텍스트박스만 있을때 쓰는 속성입니다.
+*/
+.table_txt{
+	display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+    height: 35px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+}
+/*내용열에 텍스트박스와 버튼이 같이 들어갈 경우 사용하는 속성입니다.*/
+.table_txt1{
+	display: inline-block;
+    vertical-align: top;
+    /*버튼과 같이해서 width를 조절해주세요.*/
+    width: 80%;
+    height: 35px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+}
+/*여러열이 변동이 되면  txt1, txt2같이 표시해주세요.*/
+.table_txt2{
+	display: inline-block;
+    vertical-align: top;
+    width: 85%;
+    height: 35px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+}
+
+.table_head {
+   width: 100%;
+   height: 50px;
+   border-bottom: 1px solid #cccccc;
+   font-weight: bold;
+}
+.table_row {
+   width: 100%;
+   height: 50px;
+   border-bottom: 1px solid #cccccc;
+}
+.table_row input {
+	outline: none;
+}
+
+.check {
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	color : #ffffff;
+	width: 75px;
+}
+.num {
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	color : #ffffff;
+	width: 100px;
+}
+.table_num {
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	color : #ffffff;
+	width: 75px;
+}
+
+.num_txt {
+	border : 0;
+	width: 150px;
+}
+
+.name_txt {
+	border : 0;
+	width: 150px;
+}
+.table_name {
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	color : #ffffff;
+	width: 200px;
+
+}
+.content_txt {
+	border : 0;
+	width: 150px;
+}
+
+.table_content {
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	color : #ffffff;
+	width: 700px;
+}
+
+.table_visit_date {
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	color : #ffffff;
+	width: 300px;
+
+}
+.visit_date_txt {
+	border : 0;
+	width: 250px;
+}
+
+.title_none {
+	background-color : #595959;
+	font-size : 10pt;
+	font-weight: bold;
+	color : #ffffff;
+	width: 150px;
+}
+
+.sample5_txt {
+	border : 0;
+	width: 100px;
+
+}
+
+.sample6_txt {
+	border : 0;
+	width: 100px;
+
+}
+
+.sample7_txt {
+	border : 0;
+	width: 200px;
+
+}
+
+.table_btn{
+   float: right;
+   display: inline-block;
+   height: 20px;
+   border : 1px solid #cccccc;
+   background-color: #ffffff;
+   border-radius: 3px;
+   cursor: pointer;
+   width: 50px;
+   height: 20px;
+   font-size: 10pt;
+   font-weight: bold;
+   color: #595959;
+   padding: 2px;
+   margin-right: 27px;
+}
+
+
+
+
+/* 성과분석 테이블 영역 끝 */
+
+/* 버튼영역 */
+
+.feedback_content_bottom {
+   display: block;
+   height : 40px;
+   padding : 0px;
+   width: 1200px;
+   font-size : 0px;
+   margin: 0 auto;
+   margin-top: 30px;
+}
+
+.paging_area {
+	display: inline-block;
+	width: 1200px;
+	text-align: center;
+	position: relative;
+}
+
+.content_bottom_1_span {
+
+   display: inline-block;
+   position : relative;
+   margin-left : 432px;
+}
+
+.bottom_btn_1 {
+	display : inline-block;
+	width : 40px;
+	height : 40px;
+	border : 0px;
+	margin-left : 2px;
+	background-color : #595959;
+	color: #F2F2F2;
+	padding-top: 7px;
+	font-size: 11pt;
+	margin-top: 10px;
+}
+.bottom_btn_2 {
+   display : inline-block;
+   width : 40px;
+   height : 40px;
+   margin-left : 2px;
+   border : 0px;
+   background-color : #595959;
+   color: #F2F2F2;
+   padding-top: 7px;
+	font-size: 11pt;
+	margin-top: 10px;
+}
+.bottom_btn_1:hover {
+   background-color: #F2CB07;
+   color: #595959;
+   cursor : pointer;
+}
+.paging_area{
+	display: inline-block;
+	width: 1200px;
+	text-align: center;
+	position: relative;
+}
+.bottom_btn_2:hover {
+   background-color: #F2CB07;
+   color: #595959;
+   cursor : pointer;
+  }
+
+.analyze_write_area {
+	width: 1200px;
+}
+
+.review_wrap {
+	display: inline-block;
+	width: 100%;
+	height: 100px;
+	
+}
+
+.review_area {
+	display: block;
+	width: 500px;
+	height: 200px;
+	margin: 20px auto 20px auto;
+}
+
+
+.review_text {
+	display: block;
+	width: 110px;
+	height: 30px;
+	vertical-align: top;
+	font-size: 16pt;
+	font-family: "맑은 고딕", "Malgun Gothic";
+	margin-left: 8px;
+	font-weight: bold;
+}
+
+
+
+.review_bar {
+	display: inline-block;
+	width: 500px;
+	height: 100px;
+	vertical-align: top;
+	margin-top: 8px;
+	resize: none;
+}
+
+.review_btn_area {
+	display: inline-block;
+	margin-top: 8px;
+	float: right;
+}
+
+.review_btn_area > div {
+	display: inline-block;
+	width : 80px;
+	height: 25px;
+	font-size: 10pt;
+	color: #595959;
+	text-align : center;
+	border-radius : 5px;
+	float : left;
+	background-color : #F2B807;
+	padding-top : 5px;
+	/* margin-top : 10px; */
+	margin-left : 5px;
+}
+
+.review_btn_area > div:hover {
+   background-color : #F2CB07;
+   cursor : pointer;
+}
+
+/* .review_btn_area > div {
+	display: inline-block;
+	width: calc(82px - 2px);
+    height: 30px;
+    background-color: #F2B807;
+    border: 1px solid #707070;
+    border-radius: 3px;
+    font-size: 10pt;
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+.review_btn_area > div:hover {
+	background-color: #F2CB07;
+	color: #595959;
+}
+
+.review_btn_area > div > div {
+    display: table;
+    width: 100%;
+    height: 24px;
+    font-size: 14pt;
+    font-weight: bold;
+    color: #595959;
+    margin-top: 2px
+}
+
+.review_btn_area > div > div > div {
+    display: table-cell;
+    vertical-align: middle;
+    width: 100%;
+    text-align: center;
+} */

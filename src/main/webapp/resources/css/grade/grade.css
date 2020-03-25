@@ -1,0 +1,206 @@
+@charset "UTF-8";
+.grade_chart_area {
+	width: 1200px;
+	height: 280px;
+	font-size: 0;
+}
+
+.grade_chart {
+	display: inline-block;
+	margin: 0px 50px 0px 20px;
+	width: 300px;
+	height: 300px;
+	vertical-align: top;
+}
+
+.grade_chart_right {
+	margin-top: 20px;
+	display: inline-block;
+	font-size: 9pt;
+	width: 600px;
+}
+
+.grade {
+	display: inline-block;
+	width: 270px;
+	margin: 20px 0;
+}
+
+.grade_name {
+	width: 30px;
+	display: inline-block;
+	font-size: 13pt;
+	font-weight: bold;
+	margin-left: 5px;
+	vertical-align: top;
+}
+
+.grade_per{
+	width: 60px;
+	display: inline-block;
+	font-size: 13pt;
+	margin-left: 10px;
+	vertical-align: top;
+}
+
+.grade_count{
+	font-size: 12pt;
+}
+
+.grade_color {
+	vertical-align: top;
+	display: inline-block;
+	height: 20px;
+	width: 20px;
+}
+
+.grade_chart_title {
+	font-size: 20pt;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+.grade_name_edit {
+	width: 250px;
+	height: 30px;
+	border : 1px solid #ccc;
+	border-radius : 5px;
+	padding: 10px;
+}
+
+.grade_name_edit::placeholder {
+	color: #cacaca;
+}
+
+.grade_color_btn {
+	display: inline-block;
+	height: 25px;
+	width: 25px;
+	cursor: pointer;
+	background-color: #000;
+}
+
+.edit_table {
+	width: 1080px;
+ 	text-align: center;
+  	border-collapse: collapse;
+   	font-size : 10pt;
+}
+
+.grade_rank{
+	font-size: 12pt;
+	font-weight: bold;
+}
+
+.edit_btn_area{
+	width : 1080px;
+   	height : 50px;
+   	text-align: right;
+   	font-size: 0;
+}
+
+.grade_edit {
+	width: 100px;
+	height: 30px;
+	font-size : 10pt;
+	border : 1px solid #ccc;
+	border-radius : 3px;
+}
+
+.palette {
+	display: none;
+	position: absolute;
+	left: 980px;
+	background-color: #FFF;
+	width: 150px;
+	height: 121px;
+	border-radius: 5px;
+	padding: 9px;
+	box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.5);
+	border: 1px solid gray;
+	z-index: 20;
+}
+
+.palette:before {
+	content: '';
+	position: absolute;
+	top: 9px;
+	left: 29px;
+	width: 0px;
+	height: 0px;
+	border: 12px solid transparent;
+	border-bottom-color: black;
+	border-top: 0;
+	margin-left: -21px;
+	margin-top: -21px;
+}
+
+.palette:after {
+	content: '';
+	position: absolute;
+	top: 9px;
+	left: 29px;
+	width: 0px;
+	height: 0px;
+	border: 11px solid transparent;
+	border-bottom-color: #FFF;
+	border-top: 0;
+	margin-left: -20px;
+	margin-top: -20px;
+	z-index: 20;
+}
+
+.color1, .color2, .color3, .color4, .color5, .color6, 
+.color7, .color8, .color9, .color10, .color11, .color12 {
+	display: inline-block;
+	width: 25px;
+	height: 25px;
+	margin: 2px;
+}
+
+.color1 {
+	background-color: #F00;
+}
+.color2 {
+	background-color: #FF8000;
+}
+.color3 {
+	background-color: #FFED0D;
+}
+.color4 {
+	background-color: #01DF01;
+}
+.color5 {
+	background-color: #0040FF;
+}
+.color6 {
+	background-color: #0404B4;
+}
+.color7 {
+	background-color: #A901DB;
+}
+.color8 {
+	background-color: #A5421E;
+}
+.color9 {
+	background-color: #30A9DE;
+}
+.color10 {
+	background-color: #58C9B9;
+}
+.color11 {
+	background-color: #E88B89;
+}
+.color12 {
+	background-color: #000;
+}
+
+.color1:hover, .color2:hover, .color3:hover, .color4:hover,
+.color5:hover, .color6:hover, .color7:hover, .color8:hover,
+.color9:hover, .color10:hover, .color11:hover, .color12:hover {
+	cursor: pointer;
+	opacity: 0.7;
+	margin: 0px;
+	width: 29px;
+	height: 29px;
+}

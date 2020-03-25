@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="common">
+	<select id="getLeftMenu" parameterType="hashmap" resultType="hashmap">
+		SELECT M.MENU_NO, M.MENU_NAME, M.TOP_MENU_NO, M.MENU_ADDR, M.MENU_DEPTH, M.CNT, M.MENU_FLOW
+		FROM (
+		SELECT M.MENU_NO, M.MENU_NAME, M.TOP_MENU_NO, M.MENU_ADDR, M.MENU_DEPTH, NVL(TM.CNT, 0) AS CNT,
+		       SUBSTR(SYS_CONNECT_BY_PATH(M.MENU_NO, ','), 2) AS MENU_FLOW
+		FROM MENU M INNER JOIN MENU_AUTHOR MA
+		                    ON M.MENU_NO = MA.MENU_NO
+		                   AND MA.AUTHOR_TYPE_NO IN (1, 2)
+		                   AND MA.AUTHOR_NO = #{authorNo}
+		            LEFT OUTER JOIN (SELECT M.TOP_MENU_NO, COUNT(*) AS CNT
+		                             FROM MENU M INNER JOIN MENU_AUTHOR MA
+		                                                 ON M.MENU_NO = MA.MENU_NO
+		                                                AND MA.AUTHOR_TYPE_NO IN (1, 2)
+		                                                AND MA.AUTHOR_NO = #{authorNo}
+		                             GROUP BY M.TOP_MENU_NO) TM
+		                         ON M.MENU_NO = TM.TOP_MENU_NO
+		WHERE 1 = 1
+		<!-- <if test="authorNo neq 0">
+			AND M.MENU_DIV = #{departDiv}
+		</if> -->
+		START WITH MENU_DEPTH = 1
+		CONNECT BY PRIOR M.MENU_NO = M.TOP_MENU_NO) M
+	</select>
+	
+	<select id="menuAuthorCheck" parameterType="hashmap" resultType="String">
+		SELECT AUTHOR_TYPE_NO
+		FROM MENU_AUTHOR
+		WHERE AUTHOR_NO = #{authorNo}
+		AND MENU_NO = #{menuNo}
+	</select>
+	
+	<select id="loginCheck" parameterType="hashmap" resultType="hashmap">
+		SELECT E.EMP_NO, E.EMP_NAME, E.AUTHOR_NO, T.TEAM_NO, D.DEPART_DIV, T.TEAM_NAME, EP.EMP_POSI_NAME
+		FROM EMP_INFO E INNER JOIN TEAM T
+		                        ON E.TEAM_NO = T.TEAM_NO
+		                INNER JOIN DEPART D
+                        		ON T.DEPART_NO = D.DEPART_NO
+		                INNER JOIN EMP_POSI EP
+		                        ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+		WHERE E.EMP_RESIGN_DATE IS NULL
+		AND E.EMP_ID = #{id}
+		AND E.EMP_PW = #{pw}
+	</select>
+</mapper>

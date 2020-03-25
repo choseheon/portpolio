@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cmp">
+	
+	<!-- 대상목록 -->
+	<select id="getClientList" parameterType="hashmap" resultType="hashmap">
+		SELECT  C.*
+		FROM(
+			SELECT  ICI.CLIENT_NO AS CLIENT_NO , ICI.CLIENT_NAME AS CLIENT_NAME , ICI.BIRTHD AS BIRTHD, ICI.GENDER AS GENDER
+                    ,ICI.PH_NO AS PH_NO , ICI.PH_DR AS PH_DR , ICI.EMAIL AS EMAIL , ICI.EMAIL_DR AS EMAIL_DR
+                    ,ICI.ADDRESS AS ADDRESS
+                    ,JI.JOIN_NO AS JOIN_NO ,JI.JDATE AS JDATE , JI.JOIN_EDATE AS EDATE
+                    ,PI.PAY_NO AS PAY_NO , PI.TARGET_DATE AS TARGET_DATE , PI.PAY_MONEY AS PAY_MONEY , PI.PAY_WHETHER AS PAY_WHETHER
+                    ,
+                    ROW_NUMBER()OVER(ORDER BY ICI.CLIENT_NO) AS RNUM
+			
+			FROM INSIDE_CLIENT_INFO ICI INNER JOIN JOIN_INFO JI ON ICI.CLIENT_NO = JI.CLIENT_NO
+			                            INNER JOIN PAY_INFO PI ON JI.JOIN_NO = PI.JOIN_NO
+			WHERE 1 = 1
+			
+			${str}
+			) C
+		WHERE C.RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	<!-- 검색된 고객 수 카운트 -->
+	<select id="searchClientCnt" parameterType="hashmap" resultType="Integer">
+		SELECT  COUNT(*) AS COUNT
+		FROM(
+			SELECT  ICI.CLIENT_NO AS CLIENT_NO , ICI.CLIENT_NAME AS CLIENT_NAME , ICI.BIRTHD AS BIRTHD, ICI.GENDER AS GENDER
+	                   ,ICI.PH_NO AS PH_NO , ICI.PH_DR AS PH_DR , ICI.EMAIL AS EMAIL , ICI.EMAIL_DR AS EMAIL_DR
+	                   ,ICI.ADDRESS AS ADDRESS
+	                   ,JI.JOIN_NO AS JOIN_NO ,JI.JDATE AS JDATE , JI.JOIN_EDATE AS EDATE
+	                   ,PI.PAY_NO AS PAY_NO , PI.TARGET_DATE AS TARGET_DATE , PI.PAY_MONEY AS PAY_MONEY , PI.PAY_WHETHER AS PAY_WHETHER
+	                   ,
+	                   ROW_NUMBER()OVER(ORDER BY ICI.CLIENT_NO) AS RNUM
+			
+			FROM INSIDE_CLIENT_INFO ICI INNER JOIN JOIN_INFO JI ON ICI.CLIENT_NO = JI.CLIENT_NO
+			                            INNER JOIN PAY_INFO PI ON JI.JOIN_NO = PI.JOIN_NO
+			WHERE 1 = 1
+			
+			${str}
+			) C
+	</select>
+	
+	
+	
+	<!-- 고객 수 카운트 -->
+	<select id="clientCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(A.CLIENT_NO) AS CNT
+		FROM(
+		    SELECT ICI.CLIENT_NO , ICI.CLIENT_NAME , ICI.BIRTHD , ICI.GENDER , ICI.PH_NO , ICI.PH_DR , ICI.EMAIL , ICI.EMAIL_DR ,ICI.ADDRESS
+		            ,JI.JOIN_NO , JI.JDATE , JI.JOIN_EDATE , PI.PAY_NO , PI.TARGET_DATE , PI.PAY_MONEY, PI.PAY_WHETHER,
+		            ROW_NUMBER() OVER(ORDER BY ICI.CLIENT_NO) AS RNUM
+		            
+		    FROM INSIDE_CLIENT_INFO ICI INNER JOIN JOIN_INFO JI ON ICI.CLIENT_NO = JI.CLIENT_NO
+		                                INNER JOIN PAY_INFO PI ON JI.JOIN_NO = PI.JOIN_NO
+		    )A
+	
+	</select>
+	
+	
+	<!-- 채널선정 -->
+	<insert id="channelSelect" parameterType="hashmap">
+	INSERT INTO CMP_CHANNEL (CMP_CHANNEL_NO, CMP_NO, CHANNEL_COMP_NO, CHANNEL_NO, CONTENTS) 
+	VALUES ( CMP_CHANNEL_SEQ.nextval, #{seq} , #{compNo}, #{chNo}, #{content})
+	</insert>
+	
+	<!-- 발송기발송기 -->
+	<!-- <insert id="">
+	
+	</insert> -->
+	<!-- 캠페인카운트 -->
+	<select id="getCmpCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*)
+		FROM(
+			SELECT CMP_NO, CMP_NAME, TO_CHAR(SDATE,'YYYY-MM-DD') AS SDATE, TO_CHAR(EDATE,'YYYY-MM-DD') AS EDATE, PROG_STAT, EMP_NAME, CMP.ADD_DAY,
+							ROW_NUMBER() OVER(ORDER BY ADD_DAY DESC) AS RNUM
+			FROM CMP INNER JOIN EMP_INFO
+			 			   ON CMP.MGR_NO = EMP_INFO.EMP_NO
+			 			   WHERE 1 = 1
+			<if test="textbox_srch_txt != null and textbox_srch_txt != ''">
+            <choose>
+               <when test="content_srch_DD eq 0">
+                  AND CMP_NAME LIKE '%' || #{textbox_srch_txt} || '%'
+               </when>
+               <when test="content_srch_DD eq 1">
+                  AND PROG_STAT LIKE '%' || #{textbox_srch_txt} || '%'
+               </when>
+               <when test="content_srch_DD eq 2">
+                   AND EMP_NAME LIKE '%' || #{textbox_srch_txt} || '%'
+               </when>
+            </choose>
+         </if>
+			 			   )B
+	</select>
+	
+	<!-- 캠페인목록 -->
+	<select id="getCmpList" parameterType="hashmap" resultType="hashmap">
+		SELECT B.*
+		FROM(
+			SELECT CMP_NO, CMP_NAME, TO_CHAR(SDATE,'YYYY-MM-DD') AS SDATE, TO_CHAR(EDATE,'YYYY-MM-DD') AS EDATE, PROG_STAT, EMP_NAME, CMP.ADD_DAY,
+							ROW_NUMBER() OVER(ORDER BY ADD_DAY DESC) AS RNUM
+			FROM CMP INNER JOIN EMP_INFO
+			 			   ON CMP.MGR_NO = EMP_INFO.EMP_NO
+			 			   WHERE 1 = 1
+			<if test="textbox_srch_txt != null and textbox_srch_txt != ''">
+            <choose>
+               <when test="content_srch_DD eq 0">
+                  AND CMP_NAME LIKE '%' || #{textbox_srch_txt} || '%'
+               </when>
+               <when test="content_srch_DD eq 1">
+                  AND PROG_STAT LIKE '%' || #{textbox_srch_txt} || '%'
+               </when>
+               <when test="content_srch_DD eq 2">
+                   AND EMP_NAME LIKE '%' || #{textbox_srch_txt} || '%'
+               </when>
+            </choose>
+         </if>
+			 			   )B
+		WHERE B.RNUM BETWEEN #{startCnt} AND #{endCnt}
+		
+	</select>
+	
+
+	<!-- 채널등록 -->
+	<insert id="cmpAdd" parameterType="hashmap">
+		INSERT INTO CMP (CMP_NO , CMP_TYPE_NO , MGR_NO , ADDEMP_NO , CMP_NAME , SDATE, EDATE, PROG_STAT , CMP_EXPL)
+		VALUES (#{seq} , #{typeNo} , #{empNo} , #{empNo}  , #{cmpName} , #{sDate}, #{eDate} , 1, #{con} )
+	</insert>
+
+	<!-- sms -->
+	<select id="getsms" parameterType="hashmap" resultType="hashmap">
+		SELECT CC.COMPANY_NAME AS COMPANY_NAME, TO_CHAR(CC.SDATE, 'YYYY-MM-DD')AS SDATE, TO_CHAR(CC.EDATE, 'YYYY-MM-DD') AS EDATE , cc.money AS MONEY
+		        ,CC.CHANNEL_COMP_NO AS CHANNEL_COMP_NO , CC.CHANNEL_NO AS CHANNEL_NO
+		FROM CHANNEL_COMP CC INNER JOIN CHANNEL C ON CC.CHANNEL_NO = C.CHANNEL_NO
+		WHERE CC.CHANNEL_NO = 1
+	</select>
+
+	<!-- mms -->
+	<select id="getmms" parameterType="hashmap" resultType="hashmap">
+		SELECT CC.COMPANY_NAME AS COMPANY_NAME, TO_CHAR(CC.SDATE, 'YYYY-MM-DD')AS SDATE, TO_CHAR(CC.EDATE, 'YYYY-MM-DD') AS EDATE , cc.money AS MONEY
+		        ,CC.CHANNEL_COMP_NO AS CHANNEL_COMP_NO , CC.CHANNEL_NO AS CHANNEL_NO
+		FROM CHANNEL_COMP CC INNER JOIN CHANNEL C ON CC.CHANNEL_NO = C.CHANNEL_NO
+		WHERE CC.CHANNEL_NO = 2
+	</select>
+	
+	<!-- e-mail -->
+	<select id="getemail" parameterType="hashmap" resultType="hashmap">
+		SELECT CC.COMPANY_NAME AS COMPANY_NAME, TO_CHAR(CC.SDATE, 'YYYY-MM-DD')AS SDATE, TO_CHAR(CC.EDATE, 'YYYY-MM-DD') AS EDATE , cc.money AS MONEY
+		        ,CC.CHANNEL_COMP_NO AS CHANNEL_COMP_NO , CC.CHANNEL_NO AS CHANNEL_NO
+		FROM CHANNEL_COMP CC INNER JOIN CHANNEL C ON CC.CHANNEL_NO = C.CHANNEL_NO
+		WHERE CC.CHANNEL_NO = 3
+	</select>
+	
+	<!-- 시퀀스조회 -->
+	<select id="getSeq" resultType="String">
+		SELECT CMP_SEQ.NEXTVAL AS SEQ
+		FROM DUAL
+	</select>
+	<!-- 시뮬레이션 결과 -->
+	
+	<select id="getSim_result" parameterType="hashmap" resultType="hashmap">
+		SELECT S.SIM_NO, CMP.CMP_NO AS CMP_NO, S.CHANNEL_NO AS CHANNEL_NO, SEND_SIZE, RECEIVE_SIZE, RESPONSE_SIZE, ACTUAL_RESPONSE_SIZE
+		        , CMP_NAME , C.CHANNEL_NAME AS CHANNEL_NAME , EI.EMP_NAME AS EMP_NAME
+		FROM SIM_RESULT S INNER JOIN CMP      ON S.CMP_NO = CMP.CMP_NO
+		                INNER JOIN CHANNEL C  ON C.CHANNEL_NO = S.CHANNEL_NO
+		                INNER JOIN EMP_INFO EI ON CMP.MGR_NO = EI.EMP_NO
+		WHERE S.CMP_NO = #{seq}
+	</select>
+	
+	<!-- 채널진행상태?  -->
+	<update id="updateS" parameterType="hashmap">
+		UPDATE CMP SET PROG_STAT=(SELECT PROG_STAT
+									FROM CMP
+									WHERE CMP_NO = #{seq}
+									)	 +	1
+		WHERE CMP_NO = #{seq}
+	</update>	
+	
+
+	<insert id="save" parameterType="hashmap">
+ 			INSERT INTO CMP_APP(APP_NO,CMP_NO,DRATF_EMP_NO,APP_EMP_NO,APP_STAT,APP_DAY,FEEDB)
+  			VALUES(APP_SEQ.NEXTVAL,#{seq},#{empNo},NULL,4,NULL,NULL)
+	</insert>
+		
+	<!-- 캠페인대상저장 -->
+	<insert id="insertT" parameterType="hashmap">
+		INSERT INTO CMP_TARGET( TARGET_NO , CMP_NO , DET_NO )
+		VALUES (TARGET_SEQ.NEXTVAL , #{seq} , #{detNo} )
+	</insert>	
+	<!-- 대상선정 체크박스 부르기 -->
+	<select id="selectCbox" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM CMP_TARGET
+		WHERE CMP_NO = #{seq}
+		
+	</select>
+	
+	<!-- 채널선정부르기 -->
+	<select id="selectCh" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM CMP_CHANNEL CC INNER JOIN CHANNEL_COMP CP ON CC.CHANNEL_COMP_NO = CP.CHANNEL_COMP_NO
+		WHERE CMP_NO = #{seq}
+	</select>
+	
+	<select id="getCmpType" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM CMP_TYPE
+		</select>
+		
+		<select id="cmpTypeList" parameterType="hashmap" resultType="hashmap">
+			SELECT CMP_NO, CMP_NAME, TO_CHAR(SDATE,'YYYY-MM-DD') AS SDATE, TO_CHAR(EDATE,'YYYY-MM-DD') AS EDATE, PROG_STAT, EMP_NAME, CMP.CMP_TYPE_NO
+			FROM CMP INNER JOIN EMP_INFO
+			 			   ON CMP.MGR_NO = EMP_INFO.EMP_NO
+			 			   WHERE CMP_TYPE_NO = #{cmpType}
+			 			   AND PROG_STAT = 6
+		</select>
+	
+</mapper>
+

@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="comp">
+	<select id="getCompList" parameterType="hashmap" resultType="hashmap">
+		SELECT SQ.NO, SQ.COMP_NAME, SQ.SECT_NAME, SQ.ADDR, SQ.STAT_NAME, SQ.EMP_NAME
+		FROM ( 	SELECT C.COMP_NO AS NO, C.COMP_NAME, CS1.COMP_SECT_NAME AS SECT_NAME,
+					   ('(' || C.COMP_ZC || ') ' || C.COMP_ADDR || ' ' || C.COMP_DETAIL_ADDR ) AS ADDR,
+					   CS2.COMP_STAT_NAME AS STAT_NAME, E.EMP_NAME,
+              		   ROW_NUMBER() OVER(ORDER BY C.COMP_NO DESC) AS RNUM
+       			FROM COMP C INNER JOIN COMP_SECT CS1
+       						ON C.COMP_SECT_NO = CS1.COMP_SECT_NO
+       						INNER JOIN COMP_STAT CS2
+       						ON C.COMP_STAT_NO = CS2.COMP_STAT_NO
+       						INNER JOIN EMP_INFO E
+       						ON C.EMP_NO = E.EMP_NO		
+       						AND E.AUTHOR_NO != 0
+       						INNER JOIN TEAM T
+       						ON T.TEAM_NO = E.TEAM_NO
+       						INNER JOIN DEPART D
+       						ON D.DEPART_NO = T.DEPART_NO
+       						AND D.DEPART_NO != 1
+       			WHERE C.COMP_STAT_NO != 0
+				<if test="searchTxt != null and searchTxt != ''">
+					<choose>
+						<when test="searchGbn == 0">
+							AND C.COMP_NAME LIKE '%' || #{searchTxt} || '%'
+							OR CS1.COMP_SECT_NAME LIKE '%' || #{searchTxt} || '%'
+							OR ('(' || C.COMP_ZC || ') ' || C.COMP_ADDR || ' ' || C.COMP_DETAIL_ADDR ) LIKE '%' || #{searchTxt} || '%'
+							OR CS2.COMP_STAT_NAME LIKE '%' || #{searchTxt} || '%'
+							OR E.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+						</when>
+						<when test="searchGbn == 1">AND C.COMP_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 2">AND CS1.COMP_SECT_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 3">AND ('(' || C.COMP_ZC || ') ' || C.COMP_ADDR || ' ' || C.COMP_DETAIL_ADDR ) LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 4">AND CS2.COMP_STAT_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 5">AND E.EMP_NAME LIKE '%' || #{searchTxt} || '%'</when>
+					</choose>
+				</if>
+				ORDER BY C.COMP_NO DESC
+       	) SQ
+		WHERE SQ.RNUM BETWEEN #{startCnt} AND #{endCnt}
+		
+	</select>
+	
+	<select id="getCompCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+       	FROM COMP C INNER JOIN COMP_SECT CS1
+       				ON C.COMP_SECT_NO = CS1.COMP_SECT_NO
+       				INNER JOIN COMP_STAT CS2
+       				ON C.COMP_STAT_NO = CS2.COMP_STAT_NO
+       				INNER JOIN EMP_INFO E
+       				ON C.EMP_NO = E.EMP_NO
+       				AND E.AUTHOR_NO != 0
+       				INNER JOIN TEAM T
+       				ON T.TEAM_NO = E.TEAM_NO
+       				INNER JOIN DEPART D
+       				ON D.DEPART_NO = T.DEPART_NO
+       				AND D.DEPART_NO != 1					
+       			WHERE C.COMP_STAT_NO != 0
+				<if test="searchTxt != null and searchTxt != ''">
+					<choose>
+						<when test="searchGbn == 0">
+							AND C.COMP_NAME LIKE '%' || #{searchTxt} || '%'
+							OR CS1.COMP_SECT_NAME LIKE '%' || #{searchTxt} || '%'
+							OR ('(' || C.COMP_ZC || ') ' || C.COMP_ADDR || ' ' || C.COMP_DETAIL_ADDR ) LIKE '%' || #{searchTxt} || '%'
+							OR CS2.COMP_STAT_NAME LIKE '%' || #{searchTxt} || '%'
+							OR E.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+						</when>
+						<when test="searchGbn == 1">AND C.COMP_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 2">AND CS1.COMP_SECT_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 3">AND ('(' || C.COMP_ZC || ') ' || C.COMP_ADDR || ' ' || C.COMP_DETAIL_ADDR ) LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 4">AND CS2.COMP_STAT_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 5">AND E.EMP_NAME LIKE '%' || #{searchTxt} || '%'</when>
+					</choose>
+				</if>
+	</select>
+	
+	<select id="getGradeList" resultType="hashmap">
+		SELECT CC_GRADE_NO AS G_NO, CC_GRADE_NAME AS G_NAME, CC_GRADE_COLOR AS G_COLOR
+		FROM COMP_CLIENT_GRADE
+	</select>
+	
+	<select id="getStatList" resultType="hashmap">
+		SELECT COMP_STAT_NO AS STAT_NO, COMP_STAT_NAME AS STAT_NAME
+		FROM COMP_STAT
+	</select>
+	
+	<select id="getSectList" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM ( 	SELECT COMP_SECT_NO AS SECT_NO, COMP_SECT_NAME AS SECT_NAME,
+				   	   ROW_NUMBER() OVER(ORDER BY COMP_SECT_NO DESC) AS RNUM
+			   	FROM COMP_SECT
+			   	<if test="searchTxt != null and searchTxt != ''">
+			   		WHERE COMP_SECT_NO LIKE '%' || #{searchTxt} || '%'
+					OR COMP_SECT_NAME LIKE '%' || #{searchTxt} || '%'
+				</if>
+		) SQ
+		WHERE SQ.RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	
+	<select id="getSectCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM COMP_SECT
+		<if test="searchTxt != null and searchTxt != ''">
+			WHERE COMP_SECT_NO LIKE '%' || #{searchTxt} || '%'
+			OR COMP_SECT_NAME LIKE '%' || #{searchTxt} || '%'
+		</if>
+	</select>
+	
+	<select id="checkSectName" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM COMP_SECT
+		WHERE COMP_SECT_NAME = #{insert_sect}
+	</select>
+	
+	<insert id="insertSect" parameterType="hashmap">
+		INSERT INTO COMP_SECT(COMP_SECT_NO, COMP_SECT_NAME)
+		VALUES (SECT_SEQ.NEXTVAL, #{insert_sect})
+	</insert>
+	
+	<select id="getEmpList" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM ( 	SELECT E.EMP_NO, D.DEPART_NAME, T.TEAM_NAME, E.EMP_NAME, EP.EMP_POSI_NAME AS POSI_NAME, E.EMP_EMAIL, D.DEPART_NO,
+				   	   ROW_NUMBER() OVER(ORDER BY E.EMP_NO DESC) AS RNUM
+			   	FROM EMP_INFO E INNER JOIN TEAM T
+			   					ON E.TEAM_NO = T.TEAM_NO
+			   					INNER JOIN DEPART D
+			   					ON T.DEPART_NO = D.DEPART_NO
+			   					INNER JOIN EMP_POSI EP
+			   					ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+			   	WHERE E.EMP_RESIGN_DATE IS NULL
+			   	<if test="searchTxt != null and searchTxt != ''">
+			   		AND E.EMP_NO LIKE '%' || #{searchTxt} || '%'
+					OR D.DEPART_NAME LIKE '%' || #{searchTxt} || '%'
+					OR T.TEAM_NAME LIKE '%' || #{searchTxt} || '%'
+					OR E.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+					OR EP.EMP_POSI_NAME LIKE '%' || #{searchTxt} || '%'
+				</if>
+				ORDER BY E.EMP_NO DESC
+		) SQ
+		WHERE SQ.RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	
+	<select id="getEmpCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM EMP_INFO E INNER JOIN TEAM T
+			   			ON E.TEAM_NO = T.TEAM_NO
+			   			INNER JOIN DEPART D
+			   			ON T.DEPART_NO = D.DEPART_NO
+			   			INNER JOIN EMP_POSI EP
+			   			ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+		WHERE E.EMP_RESIGN_DATE IS NULL
+		<if test="searchTxt != null and searchTxt != ''">
+			AND E.EMP_NO LIKE '%' || #{searchTxt} || '%'
+			OR D.DEPART_NAME LIKE '%' || #{searchTxt} || '%'
+			OR T.TEAM_NAME LIKE '%' || #{searchTxt} || '%'
+			OR E.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+			OR EP.EMP_POSI_NAME LIKE '%' || #{searchTxt} || '%'
+		</if>
+	</select>
+	
+	<select id="checkCompName" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM COMP
+		WHERE COMP_NAME LIKE #{comp_name}
+	</select>
+	
+	<insert id="insertComp" parameterType="hashmap">
+		INSERT INTO COMP(COMP_NO, CC_GRADE_NO, EMP_NO, COMP_SECT_NO, COMP_STAT_NO, COMP_NAME, COMP_PH, 
+						 COMP_WEBSITE, COMP_ZC, COMP_ADDR, COMP_DETAIL_ADDR, COMP_DETAIL_INFO)
+		VALUES (	COMP_SEQ.NEXTVAL, #{comp_grade}, #{emp_no}, #{sect_no}, #{comp_stat}, #{comp_name}, #{comp_ph},
+					<choose>
+						<when test="comp_web != null or comp_web != ''">#{comp_web}, </when>
+						<otherwise>NULL, </otherwise>
+					</choose>
+					<choose>
+						<when test="comp_zc != null or comp_zc != ''">#{comp_zc}, </when>
+						<otherwise>NULL, </otherwise>
+					</choose>
+					<choose>
+						<when test="comp_addr != null or comp_addr != ''">#{comp_addr}, </when>
+						<otherwise>NULL, </otherwise>
+					</choose>
+					<choose>
+						<when test="comp_det_addr != null or comp_det_addr != ''">#{comp_det_addr}, </when>
+						<otherwise>NULL, </otherwise>
+					</choose>
+					<choose>
+						<when test="comp_det_info != null or comp_det_info != ''">#{comp_det_info}</when>
+						<otherwise>NULL </otherwise>
+					</choose> )
+	</insert>
+	
+	<select id="getCompData" parameterType="hashmap" resultType="hashmap">
+		SELECT C.COMP_NO, C.COMP_NAME, E.EMP_NAME, C.COMP_PH, CC.CC_GRADE_NAME AS GRADE_NAME, CC.CC_GRADE_COLOR AS GRADE_COLOR,
+			   CS1.COMP_SECT_NAME AS SECT_NAME, CS2.COMP_STAT_NAME AS STAT_NAME, C.COMP_WEBSITE,
+			   C.COMP_ZC AS ZC, C.COMP_ADDR AS ADDR, C.COMP_DETAIL_ADDR AS DETAIL_ADDR, C.COMP_DETAIL_INFO AS DETAIL_INFO,
+			   C.EMP_NO, C.CC_GRADE_NO, C.COMP_SECT_NO, C.COMP_STAT_NO
+		FROM COMP C INNER JOIN EMP_INFO E
+					ON C.EMP_NO = E.EMP_NO
+					INNER JOIN COMP_CLIENT_GRADE CC
+					ON C.CC_GRADE_NO = CC.CC_GRADE_NO
+					INNER JOIN COMP_SECT CS1
+					ON C.COMP_SECT_NO = CS1.COMP_SECT_NO
+					INNER JOIN COMP_STAT CS2
+					ON C.COMP_STAT_NO = CS2.COMP_STAT_NO
+		WHERE C.COMP_NO = #{comp_no}
+	</select>
+	
+	<select id="getClient" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM (	SELECT CLIENT_NO, CLIENT_NAME, CLIENT_POSI_NAME AS POSI_NAME, CLIENT_PH, CLIENT_EMAIL,
+					   ROW_NUMBER() OVER(ORDER BY CLIENT_NO DESC) AS RNUM
+				FROM CLIENT
+				WHERE COMP_NO = #{comp_no}
+			 ) SQ
+		WHERE SQ.RNUM BETWEEN 1 AND #{view_cnt}
+	</select>
+	
+	<select id="getClientCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM CLIENT
+		WHERE COMP_NO = #{comp_no} 
+	</select>
+	
+	<select id="getCompOpin" parameterType="hashmap" resultType="hashmap">
+		SELECT CO.COMP_OPIN_NO AS OPIN_NO, E.EMP_NAME, E.EMP_NO, EP.EMP_POSI_NAME AS POSI_NAME, 
+			   CO.COMP_OPIN_CON AS OPIN_CON, TO_CHAR(CO.COMP_OPIN_DATE, 'YYYY-MM-DD HH24:MI:SS') AS OPIN_DATE
+		FROM COMP_OPIN CO INNER JOIN EMP_INFO E
+						  ON CO.EMP_NO = E.EMP_NO
+						  INNER JOIN EMP_POSI EP
+						  ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+						  AND CO.COMP_OPIN_DEL_YN = 1
+		WHERE CO.COMP_NO = #{comp_no}
+		ORDER BY CO.COMP_OPIN_NO DESC
+	</select>
+	
+	<select id="getCompOpinCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM COMP_OPIN 
+		WHERE COMP_NO = #{comp_no}
+		AND COMP_OPIN_DEL_YN = 1
+	</select>
+	
+	<insert id="insertCompOpin" parameterType="hashmap">
+		INSERT INTO COMP_OPIN(COMP_OPIN_NO, COMP_NO, EMP_NO, COMP_OPIN_CON)
+		VALUES ( COMP_OPIN_SEQ.NEXTVAL, #{comp_no}, #{emp_no}, #{opin_txt})
+	</insert>
+	
+	<update id="delCompOpin" parameterType="hashmap">
+		UPDATE COMP_OPIN
+		SET COMP_OPIN_DEL_YN = 0
+		WHERE COMP_OPIN_NO = #{opin_no}
+	</update>
+	
+	<select id="getWorkLead" parameterType="hashmap" resultType="hashmap">
+		SELECT L.LEAD_NO AS NO, L.LEAD_NAME AS WORK_NAME, E.EMP_NAME, EP.EMP_POSI_NAME AS EMP_POSI, C2.COMP_NAME, C1.CLIENT_NAME, 
+       		   C1.CLIENT_POSI_NAME AS CLIENT_POSI, LS.LEAD_STAT_NAME AS STAT_NAME, TO_CHAR(L.LEAD_DATE, 'YYYY-MM-DD') AS DT,
+       		   '1' AS FLAG
+		FROM LEAD L INNER JOIN CLIENT C1
+            		ON L.CLIENT_NO = C1.CLIENT_NO
+            		INNER JOIN COMP C2
+            		ON C1.COMP_NO = C2.COMP_NO
+            		INNER JOIN EMP_INFO E
+            		ON L.EMP_NO = E.EMP_NO
+            		INNER JOIN EMP_POSI EP
+		            ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+		            INNER JOIN LEAD_STAT LS
+		            ON L.LEAD_STAT_NO = LS.LEAD_STAT_NO
+		            INNER JOIN CONG_PATH CP
+		            ON L.CONG_PATH_NO = CP.CONG_PATH_NO
+		            AND L.DEL_YN = 1
+		WHERE C2.COMP_NO = #{comp_no}
+		<choose>
+			<when test="filter == 1">AND L.LEAD_STAT_NO &lt; 4</when>
+			<when test="filter == 2">AND L.LEAD_STAT_NO = 4</when>
+			<when test="filter == 3">AND 1 != 1</when>
+		</choose>
+		ORDER BY L.LEAD_NO DESC
+	</select>
+	
+	<select id="getWorkChn" parameterType="hashmap" resultType="hashmap">
+		SELECT BC.CHN_NO AS NO, BC.CHN_NAME AS WORK_NAME, E.EMP_NAME, EP.EMP_POSI_NAME AS EMP_POSI,
+       		   C2.COMP_NAME, C1.CLIENT_NAME, C1.CLIENT_POSI_NAME AS CLIENT_POSI, BP.PROG_NAME AS STAT_NAME,
+       		   TO_CHAR(BC.CHN_DATE, 'YYYY-MM-DD') AS DT, '2' AS FLAG
+		FROM BSS_CHN BC INNER JOIN BSS_PROG BP
+		                ON BC.PROG_NO = BP.PROG_NO
+		                INNER JOIN LEAD L
+		                ON BC.LEAD_NO = L.LEAD_NO
+		                INNER JOIN EMP_INFO E
+		                ON BC.EMP_NO = E.EMP_NO
+		                INNER JOIN EMP_POSI EP
+		                ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+		                INNER JOIN CLIENT C1
+		                ON L.CLIENT_NO = C1.CLIENT_NO
+		                INNER JOIN COMP C2
+		                ON C1.COMP_NO = C2.COMP_NO
+		WHERE C2.COMP_NO = #{comp_no}
+		<choose>
+			<when test="filter == 1">AND BC.PROG_NO &lt; 6</when>
+			<when test="filter == 2">AND BC.PROG_NO &gt; 5</when>
+			<when test="filter == 3">AND 1 != 1</when>
+		</choose>
+		ORDER BY BC.CHN_NO DESC
+	</select>
+	
+	<update id="updateComp" parameterType="hashmap">
+		UPDATE COMP
+		SET	CC_GRADE_NO = #{comp_grade}, EMP_NO = #{emp_no}, COMP_SECT_NO = #{sect_no},
+			COMP_STAT_NO = #{comp_stat}, COMP_NAME = #{comp_name}, COMP_PH = #{comp_ph},
+			COMP_WEBSITE = <choose>
+								<when test="comp_web != null or comp_web != ''">#{comp_web}</when>
+								<otherwise>NULL</otherwise>
+							</choose>, 
+			COMP_ZC = 	<choose>
+							<when test="comp_zc != null or comp_zc != ''">#{comp_zc}</when>
+							<otherwise>NULL</otherwise>
+						</choose>, 
+			COMP_ADDR = <choose>
+							<when test="comp_addr != null or comp_addr != ''">#{comp_addr}</when>
+							<otherwise>NULL</otherwise>
+						</choose>,
+			COMP_DETAIL_ADDR = 	<choose>
+									<when test="comp_det_addr != null or comp_det_addr != ''">#{comp_det_addr}</when>
+									<otherwise>NULL</otherwise>
+								</choose>,
+			COMP_DETAIL_INFO = 	<choose>
+									<when test="comp_det_info != null or comp_det_info != ''">#{comp_det_info}</when>
+									<otherwise>NULL </otherwise>
+								</choose>
+		WHERE COMP_NO = #{comp_no}
+	</update>
+	
+	<update id="deleteComp" parameterType="hashmap">
+		UPDATE COMP
+		SET COMP_STAT_NO = 0
+		WHERE COMP_NO = #{comp_no}
+	</update>
+	
+	<select id="getCompSche" parameterType="hashmap" resultType="hashmap">
+		SELECT S.SCHE_NO, S.SCHE_CON, S.SCHE_RES, TO_CHAR(S.SCHE_SDATE,'YY / MM / DD') AS SDATE, 
+       		   TO_CHAR(S.SCHE_EDATE,'YY/MM/DD') AS EDATE, S.SCHE_IMPORTANCE AS SC_IP, EI.EMP_NAME, EP.EMP_POSI_NAME AS EMP_PNM, 
+       		   CM.COMP_NAME, C.CLIENT_POSI_NAME AS CLIENT_PNM, CC2.CODE_S_CATE, CC2.CODE_NAME , C.CLIENT_NAME
+		FROM SCHE S INNER JOIN EMP_INFO EI 
+            ON S.EMP_NO = EI.EMP_NO 
+            INNER JOIN EMP_POSI EP 
+            ON EI.EMP_POSI_NO = EP.EMP_POSI_NO
+            INNER JOIN SCHE_CLIENT_INFO SCI
+            ON S.SCHE_NO = SCI.SCHE_NO
+            INNER JOIN CLIENT C 
+            ON SCI.CLIENT_NO = C.CLIENT_NO 
+            INNER JOIN COMP CM 
+            ON C.COMP_NO = CM.COMP_NO 
+            INNER JOIN COMMON_CODE CC1 
+            ON S.SCHE_DIV_NO = CC1.CODE_S_CATE 
+            AND CC1.CODE_L_CATE = 2 
+            INNER JOIN COMMON_CODE CC2 
+            ON S.SCHE_ACTI_NO = CC2.CODE_S_CATE 
+            AND CC2.CODE_L_CATE = 3 
+		WHERE CM.COMP_NO = #{view_no}
+		AND ( ${filter} )
+		ORDER BY S.SCHE_DATE DESC
+	</select>
+</mapper>

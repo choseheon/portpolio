@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="emp">
+	<select id="getEmpList" parameterType="hashmap" resultType="hashmap">
+		SELECT SQ.NO, SQ.NAME, SQ.EMAIL, SQ.DEPART_NAME, SQ.POSI_NAME, SQ.FORM, SQ.PHONE, SQ.JDATE, SQ.ADDR
+		FROM ( 	SELECT E.EMP_NO AS NO, E.EMP_NAME AS NAME, E.EMP_EMAIL AS EMAIL, D.DEPART_NAME, 
+					   EP.EMP_POSI_NAME AS POSI_NAME, CC.CODE_NAME AS FORM, E.EMP_PHONE AS PHONE, 
+					   TO_CHAR(E.EMP_JOIN_DATE, 'YYYY-MM-DD') AS JDATE,
+					   (E.EMP_ADDR || ' ' || E.EMP_DETAIL_ADDR) AS ADDR,
+              		   ROW_NUMBER() OVER(ORDER BY E.EMP_NO DESC) AS RNUM
+       			FROM EMP_INFO E INNER JOIN TEAM T
+       							ON E.TEAM_NO = T.TEAM_NO
+       							INNER JOIN DEPART D
+       							ON T.DEPART_NO = D.DEPART_NO
+       							INNER JOIN EMP_POSI EP
+       							ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+       							INNER JOIN COMMON_CODE CC
+       							ON E.EMP_FORM = CC.CODE_S_CATE
+       							AND CC.CODE_L_CATE = 1
+       							INNER JOIN AUTHOR A
+       							ON E.AUTHOR_NO = A.AUTHOR_NO
+       							AND E.AUTHOR_NO != 0
+       							AND D.DEPART_NO != 1
+       							
+       			WHERE E.EMP_RESIGN_DATE IS NULL
+				<if test="searchTxt != null and searchTxt != ''">
+					<choose>
+						<when test="searchGbn == 0">
+							AND E.EMP_NO LIKE '%' || #{searchTxt} || '%'
+							OR E.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+							OR E.EMP_EMAIL LIKE '%' || #{searchTxt} || '%'
+							OR D.DEPART_NAME LIKE '%' || #{searchTxt} || '%'
+							OR EP.EMP_POSI_NAME LIKE '%' || #{searchTxt} || '%'
+							OR CC.CODE_NAME LIKE '%' || #{searchTxt} || '%'
+							OR E.EMP_PHONE LIKE '%' || #{searchTxt} || '%'
+							OR (E.EMP_ADDR || ' ' || E.EMP_DETAIL_ADDR) LIKE '%' || #{searchTxt} || '%'
+						</when>
+						<when test="searchGbn == 1">AND E.EMP_NO LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 2">AND E.EMP_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 3">AND E.EMP_EMAIL LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 4">AND D.DEPART_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 5">AND EP.EMP_POSI_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 6">AND CC.CODE_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 7">AND E.EMP_PHONE LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 8">AND (E.EMP_ADDR || ' ' || E.EMP_DETAIL_ADDR) LIKE '%' || #{searchTxt} || '%'</when>	
+					</choose>
+				</if>
+				<choose>
+					<when test="filter == 1">AND E.AUTHOR_NO IN (0, 1, 2, 3)</when>
+					<when test="filter == 2">AND E.AUTHOR_NO IN (0, 1, 4, 5)</when>
+					<when test="filter == 3">AND 1 != 1</when>
+				</choose>
+				ORDER BY E.EMP_NO DESC
+       	) SQ
+		WHERE SQ.RNUM BETWEEN #{startCnt} AND #{endCnt}
+	</select>
+	
+	<select id="getEmpCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+       	FROM EMP_INFO E INNER JOIN TEAM T
+       					ON E.TEAM_NO = T.TEAM_NO
+       					INNER JOIN DEPART D
+       					ON T.DEPART_NO = D.DEPART_NO
+       					INNER JOIN EMP_POSI EP
+       					ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+       					INNER JOIN COMMON_CODE CC
+       					ON E.EMP_FORM = CC.CODE_S_CATE
+       					AND CC.CODE_L_CATE = 1
+       					INNER JOIN AUTHOR A
+       					ON E.AUTHOR_NO = A.AUTHOR_NO
+       					AND E.AUTHOR_NO != 0
+       					AND D.DEPART_NO != 1	
+       			WHERE E.EMP_RESIGN_DATE IS NULL
+				<if test="searchTxt != null and searchTxt != ''">
+					<choose>
+						<when test="searchGbn == 0">
+							AND E.EMP_NO LIKE '%' || #{searchTxt} || '%'
+							OR E.EMP_NAME LIKE '%' || #{searchTxt} || '%'
+							OR E.EMP_EMAIL LIKE '%' || #{searchTxt} || '%'
+							OR D.DEPART_NAME LIKE '%' || #{searchTxt} || '%'
+							OR EP.EMP_POSI_NAME LIKE '%' || #{searchTxt} || '%'
+							OR CC.CODE_NAME LIKE '%' || #{searchTxt} || '%'
+							OR E.EMP_PHONE LIKE '%' || #{searchTxt} || '%'
+							OR (E.EMP_ADDR || ' ' || E.EMP_DETAIL_ADDR) LIKE '%' || #{searchTxt} || '%'
+						</when>
+						<when test="searchGbn == 1">AND E.EMP_NO LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 2">AND E.EMP_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 3">AND E.EMP_EMAIL LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 4">AND D.DEPART_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 5">AND EP.EMP_POSI_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 6">AND CC.CODE_NAME LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 7">AND E.EMP_PHONE LIKE '%' || #{searchTxt} || '%'</when>
+						<when test="searchGbn == 8">AND (E.EMP_ADDR || ' ' || E.EMP_DETAIL_ADDR) LIKE '%' || #{searchTxt} || '%'</when>	
+					</choose>
+				</if>
+				<choose>
+					<when test="filter == 1">AND E.AUTHOR_NO IN (0, 1, 2, 3)</when>
+					<when test="filter == 2">AND E.AUTHOR_NO IN (0, 1, 4, 5)</when>
+					<when test="filter == 1">AND 1 != 1</when>
+				</choose>
+	</select>
+	
+	<select id="getPosiList" parameterType="hashmap" resultType="hashmap">
+		SELECT EMP_POSI_NO AS POSI_NO, EMP_POSI_NAME AS POSI_NAME
+		FROM EMP_POSI
+		WHERE EMP_POSI_NO &gt; 0
+		<if test="flag == 'INSERT'">
+			AND EMP_POSI_NO NOT IN(3,4)
+		</if>
+	</select>
+	
+	<select id="getFormList" parameterType="hashmap" resultType="hashmap">
+		SELECT CODE_S_CATE AS FORM_NO, CODE_NAME AS FORM_NAME
+		FROM COMMON_CODE
+		WHERE CODE_L_CATE = 1
+	</select>
+	
+	<select id="getDepartList" parameterType="hashmap" resultType="hashmap">
+		SELECT DISTINCT D.DEPART_NO, D.DEPART_NAME
+		FROM DEPART D INNER JOIN TEAM T
+                      ON D.DEPART_NO = T.DEPART_NO
+		ORDER BY D.DEPART_NO
+	</select>
+	
+	<select id="getAuthorList" parameterType="hashmap" resultType="hashmap">
+		SELECT AUTHOR_NO AS AUTH_NO, AUTHOR_NAME AS AUTH_NAME
+		FROM AUTHOR
+	</select>
+	
+	<select id="getTeamList" parameterType="hashmap" resultType="hashmap">
+		SELECT TEAM_NO, TEAM_NAME
+		FROM TEAM
+		WHERE DEPART_NO = #{depart_no}
+	</select>
+	<insert id="insertEmp" parameterType="hashmap">
+		INSERT INTO EMP_INFO(EMP_NO, EMP_POSI_NO, TEAM_NO, AUTHOR_NO, EMP_NAME, EMP_ID,
+						     EMP_PW, EMP_BIRTH, EMP_EMAIL, EMP_PHONE, EMP_FORM, EMP_JOIN_DATE,
+						     EMP_RESIGN_DATE, EMP_ZC, EMP_ADDR, EMP_DETAIL_ADDR, EMP_IMAGE, EMP_MEMO_CON)
+		VALUES (EMP_SEQ.NEXTVAL, #{emp_posi}, #{emp_team}, #{emp_author}, #{emp_name}, #{emp_id},
+				#{emp_pw}, #{emp_birth}, #{emp_email}, #{emp_ph}, #{emp_form}, TO_DATE(#{emp_jdate}, 'YYYY-MM-DD'), NULL,
+				<choose>
+					<when test="emp_zc == null or emp_zc == ''">NULL, NULL</when>
+					<otherwise>#{emp_zc}, #{emp_addr}</otherwise>
+				</choose>,
+				<choose>
+					<when test="emp_det_addr == null or emp_det_addr == ''">NULL</when>
+					<otherwise>#{emp_det_addr}</otherwise>
+				</choose>,
+				<choose>
+					<when test="attachFile == null or attachFile == ''">NULL, </when>
+					<otherwise>#{attachFile}, </otherwise>
+				</choose>
+				<choose>
+					<when test="emp_memo == null or emp_memo == ''">NULL</when>
+					<otherwise>#{emp_memo}</otherwise>
+				</choose>)
+	</insert>
+	
+	<update id="updateEmp" parameterType="hashmap">
+		UPDATE EMP_INFO
+		SET EMP_POSI_NO = #{emp_posi}, TEAM_NO = #{emp_team}, AUTHOR_NO = #{emp_author}, EMP_NAME = #{emp_name},
+			EMP_ID = #{emp_id}, EMP_BIRTH = #{emp_birth}, EMP_EMAIL = #{emp_email}, EMP_PHONE = #{emp_ph}, EMP_FORM = #{emp_form},
+			EMP_JOIN_DATE = TO_DATE(#{emp_jdate}, 'YYYY-MM-DD'),
+			<choose>
+				<when test="emp_zc == null or emp_zc == ''">EMP_ZC = NULL, EMP_ADDR = NULL</when>
+				<otherwise>EMP_ZC = #{emp_zc}, EMP_ADDR = #{emp_addr}</otherwise>
+			</choose>,
+			<choose>
+				<when test="emp_det_addr == null or emp_det_addr == ''">EMP_DETAIL_ADDR = NULL</when>
+				<otherwise>EMP_DETAIL_ADDR = #{emp_det_addr}</otherwise>
+			</choose>,
+			<choose>
+				<when test="attachFile == null or attachFile == ''">EMP_IMAGE = NULL</when>
+				<otherwise>EMP_IMAGE = #{attachFile}</otherwise>
+			</choose>,
+			<choose>
+				<when test="emp_memo == null or emp_memo == ''">EMP_MEMO_CON = NULL</when>
+				<otherwise>EMP_MEMO_CON = #{emp_memo}</otherwise>
+			</choose>
+			<if test="emp_pw != null and emp_pw != ''">
+				, EMP_PW = #{emp_pw}
+			</if>
+			<if test="emp_rdate != null and emp_rdate != ''">
+				, EMP_RESIGN_DATE = TO_DATE(#{emp_rdate}, 'YYYY-MM-DD')
+			</if>
+		WHERE EMP_NO = #{emp_no}
+	</update>
+	
+	<select id="getEmpData" parameterType="hashmap" resultType="hashmap">
+		SELECT E.EMP_NO, E.EMP_ID, E.EMP_NAME, TO_CHAR(E.EMP_BIRTH, 'YYMMDD') AS EMP_BIRTH, E.EMP_EMAIL, D.DEPART_NAME || ' ' || T.TEAM_NAME AS DEPART_NAME,
+			   EP.EMP_POSI_NAME AS POSI_NAME, CC.CODE_NAME AS FORM_NAME, E.EMP_PHONE, TO_CHAR(E.EMP_JOIN_DATE, 'YYYY-MM-DD') AS JOIN_DATE, TO_CHAR(E.EMP_RESIGN_DATE, 'YYYY-MM-DD') AS RESIGN_DATE,
+			   E.EMP_ZC, E.EMP_ADDR, E.EMP_DETAIL_ADDR, E.EMP_MEMO_CON AS MEMO_CON, E.TEAM_NO, E.EMP_IMAGE, E.EMP_POSI_NO AS POSI_NO, E.EMP_FORM, E.TEAM_NO, T.DEPART_NO, E.AUTHOR_NO
+		FROM EMP_INFO E INNER JOIN TEAM T
+						ON E.TEAM_NO = T.TEAM_NO
+						INNER JOIN DEPART D
+						ON T.DEPART_NO = D.DEPART_NO
+						INNER JOIN EMP_POSI EP
+						ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+						INNER JOIN COMMON_CODE CC
+						ON E.EMP_FORM = CC.CODE_S_CATE
+						AND CC.CODE_L_CATE = 1
+		WHERE EMP_NO = #{emp_no}
+	</select>
+	
+	<select id="getTeamEmp" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM (	SELECT E.EMP_NO, E.EMP_NAME, EP.EMP_POSI_NAME AS POSI_NAME, E.EMP_PHONE, E.EMP_EMAIL,
+			   		   ROW_NUMBER() OVER(ORDER BY E.EMP_NO DESC) AS RNUM
+				FROM EMP_INFO E INNER JOIN EMP_POSI EP
+					    		ON E.EMP_POSI_NO = EP.EMP_POSI_NO
+								AND E.TEAM_NO = #{team_no} 
+			 ) SQ
+		WHERE SQ.RNUM BETWEEN 1 AND #{view_cnt}
+	</select>
+	
+	<select id="getTeamEmpCnt" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM EMP_INFO
+		WHERE TEAM_NO = #{team_no} 
+	</select>
+	
+	<select id="checkEmail" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM EMP_INFO
+		WHERE EMP_EMAIL = #{emp_email}
+	</select>
+	
+	<select id="checkEmpId" parameterType="hashmap" resultType="Integer">
+		SELECT COUNT(*) AS CNT
+		FROM EMP_INFO
+		WHERE EMP_ID = #{emp_id}
+	</select>
+	
+	<update id="deleteEmp" parameterType="hashmap">
+		UPDATE EMP_INFO
+		SET EMP_RESIGN_DATE = SYSDATE
+		WHERE EMP_NO = #{emp_no}
+	</update>
+	
+</mapper>
