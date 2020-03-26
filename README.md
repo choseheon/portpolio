@@ -62,6 +62,7 @@
 #### * 페이지 내 사용자의 이용에 따라, 다양한 UI를 구현하기 위해 사용
 #### * 특히 [사내 채팅방, 캠페인 목록] 구현에 잦고, 많은 데이터 흐름이 예상되어 사용하였음.
 ![채팅목록](https://user-images.githubusercontent.com/61402001/77622043-ec596500-6f80-11ea-8930-33b946a88f50.png)
+![채팅방구현](https://user-images.githubusercontent.com/61402001/77624190-c46c0080-6f84-11ea-9c62-e0ed48909115.JPG)
 ![ajax캡처](https://user-images.githubusercontent.com/61402001/77622059-f11e1900-6f80-11ea-9ecf-6db63b0f275e.JPG)
 
 ### 2. [ HighChart를 활용한 Chart기능 제공 ]
