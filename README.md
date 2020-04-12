@@ -72,9 +72,9 @@
 ![chart](https://user-images.githubusercontent.com/61402001/77622103-0430e900-6f81-11ea-8184-0701f8587b23.JPG)
 
 ### 3. [ SVN을 통한 공동작업 ]
-#### * SVN을 활용하여 팀 작업을 진행
+#### * SVN을 활용하여 팀 작업 진행
 #### * 파트  별 개발을 통한 개발일정 단축
-#### * 사진10과 같이 SVN을 이용하여 공동작업을 하였음
+#### * 사진10과 같이 SVN을 이용하여 공동 작업을 하였음
 
 ![svn](https://user-images.githubusercontent.com/61402001/77622129-0f841480-6f81-11ea-874c-9175e7f42ff6.JPG)
 ![공통팝업](https://user-images.githubusercontent.com/61402001/77622135-10b54180-6f81-11ea-92f0-7b0030e4960d.JPG)
